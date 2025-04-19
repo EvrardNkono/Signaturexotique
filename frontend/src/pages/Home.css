@@ -1,0 +1,78 @@
+/* src/pages/Home.css */
+
+/* Général */
+.home-container {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .banner {
+    background-color: var(--noir);
+    color: var(--blanc);
+  }
+  
+  .banner h1 {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+  
+  .banner p {
+    font-size: 1.2rem;
+  }
+  
+  .banner .btn-success {
+    background-color: var(--orange);
+    border-color: var(--orange);
+  }
+  
+  .banner .btn-success:hover {
+    background-color: #e65c2d;
+    border-color: #e65c2d;
+  }
+  
+  /* Section Présentation */
+  .section-title {
+    font-size: 2rem;
+    color: var(--orange);
+    font-weight: bold;
+  }
+  
+  img.img-fluid {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Slider de Produits */
+  .carousel-caption h3 {
+    color: var(--orange);
+  }
+  
+  .carousel-item img {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Section Avis Clients */
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-body {
+    background-color: var(--blanc);
+  }
+  
+  .card-title {
+    color: var(--orange);
+  }
+
+
+  .section-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff6600; /* Orange Signature Exotique */
+  }
+  
+  

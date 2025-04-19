@@ -1,0 +1,46 @@
+/* src/styles.css */
+
+/* Définition des couleurs */
+:root {
+    --orange: #FF5733;
+    --noir: #000000;
+    --blanc: #ffffff;
+  }
+  
+  /* Styles généraux */
+  body {
+    background-color: var(--blanc);
+    color: var(--noir);
+  }
+  
+  /* Navbar */
+  .navbar-custom {
+    background-color: var(--noir);
+  }
+  
+  .navbar-custom .navbar-brand,
+  .navbar-custom .nav-link {
+    color: var(--orange) !important;
+  }
+  
+  /* Section Accueil (Home) */
+  .bg-dark {
+    background-color: var(--noir) !important;
+  }
+  
+  .bg-dark .text-white {
+    color: var(--blanc) !important;
+  }
+  
+  .btn-success {
+    background-color: var(--orange);
+    border-color: var(--orange);
+  }
+  
+  .btn-success:hover {
+    background-color: #e65c2d;
+    border-color: #e65c2d;
+  }
+  
+  /* Ajouter plus de styles selon les besoins */
+  

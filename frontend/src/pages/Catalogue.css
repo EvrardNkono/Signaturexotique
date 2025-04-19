@@ -1,0 +1,86 @@
+/* Catalogue.css */
+
+/* Container principal de la page catalogue */
+.catalogue {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* Section des filtres */
+  .filter-section {
+    width: 100%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Section des produits */
+  .product-section {
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 40px;
+  }
+  
+  /* Liste des produits */
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Adaptation automatique */
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  /* Card Styling */
+  .product-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Section des sliders */
+  .slider-section {
+    width: 100%;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  /* Boutons */
+  button {
+    background-color: #ff6600; /* Orange par défaut */
+    border: none;
+    padding: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  button:hover {
+    background-color: #e65c00;
+  }
+  
+  /* CategoryMenu et Filters */
+  .filters,
+  .category-menu {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Améliorations visuelles */
+  .filter-section input,
+  .filter-section select {
+    margin: 10px 0;
+  }
+  

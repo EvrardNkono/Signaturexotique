@@ -1,0 +1,105 @@
+/* Style global du panier */
+.cart-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.cart-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ff6f00; /* Couleur orange */
+  text-align: center;
+}
+
+.cart-empty {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #666;
+}
+
+/* Cart Card */
+.cart-card {
+  border-radius: 10px;
+  border: 2px solid #ff6f00; /* Orange */
+  background-color: #f8f9fa;
+  padding: 15px;
+}
+
+.cart-card-title {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Cart Image */
+.cart-image {
+  width: 100%;
+  height: auto; /* Maintient le ratio d'aspect de l'image */
+  object-fit: contain; /* Permet de montrer l'image dans son entiereté sans la couper */
+  max-height: 200px; /* Limite la hauteur de l'image, mais vous pouvez ajuster */
+  border-radius: 8px;
+  border: 1px solid #ccc; /* Optionnel : Bordure légère autour de l'image */
+}
+
+
+/* Button Styles */
+button {
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 1rem;
+}
+
+button:focus {
+  box-shadow: none;
+}
+
+/* Supprimer le produit */
+button.btn-danger {
+  background-color: #ff6f00;
+  border-color: #ff6f00;
+  color: white;
+}
+
+/* Boutons de commande et vider le panier */
+button.btn-outline-danger {
+  border-color: #ff6f00;
+  color: #ff6f00;
+}
+
+button.btn-outline-success {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+/* Résumé du panier */
+.cart-summary {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cart-summary h4 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.cart-summary button {
+  margin-top: 10px;
+}
+
+/* Layout */
+.card-body p {
+  font-size: 1rem;
+  color: #333;
+}
+
+.d-flex {
+  align-items: center;
+}
+
+.d-flex button {
+  margin: 0 5px;
+}
