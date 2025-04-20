@@ -8,25 +8,26 @@
 html, body {
   height: 100%;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%; /* Assurer que le body occupe toute la largeur */
 }
-
-/* Le header et footer s'étendent toujours sur toute la largeur */
-header, footer {
-  width: 100%;
-}
-
 
 #root {
   flex: 1;
   width: 100%;
-  padding: 2rem;
+  padding: 0; /* Supprimer tout padding supplémentaire sur #root */
   text-align: center;
+}
+
+header, footer {
+  width: 100%; /* Assurer que le header et footer prennent toute la largeur */
 }
 
 .logo {
@@ -35,9 +36,11 @@ header, footer {
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -67,7 +70,6 @@ header, footer {
 
 .main-content {
   flex: 1;
-
 }
 
 .footer-links li {
@@ -83,5 +85,3 @@ header, footer {
 .footer-links a:hover {
   color: #ffbb33;
 }
-
-
