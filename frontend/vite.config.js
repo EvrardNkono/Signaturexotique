@@ -6,15 +6,17 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'), // 👉 permet d'importer avec "@/components/..." au lieu de chemins relatifs
+      '@': path.resolve(__dirname, 'src'),
     },
   },
   optimizeDeps: {
-    force: true, // 👉 force la recompilation des modules quand ça bug
+    force: true,
     include: ['react', 'react-dom'],
   },
   server: {
-    port: 5173, // 👉 tu peux changer le port ici si besoin
-    open: true, // 👉 ouvre le navigateur automatiquement
+    host: process.env.VITE_HOST || '0.0.0.0',  // Prend la valeur de VITE_HOST ou 0.0.0.0 pour déploiement externe
+    port: process.env.VITE_PORT || 5173,       // Prend la valeur de VITE_PORT ou 5173
+    strictPort: true,
+    open: process.env.VITE_ENV !== 'local',  // N'ouvre pas automatiquement en local
   },
 });
