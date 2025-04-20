@@ -4,7 +4,8 @@ import { Container, Button, Alert } from 'react-bootstrap';
 import { Typography } from '@mui/material';
 import ProductGrid from '../components/ProductGrid';
 import Filters from '../components/Filters';
-import { useCart } from '../context/CartContext'; // Utilisation du contexte
+import { useCart } from '../context/CartContext';
+import { API_URL } from '../config';  // Utilisation du contexte
 
 const Catalogue = () => {
   const [allProducts, setAllProducts] = useState([]);
@@ -18,7 +19,7 @@ const Catalogue = () => {
   // Fonction pour charger les produits
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/admin/product');
+      const response = await fetch(`${API_URL}/admin/product`);
       const data = await response.json();
       setAllProducts(data);
     } catch (error) {

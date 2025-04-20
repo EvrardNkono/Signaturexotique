@@ -35,7 +35,7 @@ const Checkout = () => {
   
     // ✅ Étape 1 : Envoi de la commande au backend
     try {
-      const response = await fetch('http://localhost:5000/modules/checkout', {
+      const response = await fetch(`${API_URL}/modules/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),

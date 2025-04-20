@@ -1,6 +1,7 @@
 // src/components/admin/OrderList.jsx
 import React, { useEffect, useState } from 'react';
 import { Table, Spinner, Alert } from 'react-bootstrap';
+import { API_URL } from '../config'; 
 
 const OrderList = () => {
   const [orders, setOrders] = useState([]);
@@ -10,7 +11,7 @@ const OrderList = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch('http://localhost:5000/modules/checkout');  // L'endpoint backend
+        const response = await fetch(`${API_URL}/modules/checkout`); // Utiliser API_URL
         if (!response.ok) {
           throw new Error('Erreur lors du chargement des commandes');
         }

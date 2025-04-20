@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 const CartContext = createContext();
 
@@ -8,7 +9,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     // Charger le panier à partir du backend
-    fetch('http://localhost:5000/modules/cart/cart')
+    fetch(`${API_URL}/modules/cart/cart`)
       .then((res) => res.json())
       .then((data) => {
         console.log('Panier chargé:', data); // Vérifie les données reçues du backend
@@ -41,11 +42,11 @@ export const CartProvider = ({ children }) => {
     try {
       // On vérifie si le client est un grossiste pour utiliser le prix de gros
       const priceToUse = clientType === 'wholesale' ? product.wholesalePrice : product.price;
-
+  
       console.log('Prix à utiliser :', priceToUse);
-
+  
       // Requête POST pour ajouter le produit au panier
-      const res = await fetch('http://localhost:5000/modules/cart/cart', {
+      const res = await fetch(`${API_URL}/modules/cart/cart`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -57,11 +58,11 @@ export const CartProvider = ({ children }) => {
           wholesalePrice: product.wholesalePrice
         }),
       });
-
+  
       if (!res.ok) throw new Error('Erreur lors de l’ajout au panier');
-
+  
       // Mettre à jour le panier après l'ajout
-      const updatedCart = await fetch('http://localhost:5000/modules/cart/cart').then(res => res.json());
+      const updatedCart = await fetch(`${API_URL}/modules/cart/cart`).then(res => res.json());
       console.log('Panier mis à jour:', updatedCart);
       setCart(updatedCart);
     } catch (err) {
@@ -71,45 +72,45 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = async (productId) => {
     try {
-      const res = await fetch(`http://localhost:5000/modules/cart/cart/${productId}`, {
+      const res = await fetch(`${API_URL}/modules/cart/cart/${productId}`, {
         method: 'DELETE',
       });
-
+  
       if (!res.ok) throw new Error('Erreur lors de la suppression du produit du panier');
-
-      const updatedCart = await fetch('http://localhost:5000/modules/cart/cart').then(res => res.json());
+  
+      const updatedCart = await fetch(`${API_URL}/modules/cart/cart`).then(res => res.json());
       setCart(updatedCart);
     } catch (err) {
       console.error(err);
     }
   };
-
+  
   const updateCartQuantity = async (cartId, newQuantity) => {
     try {
-      const res = await fetch(`http://localhost:5000/modules/cart/cart/${cartId}`, {
+      const res = await fetch(`${API_URL}/modules/cart/cart/${cartId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quantity: newQuantity }),
       });
-
+  
       if (!res.ok) throw new Error('Erreur lors de la mise à jour de la quantité');
-
-      const updatedCart = await fetch('http://localhost:5000/modules/cart/cart').then(res => res.json());
+  
+      const updatedCart = await fetch(`${API_URL}/modules/cart/cart`).then(res => res.json());
       setCart(updatedCart);
     } catch (err) {
       console.error('Erreur de mise à jour :', err);
     }
   };
-
+  
   const clearCartFromBackend = async () => {
     try {
-      const res = await fetch('http://localhost:5000/modules/cart/cart', {
+      const res = await fetch(`${API_URL}/modules/cart/cart`, {
         method: 'DELETE',
       });
-
+  
       if (!res.ok) throw new Error('Erreur lors du vidage du panier');
-
-      const updatedCart = await fetch('http://localhost:5000/modules/cart/cart').then(res => res.json());
+  
+      const updatedCart = await fetch(`${API_URL}/modules/cart/cart`).then(res => res.json());
       setCart(updatedCart);
     } catch (err) {
       console.error(err);

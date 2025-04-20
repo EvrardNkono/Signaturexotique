@@ -7,6 +7,7 @@ import ProductsSection from '../components/ProductsSection';
 import CustomCarousel from '../components/CustomCarousel';
 import Services from '../components/Services';
 import Testimonials from '../components/Testimonials';
+import { API_URL } from '../config';
 
 const Home = ({ clientType }) => {
   const { searchQuery } = useSearch();
@@ -14,7 +15,7 @@ const Home = ({ clientType }) => {
 
   // Fonction pour récupérer les produits filtrés par recherche (nom)
   const fetchFilteredProducts = async () => {
-    const url = `http://localhost:5000/admin/search?nom=${searchQuery}`;
+    const url = `${API_URL}/admin/search?nom=${searchQuery}`;
     console.log('📡 Appel API recherche :', url);
     try {
       const response = await fetch(url);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Card, Table, Badge } from 'react-bootstrap';
 import './AdminPage.css'; // Fichier CSS personnalisé
 import OrderList from '../components/OrderList';
+import { API_URL } from '../config'; 
 
 const AdminPage = () => {
   const [categories, setCategories] = useState([]);
@@ -26,12 +27,12 @@ const [editingProduct, setEditingProduct] = useState(null);
     const fetchCategoriesAndProducts = async () => {
       try {
         // Récupérer les catégories
-        const categoriesResponse = await fetch('http://localhost:5000/admin/category');
+        const categoriesResponse = await fetch(`${API_URL}/admin/category`);
         const categoriesData = await categoriesResponse.json();
         setCategories(categoriesData);
 
         // Récupérer les produits
-        const productsResponse = await fetch('http://localhost:5000/admin/product');
+        const productsResponse = await fetch(`${API_URL}/admin/product`);
         const productsData = await productsResponse.json();
         setProducts(productsData);
       } catch (error) {
@@ -46,7 +47,7 @@ const [editingProduct, setEditingProduct] = useState(null);
     if (categoryInput && !categories.some((cat) => cat.name === categoryInput)) {
       try {
         // Envoi de la requête POST au backend pour créer la catégorie
-        const response = await fetch('http://localhost:5000/admin/category', {
+        const response = await fetch(`${API_URL}/admin/category`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -82,7 +83,7 @@ const handleUpdateCategory = async () => {
   }
 
   try {
-    const response = await fetch(`http://localhost:5000/admin/category/${editingCategory.id}`, {
+    const response = await fetch(`${API_URL}/admin/category/${editingCategory.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ const handleUpdateCategory = async () => {
       if (image) formData.append('image', image);
 
       try {
-        const response = await fetch('http://localhost:5000/admin/product', {
+        const response = await fetch(`${API_URL}/admin/product`, {
           method: 'POST',
           body: formData,
         });
@@ -165,7 +166,7 @@ const handleUpdateProduct = async () => {
     if (image) formData.append('image', image);
 
     try {
-      const response = await fetch(`http://localhost:5000/admin/product/${editingProduct.id}`, {
+      const response = await fetch(`${API_URL}/admin/product/${editingProduct.id}`, {
         method: 'PUT',
         body: formData,
       });

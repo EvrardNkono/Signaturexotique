@@ -13,6 +13,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import CategoryIcon from '@mui/icons-material/Category';
 import debounce from 'lodash/debounce';
+import { API_URL } from '../config';
 
 const Filters = ({ onFilterChange }) => {
   const [nom, setNom] = useState('');
@@ -26,7 +27,7 @@ const Filters = ({ onFilterChange }) => {
   const fetchCategories = async () => {
     setLoadingCategories(true);
     try {
-      const response = await fetch('http://localhost:5000/admin/category');
+      const response = await fetch(`${API_URL}/admin/category`);
       const data = await response.json();
       console.log('Categories:', data); // Debug
       if (Array.isArray(data)) {
@@ -52,7 +53,7 @@ const Filters = ({ onFilterChange }) => {
     console.log('QueryParams:', queryParams); // Log des paramètres
 
     try {
-      const response = await fetch(`http://localhost:5000/admin/product/filter?${queryParams}`);
+      const response = await fetch(`${API_URL}/admin/product/filter?${queryParams}`);
       const data = await response.json();
       console.log('Filtered Products:', data); // Log des résultats
       onFilterChange(data);

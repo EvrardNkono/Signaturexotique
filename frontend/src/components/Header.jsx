@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import SearchProduct from './SearchProduct';
 import './Header.css';
 import { Link } from 'react-router-dom';  // Ajouter cette ligne
+import { API_URL } from '../config';
 
 
 const Header = () => {
@@ -15,7 +16,7 @@ const Header = () => {
   const navigate = useNavigate(); // Pour la navigation
 
   useEffect(() => {
-    fetch('http://localhost:5000/admin/category')
+    fetch(`${API_URL}/admin/category`)
       .then((res) => res.json())
       .then((data) => {
         setCategories(data);

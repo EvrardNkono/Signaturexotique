@@ -31,7 +31,7 @@ const Contact = () => {
   
     try {
       // Remarque : Changez l'URL ici pour qu'elle pointe vers l'API du backend
-      const response = await fetch('http://localhost:5000/modules/contact/emailRoutes', {  // Remplacer '/admin/contact/send-email' par '/api/send-email'
+      const response = await fetch(`${API_URL}/modules/contact/emailRoutes`, {  // Remplacer '/admin/contact/send-email' par '/api/send-email'
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
