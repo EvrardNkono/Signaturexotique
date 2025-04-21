@@ -38,7 +38,10 @@ const Header = () => {
     <header className="custom-header">
       <div className="navbar">
         <div className="logo">
-          <Link to="/" onClick={handleLinkClick}>Signature Exotique</Link>
+        <Link to="/" onClick={handleLinkClick}>
+  <img src="/assets/exo.png" alt="Signature Exotique" style={{ height: '180px' }} />
+</Link>
+
         </div>
 
         <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
@@ -47,7 +50,10 @@ const Header = () => {
           <span className="bar"></span>
         </div>
 
-        <SearchProduct onSearch={(query) => console.log('Recherche:', query)} />
+        <div className="search-bar-container">
+  <SearchProduct onSearch={(query) => console.log('Recherche:', query)} />
+</div>
+
 
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <Link to="/" onClick={handleLinkClick}>Accueil</Link>
