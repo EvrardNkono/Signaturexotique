@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importer useNavigate
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import SearchProduct from './SearchProduct';
 import './Header.css';
-import { Link } from 'react-router-dom';  // Ajouter cette ligne
+import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
-
+import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
   const { cart } = useCart();
@@ -13,7 +13,8 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const navigate = useNavigate(); // Pour la navigation
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API_URL}/admin/category`)
@@ -32,16 +33,14 @@ const Header = () => {
     navigate(`/home?categorie=${encodeURIComponent(categoryName)}`);
     setCategoryMenuOpen(false);
   };
-  
 
   return (
     <header className="custom-header">
       <div className="navbar">
         <div className="logo">
-        <Link to="/" onClick={handleLinkClick}>
-  <img src="/assets/exo.png" alt="Signature Exotique" style={{ height: '110px' }} />
-</Link>
-
+          <Link to="/" onClick={handleLinkClick}>
+            <img src="/assets/exo.png" alt="Signature Exotique" style={{ height: '110px' }} />
+          </Link>
         </div>
 
         <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
@@ -51,9 +50,8 @@ const Header = () => {
         </div>
 
         <div className="search-bar-container">
-  <SearchProduct onSearch={(query) => console.log('Recherche:', query)} />
-</div>
-
+          <SearchProduct onSearch={(query) => console.log('Recherche:', query)} />
+        </div>
 
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <Link to="/" onClick={handleLinkClick}>Accueil</Link>
@@ -64,6 +62,23 @@ const Header = () => {
             🛒
             {cartQuantity > 0 && <span className="cart-quantity">{cartQuantity}</span>}
           </Link>
+
+          {!isAuthenticated ? (
+            <>
+              <Link to="/login" onClick={handleLinkClick}>Connexion</Link>
+              <Link to="/register" onClick={handleLinkClick}>S'inscrire</Link>
+            </>
+          ) : (
+            <span
+              onClick={() => {
+                logout();
+                handleLinkClick();
+              }}
+              className="nav-link-style"
+            >
+              Déconnexion
+            </span>
+          )}
         </nav>
       </div>
 
@@ -74,7 +89,6 @@ const Header = () => {
       </div>
 
       {/* Menu des catégories */}
-    
     </header>
   );
 };

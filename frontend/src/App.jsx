@@ -8,33 +8,40 @@ import Catalogue from './pages/Catalogue';
 import Cart from './pages/Cart';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
-import { CartProvider } from './context/CartContext'; // Importer le CartProvider
-import { SearchProvider } from './context/SearchContext'; // Importer SearchProvider
+import { CartProvider } from './context/CartContext';
+import { SearchProvider } from './context/SearchContext';
+import { AuthProvider } from './context/AuthContext'; // Importer le AuthProvider
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Checkout from './pages/Checkout';
 import './App.css';
 import './components/Header.css';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 const App = () => {
   return (
-    <CartProvider>
-      <SearchProvider> {/* Englobé avec SearchProvider */}
-        <Router>
-          <Header />
-          <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/catalogue" element={<Catalogue />} />
-              <Route path="/panier" element={<Cart />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/checkout" element={<Checkout />} />
-            </Routes>
-          </main>
-          <Footer />
-        </Router>
-      </SearchProvider>
-    </CartProvider>
+    <AuthProvider> {/* Ajout du AuthProvider */}
+      <CartProvider>
+        <SearchProvider>
+          <Router>
+            <Header />
+            <main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/catalogue" element={<Catalogue />} />
+                <Route path="/panier" element={<Cart />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+              </Routes>
+            </main>
+            <Footer />
+          </Router>
+        </SearchProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 };
 

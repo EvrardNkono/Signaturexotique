@@ -193,3 +193,15 @@
   margin: 3px 0;
   transition: 0.3s;
 }
+.nav-link-style {
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link-style:hover {
+  color: #ff6600;
+}
+

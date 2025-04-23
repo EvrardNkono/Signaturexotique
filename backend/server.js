@@ -25,13 +25,17 @@ const filterRoutes = require('./modules/admin/filter'); // ✅ Corrigé ici
 const orderRoutes = require('./modules/checkout');
 const searchRoutes = require('./modules/admin/search');
 const emailRoutes = require('./modules/contact/emailRoutes'); // Importer les routes d'email
-
+// J’importe les routes d’authentification
+const authRoutes = require('./modules/auth/auth');
 const categoryHomeRouter = require('./modules/admin/categoryhome');
 
 // Utilisation des routes
 app.use('/admin/category', categoryRoutes);
 app.use('/admin/product', productRoutes);
 app.use('/admin', filterRoutes); // Contient le GET /admin/product?...
+// J’active les routes d’authentification sur /auth
+app.use('/auth', authRoutes);
+
  // Met à jour avec le nouveau nom du fichier
 
 // Autres middlewares ou configurations ici
