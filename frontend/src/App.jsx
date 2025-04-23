@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
@@ -17,6 +16,9 @@ import './App.css';
 import './components/Header.css';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import PrivateRoute from './components/PrivateRoute'; // Importer le composant PrivateRoute
+import Profile from './pages/Profile'; // Ajouter l'import du Profile
+
 
 const App = () => {
   return (
@@ -31,10 +33,18 @@ const App = () => {
                 <Route path="/catalogue" element={<Catalogue />} />
                 <Route path="/panier" element={<Cart />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                
+                {/* Route protégée pour le dashboard */}
+                <Route 
+                  path="/dashboard" 
+                  element={<PrivateRoute element={<Dashboard />} />} 
+                />
+                
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/profile" element={<Profile />} />
+
               </Routes>
             </main>
             <Footer />

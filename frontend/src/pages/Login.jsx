@@ -5,6 +5,7 @@ import { API_URL } from '../config';
 import './Login.css'; 
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
@@ -24,7 +25,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
@@ -34,8 +35,10 @@ const Login = () => {
         body: JSON.stringify({ email, mot_de_passe: motDePasse }),
       });
       const data = await response.json();
-
+  
       if (response.ok) {
+        // Stockage du token dans le localStorage
+        localStorage.setItem('token', data.token);
         login(data.token);
         setMessage(data.message);
         navigate(from, { replace: true });
@@ -46,6 +49,7 @@ const Login = () => {
       setError('Erreur de connexion, veuillez réessayer.');
     }
   };
+  
 
   return (
     <div className="login-container">
