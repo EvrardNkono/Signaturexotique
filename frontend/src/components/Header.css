@@ -205,3 +205,16 @@
   color: #ff6600;
 }
 
+.profile-link {
+  color: #fff;
+  background-color: #ff6600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.profile-link:hover {
+  background-color: #e65c00;
+}
+

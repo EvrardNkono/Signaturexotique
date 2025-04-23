@@ -1,6 +1,9 @@
 // J’importe Express pour pouvoir créer un routeur
 const express = require('express');
 
+const verifyJWT = require('../../middleware/verifyJWT');
+
+
 // Je crée mon routeur avec la méthode Router d’Express
 const router = express.Router();
 
@@ -10,54 +13,64 @@ const db = require('../../config/db'); // J’adapte le chemin pour atteindre la
 // Je définis une route POST pour le login
 const bcrypt = require('bcrypt');
 
+const jwt = require('jsonwebtoken');
+
+// Route POST /login
 router.post('/login', (req, res) => {
-  // Je récupère l’email et le mot de passe depuis le body de la requête
   const { email, mot_de_passe } = req.body;
 
-  // Si l’un des deux est manquant, je renvoie une erreur
   if (!email || !mot_de_passe) {
     console.log('Erreur : Email ou mot de passe manquant.');
     return res.status(400).json({ error: 'Email et mot de passe requis.' });
   }
 
-  console.log('Route POST /auth/login atteinte !'); // Ce log va vérifier que la route est bien touchée
-  console.log('Email reçu : ', email); // Vérification de l'email reçu
-  console.log('Mot de passe reçu : ', mot_de_passe); // Vérification du mot de passe reçu
+  console.log('Route POST /auth/login atteinte !');
+  console.log('Email reçu : ', email);
 
-  // Je prépare une requête pour trouver l’utilisateur correspondant à cet email
   db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
     if (err) {
       console.error('Erreur lors de la requête SELECT :', err.message);
       return res.status(500).json({ error: 'Erreur serveur.' });
     }
 
-    // Si aucun utilisateur n'est trouvé en base avec cet email
     if (!user) {
       console.log('Utilisateur non trouvé pour l\'email :', email);
       return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
     }
 
-    console.log('🕵️‍♂️ Utilisateur trouvé en base :', user);
+    console.log('Utilisateur trouvé en base :', user);
 
-    // Comparaison du mot de passe haché
     bcrypt.compare(mot_de_passe, user.mot_de_passe, (err, result) => {
       if (err) {
         console.error('Erreur lors de la comparaison du mot de passe :', err);
         return res.status(500).json({ error: 'Erreur serveur.' });
       }
 
-      // Si le mot de passe est incorrect
       if (!result) {
         console.log('Mot de passe incorrect pour l\'utilisateur :', email);
         return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
       }
 
-      // Si tout est ok, je renvoie l’utilisateur (sans le mot de passe)
-      const { mot_de_passe: _, ...userSansMotDePasse } = user; // On exclut le mot de passe de l'objet retourné
-      res.json({ message: 'Connexion réussie !', user: userSansMotDePasse });
+      // Création du token JWT
+      const token = jwt.sign(
+        { email: user.email, id: user.id, role: user.role },  // Payload (information de l'utilisateur)
+        process.env.JWT_SECRET, // Clé secrète (mettre ça dans .env)
+        { expiresIn: '1h' } // Durée de validité du token (ici 1 heure)
+      );
+
+      // On exclut le mot de passe avant de répondre
+      const { mot_de_passe: _, ...userSansMotDePasse } = user;
+
+      // Réponse avec le token et les informations de l'utilisateur
+      res.json({
+        message: 'Connexion réussie !',
+        user: userSansMotDePasse,
+        token: token // Retourne le token au frontend
+      });
     });
   });
 });
+
 
 router.post('/register', (req, res) => {
     const { nom, email, mot_de_passe, num_tel, adresse } = req.body;
@@ -125,7 +138,79 @@ router.post('/auth/register', (req, res) => {
     });
   });
   
+  //-------------------------------------------------------------
+                            //Profil
+  //-------------------------------------------------------------
+
+
+// Mise à jour des informations de profil
+router.put('/updateProfile', verifyJWT, async (req, res) => {
+    const { name, email, phone, address } = req.body;
+    const userId = req.user.id; // Récupère l'id de l'utilisateur depuis le JWT
   
+    try {
+      // Vérifier si l'email est déjà pris
+      const existingUser = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+      if (existingUser && existingUser.id !== userId) {
+        return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
+      }
+  
+      // Mise à jour des informations dans la base de données
+      await db.run('UPDATE users SET name = ?, email = ?, phone = ?, address = ? WHERE id = ?',
+        [name, email, phone, address, userId]);
+  
+      res.status(200).json({ message: 'Profil mis à jour avec succès' });
+    } catch (err) {
+      console.error('Erreur mise à jour profil:', err);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
+  
+  // Mise à jour du mot de passe
+  router.put('/updatePassword', verifyJWT, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+  
+    try {
+      const user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
+      if (!user) {
+        return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+      }
+  
+      // Vérifier le mot de passe actuel
+      const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
+      if (!isPasswordCorrect) {
+        return res.status(400).json({ message: 'Mot de passe actuel incorrect.' });
+      }
+  
+      // Hacher le nouveau mot de passe
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+      // Mise à jour du mot de passe dans la base de données
+      await db.run('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
+  
+      res.status(200).json({ message: 'Mot de passe mis à jour avec succès' });
+    } catch (err) {
+      console.error('Erreur mise à jour mot de passe:', err);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
+
+  // Récupérer les infos du profil utilisateur
+router.get('/profile', verifyJWT, async (req, res) => {
+    const userId = req.user.id;
+  
+    try {
+      const user = await db.get('SELECT name, email, phone, address FROM users WHERE id = ?', [userId]);
+      if (!user) {
+        return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+      }
+      res.status(200).json(user);
+    } catch (err) {
+      console.error('Erreur récupération profil:', err);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
   
 
   

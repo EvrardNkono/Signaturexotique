@@ -69,15 +69,18 @@ const Header = () => {
               <Link to="/register" onClick={handleLinkClick}>S'inscrire</Link>
             </>
           ) : (
-            <span
-              onClick={() => {
-                logout();
-                handleLinkClick();
-              }}
-              className="nav-link-style"
-            >
-              Déconnexion
-            </span>
+            <>
+              <Link to="/profile" onClick={handleLinkClick} className="profile-link">👤 Mon Profil</Link>
+              <span
+                onClick={() => {
+                  logout();
+                  handleLinkClick();
+                }}
+                className="nav-link-style"
+              >
+                Déconnexion
+              </span>
+            </>
           )}
         </nav>
       </div>
@@ -88,7 +91,7 @@ const Header = () => {
         <span className="bar"></span>
       </div>
 
-      {/* Menu des catégories */}
+      {/* Tu peux ajouter ici ton menu déroulant des catégories */}
     </header>
   );
 };
