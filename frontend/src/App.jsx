@@ -9,20 +9,20 @@ import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import { CartProvider } from './context/CartContext';
 import { SearchProvider } from './context/SearchContext';
-import { AuthProvider } from './context/AuthContext'; // Importer le AuthProvider
+import { AuthProvider } from './context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Checkout from './pages/Checkout';
 import './App.css';
 import './components/Header.css';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import PrivateRoute from './components/PrivateRoute'; // Importer le composant PrivateRoute
-import Profile from './pages/Profile'; // Ajouter l'import du Profile
-
+import PrivateRoute from './components/PrivateRoute';
+import Profile from './pages/Profile';
+import AccessDenied from './pages/AccessDenied'; // <-- ✨ nouveau import
 
 const App = () => {
   return (
-    <AuthProvider> {/* Ajout du AuthProvider */}
+    <AuthProvider>
       <CartProvider>
         <SearchProvider>
           <Router>
@@ -33,18 +33,24 @@ const App = () => {
                 <Route path="/catalogue" element={<Catalogue />} />
                 <Route path="/panier" element={<Cart />} />
                 <Route path="/contact" element={<Contact />} />
-                
-                {/* Route protégée pour le dashboard */}
+
+                {/* ✅ Route protégée pour le dashboard */}
                 <Route 
                   path="/dashboard" 
-                  element={<PrivateRoute element={<Dashboard />} />} 
+                  element={
+                    <PrivateRoute allowedRoles={['admin', 'superadmin']}>
+                      <Dashboard />
+                    </PrivateRoute>
+                  } 
                 />
-                
+
+                {/* ✅ Page en cas d'accès refusé */}
+                <Route path="/access-denied" element={<AccessDenied />} />
+
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/profile" element={<Profile />} />
-
               </Routes>
             </main>
             <Footer />

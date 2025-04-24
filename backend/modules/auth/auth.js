@@ -9,7 +9,8 @@ const router = express.Router();
 
 // J’importe le module sqlite3 pour interagir avec la base
 const db = require('../../config/db'); // J’adapte le chemin pour atteindre la base
-
+const util = require('util');
+const dbGet = util.promisify(db.get.bind(db));
 // Je définis une route POST pour le login
 const bcrypt = require('bcrypt');
 
@@ -178,7 +179,7 @@ router.put('/updateProfile', verifyJWT, async (req, res) => {
       }
   
       // Vérifier le mot de passe actuel
-      const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
+      const isPasswordCorrect = await bcrypt.compare(currentPassword, user.mot_de_passe);
       if (!isPasswordCorrect) {
         return res.status(400).json({ message: 'Mot de passe actuel incorrect.' });
       }
@@ -187,7 +188,7 @@ router.put('/updateProfile', verifyJWT, async (req, res) => {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
   
       // Mise à jour du mot de passe dans la base de données
-      await db.run('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
+      await db.run('UPDATE users SET mot_de_passe = ? WHERE id = ?', [hashedPassword, userId]);
   
       res.status(200).json({ message: 'Mot de passe mis à jour avec succès' });
     } catch (err) {
@@ -197,20 +198,33 @@ router.put('/updateProfile', verifyJWT, async (req, res) => {
   });
 
   // Récupérer les infos du profil utilisateur
-router.get('/profile', verifyJWT, async (req, res) => {
-    const userId = req.user.id;
+  router.get('/profile', verifyJWT, async (req, res) => {
+    console.log("🔍 Utilisateur décodé du token :", req.user);
   
     try {
-      const user = await db.get('SELECT name, email, phone, address FROM users WHERE id = ?', [userId]);
+      const user = await dbGet('SELECT * FROM users WHERE email = ?', [req.user.email]);
+  
       if (!user) {
-        return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+        console.log('❌ Utilisateur non trouvé pour l\'email :', req.user.email);
+        return res.status(404).json({ message: 'Utilisateur non trouvé' });
       }
-      res.status(200).json(user);
+  
+      console.log("✅ Utilisateur récupéré :", user);
+  
+      res.json({
+        name: user.nom,
+        email: user.email,
+        phone: user.num_tel,
+        address: user.adresse,
+      });
     } catch (err) {
-      console.error('Erreur récupération profil:', err);
+      console.error('❗ Erreur serveur :', err);
       res.status(500).json({ message: 'Erreur serveur' });
     }
   });
+  
+  
+  
   
 
   

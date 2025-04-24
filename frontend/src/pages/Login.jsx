@@ -38,7 +38,10 @@ const Login = () => {
   
       if (response.ok) {
         // Stockage du token dans le localStorage
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('userRole', data.user.role);
+        console.log(data.token); 
+
         login(data.token);
         setMessage(data.message);
         navigate(from, { replace: true });
