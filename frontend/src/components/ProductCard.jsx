@@ -36,6 +36,8 @@ const ProductCard = ({ product, clientType }) => {
   const cardBackgroundClass =
     clientType === 'wholesale' ? 'wholesale-background' : 'retail-background';
 
+  const mainColor = clientType === 'wholesale' ? '#28a745' : '#ff6f00';
+
   return (
     <div className={`flip-card ${flipped ? 'flipped' : ''}`}>
       <div className="flip-card-inner">
@@ -56,16 +58,26 @@ const ProductCard = ({ product, clientType }) => {
               <span className="product-card-rating">★★★★☆</span>
             </div>
             <div className="product-quantity">
-              <button onClick={handleRemoveOne}>-</button>
+              <button
+                className={`quantity-button ${clientType}`}
+                onClick={handleRemoveOne}
+              >
+                -
+              </button>
               <span>{quantityInCart}</span>
-              <button onClick={handleAddToCart}>+</button>
+              <button
+                className={`quantity-button ${clientType}`}
+                onClick={handleAddToCart}
+              >
+                +
+              </button>
             </div>
             <button
               className="product-card-button"
               onClick={handleAddToCart}
               style={{
-                backgroundColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00',
-                borderColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00'
+                backgroundColor: mainColor,
+                borderColor: mainColor
               }}
             >
               Ajouter au panier
