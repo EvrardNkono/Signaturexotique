@@ -72,14 +72,25 @@ const Header = () => {
             <>
               <Link to="/profile" onClick={handleLinkClick} className="profile-link">👤 Mon Profil</Link>
               <span
-                onClick={() => {
-                  logout();
-                  handleLinkClick();
-                }}
-                className="nav-link-style"
-              >
-                Déconnexion
-              </span>
+  onClick={() => {
+    // 1. Supprimer le token JWT du localStorage ou sessionStorage
+    localStorage.removeItem('authToken'); // Ou sessionStorage.removeItem('authToken')
+    
+    // 2. Appeler la fonction logout (si tu as une logique backend de logout, tu peux aussi l'appeler ici)
+    logout();
+    
+    // 3. Redirection vers la page d'accueil
+    navigate('/');
+
+    // 4. Fermer le menu de navigation si ouvert
+    handleLinkClick();
+  }}
+  className="nav-link-style"
+>
+  Déconnexion
+</span>
+
+
             </>
           )}
         </nav>

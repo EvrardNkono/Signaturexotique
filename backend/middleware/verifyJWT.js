@@ -10,6 +10,7 @@ const verifyJWT = (req, res, next) => {
   }
 
   // Vérifier le token avec la clé JWT_SECRET venant de process.env
+  console.log('Clé secrète JWT :', process.env.JWT_SECRET);  // Debug de la clé secrète
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: 'Token invalide ou expiré.' });
