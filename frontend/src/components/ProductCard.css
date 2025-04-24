@@ -111,11 +111,14 @@
   background-color: #ff6f00;
   border: none;
   color: white;
-  padding: 3px 8px;
-  font-size: 0.65rem;
-  border-radius: 6px;
+  padding: 2px 5px; /* Réduit ici */
+  font-size: 0.6rem; /* Un poil plus petit */
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  width: 24px;
+  height: 24px;
+
 }
 
 .product-quantity button:hover {
@@ -145,4 +148,36 @@
   color: #000;
   font-size: 0.75rem;
   margin: 0 6px;
+}
+
+.product-quantity {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.quantity-button {
+  border: none;
+  color: white;
+  padding: 2px 5px;
+  font-size: 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 24px;
+  height: 24px;
+}
+
+.quantity-button.client {
+  background-color: #ff6f00;
+}
+
+.quantity-button.wholesale {
+  background-color: #28a745;
+}
+
+.quantity-button:hover {
+  background-color: #333333;
 }
