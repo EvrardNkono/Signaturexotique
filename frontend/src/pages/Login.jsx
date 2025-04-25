@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { API_URL } from '../config';
-import './Login.css'; 
+import './Login.css';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
-
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -19,13 +18,56 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      // Synchroniser le panier après la connexion
+      syncCart();
       navigate(from, { replace: true });
     }
   }, [isAuthenticated, navigate, from]);
 
+  const syncCart = async () => {
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    
+    if (cart) {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('Token manquant. Impossible de synchroniser le panier.');
+          return;
+        }
+        
+        const userId = JSON.parse(atob(token.split('.')[1])).id; // Extraire l'ID de l'utilisateur depuis le JWT
+        if (!userId) {
+          setError('Impossible de récupérer l\'ID utilisateur.');
+          return;
+        }
+
+        // Envoi du panier au backend pour l'associer à l'utilisateur
+        const response = await fetch(`${API_URL}/admin/cart`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // Utilisation du token dans les headers
+          },
+          body: JSON.stringify({ userId, cart }),
+        });
+
+        if (response.ok) {
+          // Supprimer le panier du localStorage après l'envoi
+          localStorage.removeItem('cart');
+          console.log('Panier synchronisé avec succès !');
+        } else {
+          setError('Erreur lors de la synchronisation du panier.');
+        }
+      } catch (error) {
+        setError('Erreur de connexion au backend pour la synchronisation du panier.');
+        console.error('Erreur lors de la synchronisation du panier :', error);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
@@ -35,13 +77,14 @@ const Login = () => {
         body: JSON.stringify({ email, mot_de_passe: motDePasse }),
       });
       const data = await response.json();
-  
+
       if (response.ok) {
         // Stockage du token dans le localStorage
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('userRole', data.user.role);
-        console.log(data.token); 
+        localStorage.setItem('userId', data.user.id);  // Stocke l'ID de l'utilisateur pour synchroniser le panier
 
+        console.log(data.token);
         login(data.token);
         setMessage(data.message);
         navigate(from, { replace: true });
@@ -52,14 +95,13 @@ const Login = () => {
       setError('Erreur de connexion, veuillez réessayer.');
     }
   };
-  
 
   return (
     <div className="login-container">
       <div className="login-image">
         <img src="/assets/exotique.png" alt="Image de connexion" className="login-background-image" />
       </div>
-      
+
       <div className="login-form">
         <h2>Connexion</h2>
         {message && <p>{message}</p>}

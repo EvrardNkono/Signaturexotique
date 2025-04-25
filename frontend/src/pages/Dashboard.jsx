@@ -248,6 +248,14 @@ const handleUpdateProduct = async () => {
                     onChange={(e) => setProduct({ ...product, unitPrice: e.target.value })}
                   />
                 </Form.Group>
+                <Form.Group>
+                  <Form.Label>Unite de mesure</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={product.unitPrice}
+                    onChange={(e) => setProduct({  })}
+                  />
+                </Form.Group>
               </Col>
               <Col md={3}>
                 <Form.Group>
@@ -256,6 +264,14 @@ const handleUpdateProduct = async () => {
                     type="number"
                     value={product.wholesalePrice}
                     onChange={(e) => setProduct({ ...product, wholesalePrice: e.target.value })}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Unite de mesure</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={product.unitPrice}
+                    onChange={(e) => setProduct({  })}
                   />
                 </Form.Group>
               </Col>
