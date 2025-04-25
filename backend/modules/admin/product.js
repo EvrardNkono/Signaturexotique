@@ -115,6 +115,7 @@ router.get('/', async (req, res) => {
  * Accès : Admin ou Superadmin
  */
 router.put(
+  
     '/:id',
     verifyJWT,
     checkRole(['admin', 'superadmin']),
@@ -170,5 +171,76 @@ router.put(
         }
     }
 );
+
+/**
+ * ============================================
+ *          AJOUTER UN PRODUIT AU PANIER
+ * ============================================
+ * Route : POST /cart
+ * Accès : Authentifié (JWT)
+ */
+router.post('/cart', verifyJWT, async (req, res) => {
+  const { cart } = req.body;
+  const userId = req.user.id; // Utilisation de l'ID utilisateur à partir du token JWT
+
+  // Vérifier que le panier existe
+  if (!cart || !cart.length) {
+    return res.status(400).json({ message: 'Le panier est vide.' });
+  }
+
+  try {
+    // Pour chaque produit du panier, soit on l'ajoute soit on met à jour la quantité
+    for (const item of cart) {
+      const { productId, quantity, price, clientType } = item;
+
+      // Vérifier si le produit est déjà dans le panier de cet utilisateur
+      const existingItem = await db.get('SELECT * FROM cart WHERE user_id = ? AND productId = ?', [userId, productId]);
+
+      if (existingItem) {
+        // Si le produit existe déjà, on met à jour la quantité
+        const updatedQuantity = existingItem.quantity + quantity;
+
+        await db.run('UPDATE cart SET quantity = ? WHERE user_id = ? AND productId = ?', [updatedQuantity, userId, productId]);
+      } else {
+        // Sinon on l'ajoute
+        await db.run('INSERT INTO cart (productId, quantity, price, clientType, user_id) VALUES (?, ?, ?, ?, ?)', 
+          [productId, quantity, price, clientType, userId]);
+      }
+    }
+
+    res.status(200).json({ message: 'Panier mis à jour avec succès.' });
+  } catch (err) {
+    console.error('Erreur lors de la mise à jour du panier:', err);
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+});
+
+
+
+/**
+ * ============================================
+ *          RÉCUPÉRER LE PANIER DE L'UTILISATEUR
+ * ============================================
+ * Route : GET /cart
+ * Accès : Authentifié (JWT)
+ */
+router.get('/cart', verifyJWT, async (req, res) => {
+  const userId = req.user.id; // On récupère l'ID de l'utilisateur du token
+
+  try {
+      // Récupérer tous les produits dans le panier de cet utilisateur
+      const cartItems = await db.all('SELECT * FROM cart WHERE user_id = ?', [userId]);
+      
+      if (!cartItems.length) {
+          return res.status(404).json({ message: 'Votre panier est vide.' });
+      }
+
+      res.json(cartItems);
+  } catch (err) {
+      console.error('Erreur lors de la récupération du panier:', err);
+      res.status(500).json({ message: 'Erreur serveur.' });
+  }
+});
+
 
 module.exports = router;

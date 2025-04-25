@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Card } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import './ProductCard.css';
+import { Card } from 'react-bootstrap';
+import './ProductCard.css'
 
 const ProductCard = ({ product, clientType }) => {
   const { addToCart, updateCartQuantity, cart } = useCart();
@@ -19,12 +19,22 @@ const ProductCard = ({ product, clientType }) => {
       ? product.wholesalePrice
       : product.unitPrice;
 
+  // Fonction d'ajout au panier
   const handleAddToCart = () => {
-    addToCart({ ...product, price: priceToDisplay }, clientType);
+    const userId = localStorage.getItem('userId');  // Récupère l'user_id si connecté
+    if (userId) {
+      // Si l'utilisateur est connecté, ajouter au panier avec l'user_id
+      addToCart({ ...product, price: priceToDisplay, userId }, clientType);
+    } else {
+      // Si l'utilisateur n'est pas connecté, ajouter au panier local (localStorage)
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.push({ ...product, price: priceToDisplay });
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
   };
 
   const handleRemoveOne = () => {
-    if (quantityInCart > 1 && cartItem) {
+    if (quantityInCart > 0 && cartItem) {
       updateCartQuantity(cartItem.id, quantityInCart - 1);
     }
   };
