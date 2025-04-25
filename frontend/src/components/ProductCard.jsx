@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { Card } from 'react-bootstrap';
-import './ProductCard.css'
+import './ProductCard.css';
+import StarRating from './StarRating'; // Import du composant dynamique
 
 const ProductCard = ({ product, clientType }) => {
   const { addToCart, updateCartQuantity, cart } = useCart();
@@ -62,11 +63,16 @@ const ProductCard = ({ product, clientType }) => {
           <Card.Body className="product-card-body">
             <Card.Title className="product-card-title">{product.name}</Card.Title>
 
-            <div className="product-card-price-rating">
-              <span className="product-card-price">
+            {/* Prix au-dessus du StarRating */}
+            <div className="product-card-price">
+              <span className="product-price-display">
                 {priceToDisplay} € / {unitLabel}
               </span>
-              <span className="product-card-rating">★★★★☆</span>
+            </div>
+
+            {/* StarRating en dessous du prix */}
+            <div className="product-card-rating">
+              <StarRating defaultRating={product.rating || 4} />
             </div>
 
             <div className="product-quantity">

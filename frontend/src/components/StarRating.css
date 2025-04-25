@@ -1,0 +1,12 @@
+.star-icon {
+    font-size: 1rem;
+    stroke: black;
+    stroke-width: 20;
+    transition: color 0.2s;
+  }
+  
+  .star-rating {
+    display: flex;
+    gap: 0.2rem;
+  }
+  

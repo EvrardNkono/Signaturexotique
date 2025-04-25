@@ -1,16 +1,37 @@
-/* components/RecommendationsGrid.css */
-.recommendation-section h6 {
-    color: #ff6f00;
-    margin-bottom: 10px;
+/* recommendationsGrid.css */
+
+.recommendation-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Prendre toute la hauteur disponible */
+    border: 1px solid #ddd;
+    padding: 15px;
+    background-color: white;
   }
   
-  .recommendation-card {
-    border: 1px solid #ff6f00;
-    transition: transform 0.2s ease-in-out;
+  .recommendation-card .card-img-top {
+    max-height: 200px; /* Limite la hauteur de l'image */
+    object-fit: cover; /* Ajuste l'image pour couvrir sans déformation */
   }
   
-  .recommendation-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 8px rgba(255, 111, 0, 0.3);
+  .recommendation-card .card-body {
+    flex-grow: 1; /* Permet au corps de la carte de prendre toute l'espace restant */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Espacement égal entre le titre, le prix et le bouton */
+  }
+  
+  .recommendation-card .card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* Ajouter un peu d'espace sous le titre */
+  }
+  
+  .recommendation-card .text-muted {
+    font-size: 0.9rem;
+  }
+  
+  .recommendation-card .btn {
+    margin-top: auto; /* Pousse le bouton vers le bas de la carte */
   }
   

@@ -1,4 +1,3 @@
-// components/RecommendationsGrid.jsx
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../config';
 import { Card, Row, Col, Button } from 'react-bootstrap';
@@ -37,10 +36,10 @@ const RecommendationsGrid = ({ productId }) => {
 
   // Si aucune recommandation filtrée, ne rien afficher
   if (limitedRecommendations.length === 0) return null;
-<h6>Vous aimerez peut-être aussi :</h6>
+
   return (
     <div className="recommendation-section mt-3">
-      
+      <h6>Vous aimerez peut-être aussi :</h6>
       <Row>
         {limitedRecommendations.map((product) => (
           <Col key={product.productId} xs={12} md={4} className="mb-3">
@@ -49,9 +48,10 @@ const RecommendationsGrid = ({ productId }) => {
                 variant="top"
                 src={`${API_URL}/uploads/${product.image}`}
                 alt={product.name}
+                className="card-img-top"
               />
               <Card.Body>
-                <Card.Title style={{ fontSize: '1rem' }}>{product.name}</Card.Title>
+                <Card.Title>{product.name}</Card.Title>
                 <p className="text-muted">{product.unitPrice} €</p>
                 {/* Bouton d'ajout au panier */}
                 <Button

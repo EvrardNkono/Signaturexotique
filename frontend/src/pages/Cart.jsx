@@ -9,7 +9,8 @@ const Cart = () => {
   const {
     cart,
     removeFromCart,
-    clientType // Utilisation de clientType ici
+    clearCartFromBackend, // Utilisation de clearCartFromBackend ici
+    clientType
   } = useCart();
 
   const navigate = useNavigate();
@@ -17,12 +18,6 @@ const Cart = () => {
   // Calcul du prix total basé sur le type de client
   const totalPrice = cart.reduce((total, product) => {
     const price = product.price;
-
-    console.log("=== Calcul du prix ===");
-    console.log("Client Type dans le panier:", clientType);
-    console.log("Produit:", product);
-    console.log("Prix à utiliser:", price);
-    
     return total + price * product.quantity;
   }, 0);
 
@@ -48,11 +43,6 @@ const Cart = () => {
           {cart.map((product) => {
             const price = product.price;
 
-            console.log("=== Détails du produit dans le panier ===");
-            console.log("Nom du produit:", product.name);
-            console.log("Prix utilisé dans le panier:", price);
-            console.log("Quantité:", product.quantity);
-
             return (
               <div key={`${product.productId}-${product.quantity}`}>
                 <Card className="mb-3 cart-card" style={{ border: '2px solid #ff6f00' }}>
@@ -66,7 +56,9 @@ const Cart = () => {
                     </Col>
                     <Col md={7}>
                       <Card.Body>
-                        <Card.Title className="cart-card-title" style={{ color: '#ff6f00' }}>{product.name}</Card.Title>
+                        <Card.Title className="cart-card-title" style={{ color: '#ff6f00' }}>
+                          {product.name}
+                        </Card.Title>
                         <p><strong>Prix Unitaire:</strong> {price} €</p>
                         <p><strong>Quantité:</strong> {product.quantity}</p>
                         <p><strong>Total :</strong> {price * product.quantity} €</p>
@@ -90,11 +82,8 @@ const Cart = () => {
               </div>
             );
           })}
-          
-          {/* 🔥 Section recommandations après tous les produits */}
+
           <div className="mt-5">
-            {/*<h3 style={{ color: '#ff6f00' }}>Produits recommandés pour vous :</h3>*/}
-            {/* Passer l'array des produits du panier pour exclure les produits déjà présents */}
             <Recommendations excludeProductIds={productIdsInCart} />
           </div>
 
@@ -102,7 +91,7 @@ const Cart = () => {
             <h4>Total : {totalPrice.toFixed(2)} €</h4>
             <Button
               variant="outline-danger"
-              onClick={() => console.log("Vider le panier")}
+              onClick={clearCartFromBackend} // Appel de clearCartFromBackend
               style={{ marginRight: '15px', borderColor: '#ff6f00', color: '#ff6f00' }}
             >
               Vider le panier
