@@ -96,11 +96,6 @@
   margin-bottom: 8px;
 }
 
-.product-card-price {
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #ff6f00;
-}
 
 .product-card-rating {
   font-size: 0.65rem;
@@ -181,3 +176,36 @@
 .quantity-button:hover {
   background-color: #333333;
 }
+.product-card-rating {
+  display: flex;
+  justify-content: center; /* Centre les étoiles horizontalement */
+  margin-top: 10px; /* Un petit espace au-dessus des étoiles */
+}
+
+.star-rating {
+  display: flex;
+  justify-content: center; /* Centre les étoiles horizontalement */
+  gap: 5px; /* Ajuste l'espacement entre les étoiles */
+}
+
+.star-icon {
+  color: gold;
+  font-size: 1.2rem; /* Ajuste la taille des étoiles */
+  stroke: black;
+  stroke-width: 1;
+  cursor: pointer; /* Le curseur devient un pointeur quand on survole une étoile */
+}
+
+.product-card-price {
+  font-size: 1rem; /* Augmente la taille de la police */
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px; /* Un peu d'espace sous le prix */
+}
+
+.product-price-display {
+  font-size: 1.5rem; /* Taille plus grande pour le prix par unité */
+  font-weight: bold;
+  color: #ff6f00; /* Couleur orange pour le prix */
+}
+
