@@ -28,6 +28,7 @@ const emailRoutes = require('./modules/contact/emailRoutes'); // Importer les ro
 // J’importe les routes d’authentification
 const authRoutes = require('./modules/auth/auth');
 const categoryHomeRouter = require('./modules/admin/categoryhome');
+const recommendationRoutes = require('./routes/recommendations');
 
 // Utilisation des routes
 app.use('/admin/category', categoryRoutes);
@@ -55,6 +56,7 @@ app.use('/modules/checkout', orderRoutes);
 app.use('/admin/search', searchRoutes);  // Utiliser la route de recherche ici
 app.use('/admin/categoryhome', categoryHomeRouter); // Utiliser les routes de catégorie
 app.use('/modules/contact/emailRoutes', emailRoutes);
+app.use('/routes/recommendations', recommendationRoutes);
 
 // Lancement du serveur
 app.listen(5000, () => {
