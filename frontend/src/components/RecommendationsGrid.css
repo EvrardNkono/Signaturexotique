@@ -1,0 +1,16 @@
+/* components/RecommendationsGrid.css */
+.recommendation-section h6 {
+    color: #ff6f00;
+    margin-bottom: 10px;
+  }
+  
+  .recommendation-card {
+    border: 1px solid #ff6f00;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .recommendation-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(255, 111, 0, 0.3);
+  }
+  

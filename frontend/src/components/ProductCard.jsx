@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { Card } from 'react-bootstrap';
 import './ProductCard.css'
@@ -19,14 +19,13 @@ const ProductCard = ({ product, clientType }) => {
       ? product.wholesalePrice
       : product.unitPrice;
 
-  // Fonction d'ajout au panier
+  const unitLabel = product.unit || "unité";
+
   const handleAddToCart = () => {
-    const userId = localStorage.getItem('userId');  // Récupère l'user_id si connecté
+    const userId = localStorage.getItem('userId');
     if (userId) {
-      // Si l'utilisateur est connecté, ajouter au panier avec l'user_id
       addToCart({ ...product, price: priceToDisplay, userId }, clientType);
     } else {
-      // Si l'utilisateur n'est pas connecté, ajouter au panier local (localStorage)
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       cart.push({ ...product, price: priceToDisplay });
       localStorage.setItem('cart', JSON.stringify(cart));
@@ -64,9 +63,12 @@ const ProductCard = ({ product, clientType }) => {
             <Card.Title className="product-card-title">{product.name}</Card.Title>
 
             <div className="product-card-price-rating">
-              <span className="product-card-price">{priceToDisplay} €</span>
+              <span className="product-card-price">
+                {priceToDisplay} € / {unitLabel}
+              </span>
               <span className="product-card-rating">★★★★☆</span>
             </div>
+
             <div className="product-quantity">
               <button
                 className={`quantity-button ${clientType}`}
@@ -82,6 +84,7 @@ const ProductCard = ({ product, clientType }) => {
                 +
               </button>
             </div>
+
             <button
               className="product-card-button"
               onClick={handleAddToCart}
@@ -118,6 +121,9 @@ const ProductCard = ({ product, clientType }) => {
             </Card.Text>
             <Card.Text className="product-card-description">
               Disponibilité : {product.stock ? `${product.stock} en stock` : "Stock inconnu"}
+            </Card.Text>
+            <Card.Text className="product-card-description">
+              Unité : {unitLabel}
             </Card.Text>
             <button
               className="product-card-button"

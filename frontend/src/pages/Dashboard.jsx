@@ -17,7 +17,10 @@ const [editCategoryInput, setEditCategoryInput] = useState(''); // Nom modifié
     wholesalePrice: '',
     category: '',
     image: null,
-  });
+    unit: '', // Unité de mesure pour le prix particulier
+    wholesaleUnit: '', // Unité de mesure pour le prix de gros
+});
+
   // Pour savoir si on est en train de modifier un produit
 const [editingProduct, setEditingProduct] = useState(null);
 
@@ -111,58 +114,87 @@ const handleUpdateCategory = async () => {
 
 
 
-  const handleAddProduct = async () => {
-    const { name, unitPrice, wholesalePrice, category, image } = product;
+const handleAddProduct = async () => {
+  const { name, unitPrice, wholesalePrice, category, image, unit, wholesaleUnit } = product;
 
-    if (name && unitPrice && wholesalePrice && category) {
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('unitPrice', unitPrice);
-      formData.append('wholesalePrice', wholesalePrice);
-      formData.append('category', category);
-      if (image) formData.append('image', image);
-
-      try {
-        const response = await fetch(`${API_URL}/admin/product`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          setProducts([...products, data.product]);
-          setProduct({ name: '', unitPrice: '', wholesalePrice: '', category: '', image: null });
-        } else {
-          alert(`Erreur: ${data.message}`);
-        }
-      } catch (error) {
-        alert(`Erreur serveur : ${error.message}`);
-      }
-    }
-  };
-
-  // Lorsqu'on clique sur "Modifier", on remplit le formulaire avec les infos existantes
-const handleEditProduct = (prod) => {
-  setEditingProduct(prod);
-  setProduct({
-    name: prod.name,
-    unitPrice: prod.unitPrice,
-    wholesalePrice: prod.wholesalePrice,
-    category: prod.category,
-    image: null, // On ne remplit pas l'image ici, elle doit être rechargée manuellement si besoin
-  });
-};
-
-// Envoyer la mise à jour d'un produit existant
-const handleUpdateProduct = async () => {
-  const { name, unitPrice, wholesalePrice, category, image } = product;
-
-  if (name && unitPrice && wholesalePrice && category && editingProduct) {
+  if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit) { // Vérifie que les deux unités sont définies
     const formData = new FormData();
     formData.append('name', name);
     formData.append('unitPrice', unitPrice);
     formData.append('wholesalePrice', wholesalePrice);
     formData.append('category', category);
+    formData.append('unit', unit); // Ajout de l'unité pour le prix particulier
+    formData.append('wholesaleUnit', wholesaleUnit); // Ajout de l'unité pour le prix de gros
+    if (image) formData.append('image', image);
+
+    try {
+      const token = localStorage.getItem('token');  // Récupère le token
+      const response = await fetch(`${API_URL}/admin/product`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,  // ✅ Garde uniquement l'auth
+          // ❌ NE PAS mettre Content-Type ici
+        },
+        body: formData,
+      });
+      
+    
+      // Log la réponse brute pour voir ce qu'on reçoit
+      const text = await response.text();
+      console.log(text);  // Log le contenu complet de la réponse
+    
+      const data = JSON.parse(text);  // Essaye de parser ici une fois que tu vois ce qui est renvoyé
+    
+      if (response.ok) {
+        setProducts([...products, data.product]);
+        setProduct({
+          name: '',
+          unitPrice: '',
+          wholesalePrice: '',
+          category: '',
+          image: null,
+          unit: '', // Réinitialisation de l'unité
+          wholesaleUnit: '', // Réinitialisation de l'unité de gros
+        });
+      } else {
+        alert(`Erreur: ${data.message}`);
+      }
+    } catch (error) {
+      alert(`Erreur serveur : ${error.message}`);
+    }
+    
+
+  }
+};
+
+
+  // Lorsqu'on clique sur "Modifier", on remplit le formulaire avec les infos existantes
+  const handleEditProduct = (prod) => {
+    setEditingProduct(prod);
+    setProduct({
+      name: prod.name,
+      unitPrice: prod.unitPrice,
+      wholesalePrice: prod.wholesalePrice,
+      category: prod.category,
+      unit: prod.unit, // Ajout de l'unité pour le prix particulier
+      wholesaleUnit: prod.wholesaleUnit, // Ajout de l'unité pour le prix de gros
+      image: null, // On ne remplit pas l'image ici, elle doit être rechargée manuellement si besoin
+    });
+  };
+  
+
+// Envoyer la mise à jour d'un produit existant
+const handleUpdateProduct = async () => {
+  const { name, unitPrice, wholesalePrice, category, unit, wholesaleUnit, image } = product;
+
+  if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit && editingProduct) {
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('unitPrice', unitPrice);
+    formData.append('wholesalePrice', wholesalePrice);
+    formData.append('category', category);
+    formData.append('unit', unit); // Ajout de l'unité pour le prix particulier
+    formData.append('wholesaleUnit', wholesaleUnit); // Ajout de l'unité pour le prix de gros
     if (image) formData.append('image', image);
 
     try {
@@ -181,7 +213,7 @@ const handleUpdateProduct = async () => {
 
         // Réinitialiser le formulaire
         setEditingProduct(null);
-        setProduct({ name: '', unitPrice: '', wholesalePrice: '', category: '', image: null });
+        setProduct({ name: '', unitPrice: '', wholesalePrice: '', category: '', unit: '', wholesaleUnit: '', image: null });
       } else {
         alert(`Erreur: ${updated.message}`);
       }
@@ -190,6 +222,7 @@ const handleUpdateProduct = async () => {
     }
   }
 };
+
 
 
 
@@ -249,13 +282,13 @@ const handleUpdateProduct = async () => {
                   />
                 </Form.Group>
                 <Form.Group>
-                  <Form.Label>Unite de mesure</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={product.unitPrice}
-                    onChange={(e) => setProduct({  })}
-                  />
-                </Form.Group>
+  <Form.Label>Unité de mesure (prix unitaire)</Form.Label>
+  <Form.Control
+    type="text"
+    value={product.unit}
+    onChange={(e) => setProduct({ ...product, unit: e.target.value })}
+  />
+</Form.Group>
               </Col>
               <Col md={3}>
                 <Form.Group>
@@ -267,13 +300,13 @@ const handleUpdateProduct = async () => {
                   />
                 </Form.Group>
                 <Form.Group>
-                  <Form.Label>Unite de mesure</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={product.unitPrice}
-                    onChange={(e) => setProduct({  })}
-                  />
-                </Form.Group>
+  <Form.Label>Unité de mesure (prix de gros)</Form.Label>
+  <Form.Control
+    type="text"
+    value={product.wholesaleUnit}
+    onChange={(e) => setProduct({ ...product, wholesaleUnit: e.target.value })}
+  />
+</Form.Group>
               </Col>
             </Row>
             <Row className="mt-3">
@@ -330,10 +363,10 @@ const handleUpdateProduct = async () => {
             </thead>
             <tbody>
               {products.map((prod) => (
-               <tr key={prod.id}>
+               <tr key={prod.id || `${prod.name}-${Math.random()}`}>
                <td>
-                 {prod.imageURL && (
-                   <img src={prod.imageURL} alt={prod.name} width="70" className="rounded shadow-sm" />
+                 {product.image && (
+                   <img src={product.image} alt={prod.name} width="70" className="rounded shadow-sm" />
                  )}
                </td>
                <td>{prod.name}</td>

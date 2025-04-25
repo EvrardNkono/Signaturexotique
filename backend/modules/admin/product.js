@@ -40,38 +40,42 @@ router.post(
     checkRole(['admin', 'superadmin']),
     upload.single('image'),
     async (req, res) => {
-        try {
-            const { name, category, unitPrice, wholesalePrice } = req.body;
-            const image = req.file ? req.file.filename : null;
-
-            if (!name || !category || !unitPrice || !wholesalePrice) {
-                return res.status(400).json({ message: 'Tous les champs sont requis.' });
-            }
-
-            const result = await db.run(
-                `INSERT INTO products (name, category, unitPrice, wholesalePrice, image)
-                 VALUES (?, ?, ?, ?, ?)`,
-                [name, category, unitPrice, wholesalePrice, image]
-            );
-
-            res.status(201).json({
-                message: 'Produit créé avec succès',
-                product: {
-                    id: result.lastID,
-                    name,
-                    category,
-                    unitPrice,
-                    wholesalePrice,
-                    imageURL: image ? `/uploads/${image}` : null
-                }
-            });
-
-        } catch (error) {
-            console.error('Erreur lors de la création du produit :', error);
-            res.status(500).json({ message: 'Erreur serveur' });
+      try {
+        const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit } = req.body;
+        const image = req.file ? req.file.filename : null;
+  
+        // Validation des champs
+        if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
+          return res.status(400).json({ message: 'Tous les champs sont requis.' });
         }
+  
+        const result = await db.run(
+          `INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit]
+        );
+  
+        res.status(201).json({
+          message: 'Produit créé avec succès',
+          product: {
+            id: result.lastID,
+            name,
+            category,
+            unitPrice,
+            wholesalePrice,
+            unit,
+            wholesaleUnit,
+            imageURL: image ? `/uploads/${image}` : null
+          }
+        });
+  
+      } catch (error) {
+        console.error('Erreur lors de la création du produit :', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+      }
     }
-);
+  );
+  
 
 /**
  * ============================================
@@ -115,62 +119,67 @@ router.get('/', async (req, res) => {
  * Accès : Admin ou Superadmin
  */
 router.put(
-  
     '/:id',
     verifyJWT,
     checkRole(['admin', 'superadmin']),
     upload.single('image'),
     async (req, res) => {
-        const { id } = req.params;
-        const { name, category, unitPrice, wholesalePrice } = req.body;
-        const image = req.file ? req.file.filename : null;
-
-        if (!name || !category || !unitPrice || !wholesalePrice) {
-            return res.status(400).json({ message: 'Tous les champs sont requis.' });
+      const { id } = req.params;
+      const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit } = req.body;
+      const image = req.file ? req.file.filename : null;
+  
+      // Validation des champs
+      if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
+        return res.status(400).json({ message: 'Tous les champs sont requis.' });
+      }
+  
+      try {
+        const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
+  
+        if (!product) {
+          return res.status(404).json({ message: 'Produit non trouvé' });
         }
-
-        try {
-            const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
-
-            if (!product) {
-                return res.status(404).json({ message: 'Produit non trouvé' });
-            }
-
-            const updateSql = `
-                UPDATE products
-                SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?
-                WHERE id = ?
-            `;
-
-            const imageToUpdate = image || product.image;
-
-            await db.run(updateSql, [
-                name,
-                category,
-                unitPrice,
-                wholesalePrice,
-                imageToUpdate,
-                id
-            ]);
-
-            res.status(200).json({
-                message: 'Produit mis à jour avec succès',
-                product: {
-                    id,
-                    name,
-                    category,
-                    unitPrice,
-                    wholesalePrice,
-                    imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null
-                }
-            });
-
-        } catch (error) {
-            console.error('Erreur mise à jour produit :', error);
-            res.status(500).json({ message: 'Erreur serveur' });
-        }
+  
+        const updateSql = `
+          UPDATE products
+          SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?
+          WHERE id = ?
+        `;
+  
+        const imageToUpdate = image || product.image;
+  
+        await db.run(updateSql, [
+          name,
+          category,
+          unitPrice,
+          wholesalePrice,
+          imageToUpdate,
+          unit,
+          wholesaleUnit,
+          id
+        ]);
+  
+        res.status(200).json({
+          message: 'Produit mis à jour avec succès',
+          product: {
+            id,
+            name,
+            category,
+            unitPrice,
+            wholesalePrice,
+            unit,
+            wholesaleUnit,
+            imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null
+          }
+        });
+  
+      } catch (error) {
+        console.error('Erreur mise à jour produit :', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+      }
     }
-);
+  );
+  
 
 /**
  * ============================================
