@@ -4,7 +4,7 @@ import './Banner.css';
 
 const Banner = () => {
   return (
-    <Carousel fade interval={2000} className="banner-carousel">
+    <Carousel fade interval={3000} className="banner-carousel">
       {/* Slide 1 */}
       <Carousel.Item>
         <div className="banner-slide slide1">
