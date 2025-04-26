@@ -1,47 +1,47 @@
-/* src/components/Banner.css */
+.banner-carousel {
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+}
 
-/* Définir la hauteur de la bannière à 100vh pour qu'elle prenne toute la hauteur de l'écran */
-.banner {
-    width: 100%;
-    height: 70vh;  /* Hauteur de 100% de la vue */
-    background-image: url('/assets/openart-image_rACErt3v_1745082151702_raw.jpg');  /* Image de fond (assurez-vous de mettre le bon chemin) */
-    background-size: cover;  /* Pour couvrir toute la surface */
-    background-position: center;  /* Centrer l'image */
-    background-repeat: no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-  
-  /* Contenu de la bannière */
-  .banner-content {
-    text-align: center;
-    color: var(--blanc);
-    z-index: 2;  /* Placer le texte au-dessus de l'image */
-  }
-  
-  .banner h1 {
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .banner p {
-    font-size: 1.5rem;
-    margin: 20px 0;
-  }
-  
-  .banner .btn-success {
-    background-color: var(--orange);
-    border-color: var(--orange);
-    font-size: 1.2rem;
-    padding: 10px 20px;
-    border-radius: 5px;
-  }
-  
-  .banner .btn-success:hover {
-    background-color: #e65c2d;
-    border-color: #e65c2d;
-  }
-  
+.banner-slide {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+}
+
+.slide1 {
+  background-image: url('/assets/openart-image_D-wNcpOc_1745082151669_raw.png'); /* mets ici ton image */
+  background-color: #ff6600; /* orange de base pour ton branding */
+}
+
+.slide2 {
+  background-image: url('/assets/openart-image_3yX6v5Xb_1745652624163_raw.png');
+  background-color: #000000; /* noir classe */
+}
+
+.slide3 {
+  background-image: url('/assets/openart-image_p6WdWE6G_1745652875275_raw.jpg');
+  background-color: #ffffff; /* blanc propre */
+  color: black; /* pour que le texte soit visible */
+}
+
+.banner-content h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.banner-content p {
+  font-size: 1.5rem;
+  margin: 1rem 0;
+}
+
+.banner-content Button {
+  margin-top: 1rem;
+}
