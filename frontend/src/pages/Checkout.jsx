@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import { useCart } from '../context/CartContext';
 import './Checkout.css';
+import { API_URL } from '../config'; // adapte le chemin selon ta structure
 
 const Checkout = () => {
   const { cart, clearCartFromBackend } = useCart(); // Modifier l'importation ici
