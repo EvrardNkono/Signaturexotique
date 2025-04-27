@@ -19,9 +19,7 @@ const Header = () => {
   useEffect(() => {
     fetch(`${API_URL}/admin/category`)
       .then((res) => res.json())
-      .then((data) => {
-        setCategories(data);
-      })
+      .then((data) => setCategories(data))
       .catch((err) => console.error('Erreur chargement catégories:', err));
   }, []);
 
@@ -72,25 +70,23 @@ const Header = () => {
             <>
               <Link to="/profile" onClick={handleLinkClick} className="profile-link">👤 Mon Profil</Link>
               <span
-  onClick={() => {
-    // 1. Supprimer le token JWT du localStorage ou sessionStorage
-    localStorage.removeItem('authToken'); // Ou sessionStorage.removeItem('authToken')
-    
-    // 2. Appeler la fonction logout (si tu as une logique backend de logout, tu peux aussi l'appeler ici)
-    logout();
-    
-    // 3. Redirection vers la page d'accueil
-    navigate('/');
-
-    // 4. Fermer le menu de navigation si ouvert
-    handleLinkClick();
-  }}
-  className="nav-link-style"
->
-  Déconnexion
-</span>
-
-
+                onClick={() => {
+                  // Supprimer le token JWT du localStorage ou sessionStorage
+                  localStorage.removeItem('authToken'); // Ou sessionStorage.removeItem('authToken')
+                  
+                  // Appeler la fonction logout
+                  logout();
+                  
+                  // Redirection vers la page d'accueil
+                  navigate('/');
+                  
+                  // Fermer le menu de navigation
+                  handleLinkClick();
+                }}
+                className="nav-link-style"
+              >
+                Déconnexion
+              </span>
             </>
           )}
         </nav>
@@ -102,7 +98,16 @@ const Header = () => {
         <span className="bar"></span>
       </div>
 
-      {/* Tu peux ajouter ici ton menu déroulant des catégories */}
+      {/* Menu déroulant des catégories */}
+      {categoryMenuOpen && (
+        <div className="category-dropdown">
+          {categories.map((category) => (
+            <div key={category.id} className="category-item" onClick={() => handleCategoryClick(category.name)}>
+              {category.name}
+            </div>
+          ))}
+        </div>
+      )}
     </header>
   );
 };
