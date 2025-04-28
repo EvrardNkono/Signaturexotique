@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { Card } from 'react-bootstrap';
 import './ProductCard.css';
@@ -7,13 +7,17 @@ import StarRating from './StarRating'; // Import du composant dynamique
 const ProductCard = ({ product, clientType }) => {
   const { addToCart, updateCartQuantity, cart } = useCart();
   const [flipped, setFlipped] = useState(false);
+  const [quantityInCart, setQuantityInCart] = useState(0);
 
   const fullImagePath = product.image
     ? `http://localhost:5000/uploads/${product.image}`
     : '';
 
-  const cartItem = cart.find(item => item.productId === product.id);
-  const quantityInCart = cartItem ? cartItem.quantity : 0;
+  // Utilisation d'un useEffect pour mettre à jour la quantité dans le panier
+  useEffect(() => {
+    const cartItem = cart.find(item => item.productId === product.id);
+    setQuantityInCart(cartItem ? cartItem.quantity : 0);
+  }, [cart, product.id]); // Se déclenche lorsque 'cart' ou 'product.id' change
 
   const priceToDisplay =
     clientType === 'wholesale' && product.wholesalePrice
@@ -32,12 +36,48 @@ const ProductCard = ({ product, clientType }) => {
       localStorage.setItem('cart', JSON.stringify(cart));
     }
   };
-
   const handleRemoveOne = () => {
-    if (quantityInCart > 0 && cartItem) {
-      updateCartQuantity(cartItem.id, quantityInCart - 1);
+    if (!cart || cart.length === 0) {
+      console.error('Le panier est vide');
+      return;
+    }
+  
+    const cartItem = cart.find(item => item.productId === product.id);
+    if (!cartItem) {
+      console.error('Le produit n\'est pas dans le panier');
+      return;
+    }
+  
+    if (cartItem.quantity > 0) {
+      const newQuantity = cartItem.quantity - 1;
+  
+      // Met à jour la quantité via l'API
+      updateCartQuantity(cartItem.id, newQuantity)
+        .then(response => {
+          console.log('Réponse de l\'API après mise à jour :', response);  // Ajout d'un log pour voir la réponse complète
+          if (response && response.message === 'Quantité mise à jour avec succès') {
+            setCart(prevCart =>
+              prevCart.map(item =>
+                item.productId === cartItem.productId
+                  ? { ...item, quantity: newQuantity }
+                  : item
+              )
+            );
+            console.log('Panier après mise à jour:', prevCart);
+          } else {
+            //console.error('Erreur lors de la mise à jour ou réponse invalide', response);
+          }
+        })
+        .catch(error => {
+          console.error('Erreur dans la requête API :', error);
+        });
     }
   };
+  
+  
+  
+  
+  
 
   const toggleFlip = () => {
     setFlipped(prev => !prev);

@@ -11,24 +11,19 @@ export const CartProvider = ({ children }) => {
     // Charger le panier à partir du backend
     const loadCart = async () => {
       try {
-        // 1. Récupération du token
         const token = localStorage.getItem('token');
         console.log('Token récupéré :', token); // 👀 Vérification immédiate
     
-        // 2. Vérification de l'existence du token
         if (!token) {
           console.error('Aucun token trouvé, veuillez vous reconnecter.');
           return; // ⚠️ Stopper ici si pas de token
         }
     
-        // 3. Vérification si le token est expiré
         if (isTokenExpired(token)) {
           console.error('Token invalide ou expiré. Redirection vers la page de connexion...');
-          // window.location.href = '/login'; // Optionnel selon ton flow
           return;
         }
     
-        // 4. Si tout va bien, appel backend
         const res = await fetch(`${API_URL}/modules/cart/cart`, {
           method: 'GET',
           headers: {
@@ -40,7 +35,6 @@ export const CartProvider = ({ children }) => {
         const data = await res.json();
         console.log('Données du backend:', data); // 🔥 Voir ce que renvoie ton backend
     
-        // 5. Vérification de la structure des données
         if (Array.isArray(data)) {
           console.log('Panier chargé:', data);
           setCart(data);
@@ -52,8 +46,6 @@ export const CartProvider = ({ children }) => {
       }
     };
     
-    
-    // Fonction pour vérifier si le token est expiré
     const isTokenExpired = (token) => {
       try {
         const decoded = JSON.parse(atob(token.split('.')[1]));  // Décode le payload du JWT
@@ -66,17 +58,13 @@ export const CartProvider = ({ children }) => {
       }
     };
     
-    
-
     loadCart();
   }, []);
 
-  // Fonction pour vider le panier
   const clearCart = () => {
     setCart([]); // Vide l'état du panier
   };
 
-  // Fonction pour changer le type de client (retail / wholesale)
   const changeClientType = (newClientType) => {
     if (newClientType !== clientType) {
       clearCart(); // Vider le panier si le type de client change
@@ -113,7 +101,6 @@ export const CartProvider = ({ children }) => {
         }),
       });
   
-      // Vérifie la réponse avant de la traiter
       const data = await res.json();
       console.log('Réponse du backend:', data);
   
@@ -121,7 +108,6 @@ export const CartProvider = ({ children }) => {
         throw new Error(data.error || 'Erreur lors de l’ajout au panier');
       }
   
-      // Si tout se passe bien, mettre à jour le panier
       const updatedCartResponse = await fetch(`${API_URL}/modules/cart/cart`, {
         method: 'GET',
         headers: {
@@ -132,7 +118,6 @@ export const CartProvider = ({ children }) => {
       const updatedCart = await updatedCartResponse.json();
       console.log('Réponse du panier mis à jour:', updatedCart);  // Ajoute ceci pour debugger
 
-  
       if (Array.isArray(updatedCart)) {
         console.log('Panier mis à jour:', updatedCart);
         setCart(updatedCart);
@@ -154,7 +139,6 @@ export const CartProvider = ({ children }) => {
         throw new Error('Token manquant, impossible de continuer.');
       }
   
-      // Appel DELETE au backend pour retirer une unité de produit
       const res = await fetch(`${API_URL}/modules/cart/cart/${productId}`, {
         method: 'DELETE',
         headers: {
@@ -183,7 +167,7 @@ export const CartProvider = ({ children }) => {
           return item;
         }).filter(item => item !== null); // Filtre pour retirer les éléments null
   
-        console.log('Panier mis à jour localement:', updatedCart);
+        console.log('Panier mis à jour localement après suppression:', updatedCart);
         return updatedCart;
       });
       
@@ -193,59 +177,51 @@ export const CartProvider = ({ children }) => {
       console.error('Erreur:', err);
     }
   };
-  
-  
-  
-  
-  
-  
-  
 
   const updateCartQuantity = async (cartId, newQuantity) => {
     const token = localStorage.getItem('token');
-    
-    // Vérifier si le token est présent
+  
     if (!token) {
       console.error('Token manquant');
-      return; // Sortir de la fonction si le token est manquant
+      return;
     }
   
     try {
-      // Envoi de la requête PUT pour mettre à jour la quantité
       const res = await fetch(`${API_URL}/modules/cart/cart/${cartId}`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ quantity: newQuantity }),
       });
   
-      // Vérification si la requête a échoué
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Erreur lors de la mise à jour de la quantité');
+      const data = await res.json();
+  
+      // Vérifie la validité de la réponse du serveur avant d'aller plus loin
+      if (!res.ok || !data.id || !data.quantity) {
+        throw new Error(data.error || 'Erreur lors de la mise à jour de la quantité');
       }
   
-      // On suppose que la réponse contient l'élément mis à jour
-      const updatedItem = await res.json();
-      console.log('Produit mis à jour :', updatedItem);
+      console.log('Réponse du serveur:', data);
   
-      // Mettre à jour l'état du panier avec la nouvelle quantité
+      // Met à jour le panier dans l'état global
       setCart(prevCart => {
-        return prevCart.map(item =>
-          item.id === updatedItem.id ? { ...item, quantity: updatedItem.quantity } : item
+        const updatedCart = prevCart.map(item =>
+          item.id === data.id ? { ...item, quantity: data.quantity } : item
         );
+        console.log('Panier après mise à jour dans CartContext:', updatedCart);
+        return updatedCart;
       });
   
-      // Afficher une confirmation dans la console
       console.log('Quantité mise à jour avec succès');
-  
     } catch (err) {
-      // Gestion des erreurs
       console.error('Erreur de mise à jour du panier :', err.message);
     }
   };
+  
+  
+  
   
 
   const clearCartFromBackend = async () => {
@@ -257,7 +233,7 @@ export const CartProvider = ({ children }) => {
       if (!res.ok) throw new Error('Erreur lors du vidage du panier');
 
       const updatedCart = await fetch(`${API_URL}/modules/cart/cart`).then(res => res.json());
-      console.log('Données du backend:', updatedCart);
+      console.log('Données du backend après vidage:', updatedCart);
       
       if (Array.isArray(updatedCart)) {
         setCart(updatedCart);
@@ -277,7 +253,7 @@ export const CartProvider = ({ children }) => {
       removeFromCart,
       updateCartQuantity,
       clearCartFromBackend,
-      changeClientType, // Exposer la fonction pour changer le type de client
+      changeClientType, 
     }}>
       {children}
     </CartContext.Provider>
