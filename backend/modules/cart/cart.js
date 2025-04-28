@@ -111,13 +111,23 @@ router.put('/:cartId', authmiddleware, (req, res) => {
       return res.status(500).json({ error: 'Erreur serveur' });
     }
 
+    console.log('[PUT] Nombre de lignes modifiées:', this.changes);
+
     if (this.changes === 0) {
+      console.log('[PUT] Aucune ligne mise à jour, vérifier les identifiants');
       return res.status(404).json({ error: 'Produit non trouvé dans votre panier' });
     }
 
     console.log('[PUT] Quantité mise à jour avec succès pour cartId:', cartId);
-    return res.status(200).json({ message: 'Quantité mise à jour avec succès' });
+
+    // 🎁 Voici la petite magie que ton Front adore
+    return res.status(200).json({
+      id: Number(cartId),      // Bien sûr, on retourne l'ID mis à jour
+      quantity: quantity       // Et la nouvelle quantité
+    });
   });
 });
+
+
 
 module.exports = router;
