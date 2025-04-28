@@ -37,7 +37,7 @@ const Header = () => {
       <div className="navbar">
         <div className="logo">
           <Link to="/" onClick={handleLinkClick}>
-            <img src="/assets/exo.png" alt="Signature Exotique" style={{ height: '110px' }} />
+            <img src="/assets/logo.png" alt="Signature Exotique" style={{ height: '200px' }} />
           </Link>
         </div>
 

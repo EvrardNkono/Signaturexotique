@@ -4,6 +4,7 @@ import { Container, Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Recommendations from '../components/Recommendations'; // Importation de Recommendations
 import './Cart.css';
+import '../config'
 
 const Cart = () => {
   const {
@@ -49,7 +50,7 @@ const Cart = () => {
                   <Row className="w-100">
                     <Col md={3} className="d-flex justify-content-center align-items-center">
                       <Card.Img
-                        src={`http://localhost:5000/uploads/${product.image}`}
+                        src={`${API_URL}/uploads/${product.image}`} 
                         alt={product.name}
                         className="cart-image"
                       />

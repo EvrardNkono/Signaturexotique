@@ -16,21 +16,38 @@
   padding: 2rem;
 }
 
+/* --- STYLES PAR DÉFAUT = grands écrans --- */
 .slide1 {
-  background-image: url('/assets/openart-image_D-wNcpOc_1745082151669_raw.png'); /* mets ici ton image */
-  background-color: #ff6600; /* orange de base pour ton branding */
+  background-image: url('/assets/Meka France.png');
+  background-color: #ff6600;
 }
 
 .slide2 {
-  background-image: url('/assets/openart-image_3yX6v5Xb_1745652624163_raw.png');
-  background-color: #000000; /* noir classe */
+  background-image: url('/assets/Design sans titre (5).png');
+  background-color: #000000;
 }
 
 .slide3 {
   background-image: url('/assets/openart-image_p6WdWE6G_1745652875275_raw.jpg');
-  background-color: #ffffff; /* blanc propre */
-  color: black; /* pour que le texte soit visible */
+  background-color: #ffffff;
+  color: black;
 }
+
+/* --- STYLES POUR PETITS ÉCRANS (mobiles, tablettes) --- */
+@media (max-width: 768px) {
+  .slide1 {
+    background-image: url('/assets/MEKA3.png');
+  }
+  
+  .slide2 {
+    background-image: url('/assets/MEKA2.png');
+  }
+  
+  .slide3 {
+    background-image: url('/assets/MEKA1.png');
+  }
+}
+
 
 .banner-content h1 {
   font-size: 3rem;

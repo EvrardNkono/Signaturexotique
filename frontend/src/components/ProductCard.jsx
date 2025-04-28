@@ -3,6 +3,8 @@ import { useCart } from '../context/CartContext';
 import { Card } from 'react-bootstrap';
 import './ProductCard.css';
 import StarRating from './StarRating'; // Import du composant dynamique
+import '../config'
+
 
 const ProductCard = ({ product, clientType }) => {
   const { addToCart, updateCartQuantity, cart } = useCart();
@@ -10,7 +12,7 @@ const ProductCard = ({ product, clientType }) => {
   const [quantityInCart, setQuantityInCart] = useState(0);
 
   const fullImagePath = product.image
-    ? `http://localhost:5000/uploads/${product.image}`
+    ? `${API_URL}/uploads/${product.image}`
     : '';
 
   // Utilisation d'un useEffect pour mettre à jour la quantité dans le panier
