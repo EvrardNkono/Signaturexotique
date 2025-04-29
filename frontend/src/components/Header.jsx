@@ -54,6 +54,7 @@ const Header = () => {
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <Link to="/" onClick={handleLinkClick}>Accueil</Link>
           <Link to="/catalogue" onClick={handleLinkClick}>Catalogue</Link>
+          <Link to="/bonplans" onClick={handleLinkClick} className="bonplans-link">🔥 Bons Plans</Link> 
           <Link to="/contact" onClick={handleLinkClick}>Contact</Link>
           <Link to="/dashboard" onClick={handleLinkClick}>Tableau de bord</Link>
           <Link to="/panier" onClick={handleLinkClick}>

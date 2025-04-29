@@ -19,6 +19,9 @@ import Register from './pages/Register';
 import PrivateRoute from './components/PrivateRoute';
 import Profile from './pages/Profile';
 import AccessDenied from './pages/AccessDenied'; // <-- ✨ nouveau import
+import BonPlans from './pages/BonPlans'; // 🔥 Import de ta page de Bons Plans
+
+
 
 const App = () => {
   return (
@@ -31,6 +34,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/catalogue" element={<Catalogue />} />
+                <Route path="/bonplans" element={<BonPlans />} /> 
                 <Route path="/panier" element={<Cart />} />
                 <Route path="/contact" element={<Contact />} />
 
