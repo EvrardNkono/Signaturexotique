@@ -2,15 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { Card } from 'react-bootstrap';
 import './ProductCard.css';
-import StarRating from './StarRating'; // Import du composant dynamique
+import StarRating from './StarRating'; // Import du composant 
+import { API_URL } from '../config';
 
 const ProductCard = ({ product, clientType }) => {
   const { addToCart, updateCartQuantity, cart } = useCart();
   const [flipped, setFlipped] = useState(false);
   const [quantityInCart, setQuantityInCart] = useState(0);
+  const originalPrice = clientType === 'wholesale' && product.wholesalePrice
+  ? product.wholesalePrice
+  : product.unitPrice;
+
+const discountedPrice = product.reduction > 0
+  ? originalPrice * (1 - product.reduction / 100)
+  : originalPrice;
+
 
   const fullImagePath = product.image
-    ? `http://localhost:5000/uploads/${product.image}`
+    ? `${API_URL}/uploads/${product.image}`
     : '';
 
   // Utilisation d'un useEffect pour mettre à jour la quantité dans le panier
@@ -105,15 +114,32 @@ const ProductCard = ({ product, clientType }) => {
 
             {/* Prix au-dessus du StarRating */}
             <div className="product-card-price">
-              <span className="product-price-display">
-                {priceToDisplay} € / {unitLabel}
-              </span>
-            </div>
+  {product.reduction > 0 ? (
+    <div className="price-discounted">
+      <div className="old-price">
+        {originalPrice.toFixed(2)} € / {unitLabel}
+      </div>
+      <div className="new-price">
+        {discountedPrice.toFixed(2)} € / {unitLabel}
+      </div>
+      <div className="reduction-badge">
+        -{product.reduction}% 🔥
+      </div>
+    </div>
+  ) : (
+    <div className="product-price-display">
+      {originalPrice.toFixed(2)} € / {unitLabel}
+    </div>
+  )}
+</div>
+
+
+
 
             {/* StarRating en dessous du prix */}
-            <div className="product-card-rating">
+           {/*<div className="product-card-rating">
               <StarRating defaultRating={product.rating || 4} />
-            </div>
+            </div>*/}
 
             <div className="product-quantity">
               <button

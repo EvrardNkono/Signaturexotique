@@ -1,0 +1,17 @@
+.bonplans-container {
+    padding: 2rem;
+    background-color: #fff;
+  }
+  
+  .title {
+    font-size: 2rem;
+    color: #ff6600; /* Ton orange fétiche */
+    margin-bottom: 1.5rem;
+  }
+  
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+  
