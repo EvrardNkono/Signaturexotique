@@ -50,8 +50,8 @@ router.post(
         }
   
         const result = await db.run(
-          `INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           [name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit]
         );
   
@@ -65,6 +65,7 @@ router.post(
             wholesalePrice,
             unit,
             wholesaleUnit,
+            reduction: reduction || 0,
             imageURL: image ? `/uploads/${image}` : null
           }
         });
@@ -119,66 +120,72 @@ router.get('/', async (req, res) => {
  * Accès : Admin ou Superadmin
  */
 router.put(
-    '/:id',
-    verifyJWT,
-    checkRole(['admin', 'superadmin']),
-    upload.single('image'),
-    async (req, res) => {
-      const { id } = req.params;
-      const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit } = req.body;
-      const image = req.file ? req.file.filename : null;
-  
-      // Validation des champs
-      if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
-        return res.status(400).json({ message: 'Tous les champs sont requis.' });
+  '/:id',
+  verifyJWT,
+  checkRole(['admin', 'superadmin']),
+  upload.single('image'),
+  async (req, res) => {
+    const { id } = req.params;
+    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction } = req.body;
+    const image = req.file ? req.file.filename : null;
+
+    // Validation des champs
+    if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
+      return res.status(400).json({ message: 'Tous les champs sont requis.' });
+    }
+
+    try {
+      // Récupère le produit existant
+      const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
+
+      if (!product) {
+        return res.status(404).json({ message: 'Produit non trouvé' });
       }
-  
-      try {
-        const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
-  
-        if (!product) {
-          return res.status(404).json({ message: 'Produit non trouvé' });
-        }
-  
-        const updateSql = `
-          UPDATE products
-          SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?
-          WHERE id = ?
-        `;
-  
-        const imageToUpdate = image || product.image;
-  
-        await db.run(updateSql, [
+
+      // Prépare la requête UPDATE avec la réduction
+      const updateSql = `
+        UPDATE products
+        SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, reduction = ?
+        WHERE id = ?
+      `;
+
+      const imageToUpdate = image || product.image;
+
+      await db.run(updateSql, [
+        name,
+        category,
+        unitPrice,
+        wholesalePrice,
+        imageToUpdate,
+        unit,
+        wholesaleUnit,
+        reduction || 0,  // Si aucune réduction n'est fournie, on garde 0 comme valeur par défaut
+        id
+      ]);
+
+      // Répond avec les infos mises à jour
+      res.status(200).json({
+        message: 'Produit mis à jour avec succès',
+        product: {
+          id,
           name,
           category,
           unitPrice,
           wholesalePrice,
-          imageToUpdate,
           unit,
           wholesaleUnit,
-          id
-        ]);
-  
-        res.status(200).json({
-          message: 'Produit mis à jour avec succès',
-          product: {
-            id,
-            name,
-            category,
-            unitPrice,
-            wholesalePrice,
-            unit,
-            wholesaleUnit,
-            imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null
-          }
-        });
-  
-      } catch (error) {
-        console.error('Erreur mise à jour produit :', error);
-        res.status(500).json({ message: 'Erreur serveur' });
-      }
+          reduction: reduction || 0,  // Inclut la réduction dans la réponse
+          imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null
+        }
+      });
+
+    } catch (error) {
+      console.error('Erreur mise à jour produit :', error);
+      res.status(500).json({ message: 'Erreur serveur' });
     }
-  );
+  }
+);
+
   
 
 /**
@@ -251,5 +258,22 @@ router.get('/cart', verifyJWT, async (req, res) => {
   }
 });
 
+
+
+router.get('/deals', async (req, res) => {
+  try {
+    const productsOnSale = await db.all(`
+      SELECT * FROM products
+      WHERE reduction > 0
+    `);
+
+    res.status(200).json(productsOnSale);
+  } catch (error) {
+    console.error('Erreur récupération bons plans :', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// /modules/products/products.js
 
 module.exports = router;

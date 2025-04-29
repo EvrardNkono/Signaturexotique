@@ -196,12 +196,7 @@
   cursor: pointer; /* Le curseur devient un pointeur quand on survole une étoile */
 }
 
-.product-card-price {
-  font-size: 1rem; /* Augmente la taille de la police */
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px; /* Un peu d'espace sous le prix */
-}
+
 
 .product-price-display {
   font-size: 1.5rem; /* Taille plus grande pour le prix par unité */
@@ -209,3 +204,33 @@
   color: #ff6f00; /* Couleur orange pour le prix */
 }
 
+.price-discounted {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.old-price {
+  color: red;
+  text-decoration: line-through;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.new-price {
+  color: #28a745; /* Vert éclatant */
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.reduction-badge {
+  background-color: #ff6f00;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-top: 6px;
+}

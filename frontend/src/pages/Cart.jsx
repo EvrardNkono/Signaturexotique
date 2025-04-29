@@ -4,7 +4,8 @@ import { Container, Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Recommendations from '../components/Recommendations'; // Importation de Recommendations
 import './Cart.css';
-import '../config'
+import { API_URL } from '../config';
+
 
 const Cart = () => {
   const {
