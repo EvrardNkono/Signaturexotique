@@ -44,8 +44,9 @@ router.post('/create-checkout-session', async (req, res) => {
         },
         quantity: item.quantity,
       })),
-      success_url: 'http://localhost:5173/success',
-      cancel_url: 'http://localhost:5173/cancel',
+      success_url: process.env.STRIPE_SUCCESS_URL,
+      cancel_url: process.env.STRIPE_CANCEL_URL,
+      
     });
 
     console.log("Session Stripe créée avec succès !", session.id); // Affiche l'ID de la session créée
