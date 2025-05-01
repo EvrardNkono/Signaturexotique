@@ -1,7 +1,7 @@
 import React from 'react';
 import Slider from 'react-slick';
 import ProductCard from './ProductCard';
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
 
@@ -12,12 +12,28 @@ const ProductCarousel = ({ products, title }) => {
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
-    centerMode: true, // Active le mode centré pour avoir un produit au centre
-    focusOnSelect: true, // Sélection automatique du produit au clic
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: true,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3 } },
-      { breakpoint: 600, settings: { slidesToShow: 2 } },
-      { breakpoint: 480, settings: { slidesToShow: 1 } },
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2, // <-- ici au lieu de 1
+        },
+      },
     ],
   };
 

@@ -1,112 +1,106 @@
-/* Style général du carousel */
 .product-carousel {
-    margin: 50px auto;
-    max-width: 1200px;
-    padding: 0 20px;
-    position: relative; /* Nécessaire pour positionner les flèches de manière absolue */
-  }
-  
-  /* Flèches de navigation personnalisées */
-  .slick-prev, .slick-next {
-    background-color: #f58c42; /* Orange clair */
-    border: none;
-    border-radius: 50%;
-    padding: 12px;
-    color: white;
-    font-size: 18px;
-    position: absolute;
-    z-index: 10;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 35px; /* Taille du bouton */
-    height: 35px; /* Taille du bouton */
-  }
-  
-  /* Pour la flèche précédente */
-  .slick-prev {
-    left: 10px; /* Positionne la flèche à gauche */
-  }
-  
-  /* Pour la flèche suivante */
-  .slick-next {
-    right: 10px; /* Positionne la flèche à droite */
-  }
-  
-  /* Effet au survol des flèches */
-  .slick-prev:hover, .slick-next:hover {
-    background-color: #f57c42; /* Teinte plus foncée */
-    transform: scale(1.1); /* Effet de zoom */
-  }
-  
-  /* Supprimer les icônes de défaut des flèches */
-  .slick-prev:before, .slick-next:before {
-    content: none;
-  }
-  
-  /* Pour afficher les icônes sous forme de flèches */
-  .slick-prev::after, .slick-next::after {
-    content: '\2190'; /* Flèche gauche */
-    font-size: 18px;
-    color: white;
-  }
-  
-  /* Flèche droite */
-  .slick-next::after {
-    content: '\2192'; /* Flèche droite */
-  }
-  
-  /* .slick-track pour l'affichage horizontal */
-  .slick-track {
-    display: flex !important; /* Force l'affichage horizontal */
-    align-items: center;
-  }
-  
-  /* Les éléments du carousel */
-  .slick-slide {
-    display: inline-block !important;
-    padding: 0 10px;
-    box-sizing: border-box;
-  }
-  
-  /* Personnalisation de la carte produit */
+  margin: 50px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+  position: relative;
+}
+
+/* Flèches */
+.slick-prev, .slick-next {
+  background-color: #f58c42;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  color: white;
+  font-size: 18px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  width: 35px;
+  height: 35px;
+}
+
+.slick-prev {
+  left: 0;
+}
+
+.slick-next {
+  right: 0;
+}
+
+.slick-prev:hover, .slick-next:hover {
+  background-color: #f57c42;
+  transform: scale(1.1) translateY(-50%);
+}
+
+.slick-prev:before, .slick-next:before {
+  content: none;
+}
+
+.slick-prev::after, .slick-next::after {
+  font-size: 18px;
+  color: white;
+}
+
+.slick-prev::after {
+  content: '\2190';
+}
+
+.slick-next::after {
+  content: '\2192';
+}
+
+/* Slides */
+.slick-track {
+  display: flex !important;
+  align-items: center;
+}
+
+.slick-slide {
+  display: inline-block !important;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* ProductCard */
+.product-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 280px;
+}
+
+/* Ajustements Responsive */
+@media (max-width: 1024px) {
   .product-card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    overflow: hidden;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 280px;
+    max-width: 240px;
   }
-  
-  /* Responsivité */
-  @media (max-width: 1024px) {
-    .product-card {
-      max-width: 230px;
-    }
+}
+
+@media (max-width: 768px) {
+  .product-card {
+    max-width: 200px;
   }
-  
-  @media (max-width: 600px) {
-    .product-card {
-      max-width: 180px;
-    }
+}
+
+@media (max-width: 480px) {
+  .product-carousel {
+    padding: 0 5px;
   }
-  
-  @media (max-width: 480px) {
-    .product-carousel {
-      padding: 0 10px;
-    }
-  
-    .product-card {
-      max-width: 150px;
-    }
+
+  .product-card {
+    max-width: 160px;
   }
-  
+
+  .slick-slide {
+    padding: 0 5px;
+  }
+}

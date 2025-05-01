@@ -20,6 +20,10 @@ import PrivateRoute from './components/PrivateRoute';
 import Profile from './pages/Profile';
 import AccessDenied from './pages/AccessDenied'; // <-- ✨ nouveau import
 import BonPlans from './pages/BonPlans'; // 🔥 Import de ta page de Bons Plans
+import RecipePage from './pages/RecipePage';
+
+import Success from './pages/Success';
+import Cancel from './pages/Cancel';
 
 
 
@@ -37,6 +41,7 @@ const App = () => {
                 <Route path="/bonplans" element={<BonPlans />} /> 
                 <Route path="/panier" element={<Cart />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/recettes" element={<RecipePage />} />
 
                 {/* ✅ Route protégée pour le dashboard */}
                 <Route 
@@ -55,6 +60,8 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/success" element={<Success />} />
+<Route path="/cancel" element={<Cancel />} />
               </Routes>
             </main>
             <Footer />

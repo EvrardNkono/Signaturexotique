@@ -1,0 +1,155 @@
+.recipe-page {
+    background-color: #fff;
+    color: #000;
+    padding: 2rem;
+    font-family: 'Arial, sans-serif';
+  }
+  
+  .page-title {
+    text-align: center;
+    color: #e91e63; /* Rose */
+    margin-bottom: 2rem;
+  }
+  
+  .recipe-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+  }
+  
+  .recipe-card {
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .recipe-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .recipe-info {
+    padding: 1rem;
+  }
+  
+  .recipe-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .recipe-description {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1rem;
+  }
+  
+  .social-section {
+    margin-bottom: 1rem;
+  }
+  
+  .social-message {
+    font-size: 0.9rem;
+    color: #e91e63;
+    margin-bottom: 0.5rem;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .social-icon {
+    color: #e91e63;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+  }
+  
+  .social-icon:hover {
+    color: #000;
+  }
+  
+  .recipe-button {
+    background-color: #e91e63;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .recipe-button:hover {
+    background-color: #d81b60;
+  }
+  
+  /* === MODAL MODERNE ET RESPONSIVE === */
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  
+  .modal-content {
+    background: #fff;
+    color: #333;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideIn 0.3s ease-in-out;
+  }
+  
+  /* BOUTON DE FERMETURE BIEN VISIBLE ET FIXÉ */
+  
+  .modal-close {
+    position: sticky;
+    top: 0;
+    left: 100%;
+    transform: translateX(-100%);
+    font-size: 2.2rem;
+    font-weight: bold;
+    background-color: #fff;
+    color: #e91e63;
+    border: none;
+    padding: 0.5rem;
+    margin: 0;
+    z-index: 1000;
+    cursor: pointer;
+    display: block;
+  }
+  
+  .modal-close:hover {
+    color: #000;
+    background-color: #ffe4ec;
+    border-radius: 50%;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
