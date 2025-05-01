@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../config';
 import ProductCarousel from '../components/ProductCarousel';
+import ClientRating2 from '../components/ClientRating2';
 
 const BonPlans = () => {
   const [products, setProducts] = useState([]);
@@ -50,7 +51,10 @@ const BonPlans = () => {
     <div className="bonplans-container">
       <h1>Nos Bons Plans 🔥</h1>
       {products.length > 0 ? (
-        <ProductCarousel products={products} title="Produits en Promotion" />
+        <>
+          <ProductCarousel products={products} title="Produits en Promotion" />
+          <ClientRating2 />
+        </>
       ) : (
         <p>Aucun bon plan pour le moment... mais restez connectés !</p>
       )}

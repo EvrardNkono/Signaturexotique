@@ -5,8 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import Recommendations from '../components/Recommendations'; // Importation de Recommendations
 import './Cart.css';
 import { API_URL } from '../config';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 
+//import stripePromise from './stripe'; // ajuste le chemin
+
+
+//const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+
+console.log(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const Cart = () => {
   const {
     cart,
@@ -27,9 +37,61 @@ const Cart = () => {
   const productIdsInCart = cart.map(product => product.productId);
 
   // Redirige vers la page de paiement
-  const handleOrder = () => {
-    navigate('/checkout');
+  const handleOrder = async () => {
+    try {
+      console.log("Contenu détaillé du panier :");
+      cart.forEach((item, index) => {
+        console.log(`Produit ${index + 1}:`, item);
+      });
+      
+      const response = await fetch(`${API_URL}/payement/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart })
+      });
+  
+      const data = await response.json();
+      console.log('Réponse Stripe backend:', data);
+  
+      // Vérifie si la sessionId est bien reçue
+      if (!data.sessionId) {
+        console.error("Aucun sessionId reçu du backend.");
+        alert("Une erreur est survenue lors de la création de la session Stripe.");
+        return;
+      }
+  
+      const stripe = await stripePromise;
+      if (!stripe) {
+        console.error('Stripe n’a pas été initialisé correctement.');
+        alert('Erreur de configuration Stripe.');
+        return;
+      }
+  
+      console.log('Session ID reçu :', data.sessionId);
+  
+      const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+  
+      if (result.error) {
+        // Afficher l'erreur dans la console
+        console.error('Erreur lors de la redirection vers Stripe :', result.error);
+        alert(result.error.message);
+      }
+  
+    } catch (error) {
+      console.error('Erreur lors de la redirection vers Stripe :', error);
+      
+      // Affichage plus précis
+      if (error instanceof Error) {
+        alert(`Erreur lors de la tentative de paiement : ${error.message}`);
+      } else {
+        alert("Une erreur inconnue est survenue : " + JSON.stringify(error));
+      }
+    }
   };
+  
+  
+  
+  
 
   useEffect(() => {
     console.log('Panier mis à jour:', cart);

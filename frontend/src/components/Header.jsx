@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 
+
 const Header = () => {
   const { cart } = useCart();
   const cartQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -52,45 +53,47 @@ const Header = () => {
         </div>
 
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
-          <Link to="/" onClick={handleLinkClick}>Accueil</Link>
-          <Link to="/catalogue" onClick={handleLinkClick}>Catalogue</Link>
-          <Link to="/bonplans" onClick={handleLinkClick} className="bonplans-link">🔥 Bons Plans</Link> 
-          <Link to="/contact" onClick={handleLinkClick}>Contact</Link>
-          <Link to="/dashboard" onClick={handleLinkClick}>Tableau de bord</Link>
-          <Link to="/panier" onClick={handleLinkClick}>
-            🛒
-            {cartQuantity > 0 && <span className="cart-quantity">{cartQuantity}</span>}
-          </Link>
+  <Link to="/" onClick={handleLinkClick}>Accueil</Link>
+  <Link to="/catalogue" onClick={handleLinkClick}>Catalogue</Link>
+  <Link to="/bonplans" onClick={handleLinkClick} className="bonplans-link">🔥 Bons Plans</Link>
+  <Link to="/recettes" onClick={handleLinkClick} className="recettes-link">🍽️ Nos Recettes</Link> {/* Nouveau lien */}
+  <Link to="/contact" onClick={handleLinkClick}>Contact</Link>
+  <Link to="/dashboard" onClick={handleLinkClick}>Tableau de bord</Link>
+  <Link to="/panier" onClick={handleLinkClick}>
+    🛒
+    {cartQuantity > 0 && <span className="cart-quantity">{cartQuantity}</span>}
+  </Link>
 
-          {!isAuthenticated ? (
-            <>
-              <Link to="/login" onClick={handleLinkClick}>Connexion</Link>
-              <Link to="/register" onClick={handleLinkClick}>S'inscrire</Link>
-            </>
-          ) : (
-            <>
-              <Link to="/profile" onClick={handleLinkClick} className="profile-link">👤 Mon Profil</Link>
-              <span
-                onClick={() => {
-                  // Supprimer le token JWT du localStorage ou sessionStorage
-                  localStorage.removeItem('authToken'); // Ou sessionStorage.removeItem('authToken')
-                  
-                  // Appeler la fonction logout
-                  logout();
-                  
-                  // Redirection vers la page d'accueil
-                  navigate('/');
-                  
-                  // Fermer le menu de navigation
-                  handleLinkClick();
-                }}
-                className="nav-link-style"
-              >
-                Déconnexion
-              </span>
-            </>
-          )}
-        </nav>
+  {!isAuthenticated ? (
+    <>
+      <Link to="/login" onClick={handleLinkClick}>Connexion</Link>
+      <Link to="/register" onClick={handleLinkClick}>S'inscrire</Link>
+    </>
+  ) : (
+    <>
+      <Link to="/profile" onClick={handleLinkClick} className="profile-link">👤 Mon Profil</Link>
+      <span
+        onClick={() => {
+          // Supprimer le token JWT du localStorage ou sessionStorage
+          localStorage.removeItem('authToken'); // Ou sessionStorage.removeItem('authToken')
+          
+          // Appeler la fonction logout
+          logout();
+          
+          // Redirection vers la page d'accueil
+          navigate('/');
+          
+          // Fermer le menu de navigation
+          handleLinkClick();
+        }}
+        className="nav-link-style"
+      >
+        Déconnexion
+      </span>
+    </>
+  )}
+</nav>
+
       </div>
 
       <div className="category-toggle" onClick={() => setCategoryMenuOpen(!categoryMenuOpen)}>

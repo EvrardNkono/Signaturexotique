@@ -35,47 +35,56 @@ const upload = multer({ storage: storage });
  * Accès : Admin ou Superadmin uniquement
  */
 router.post(
-    '/',
-    verifyJWT,
-    checkRole(['admin', 'superadmin']),
-    upload.single('image'),
-    async (req, res) => {
-      try {
-        const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit } = req.body;
-        const image = req.file ? req.file.filename : null;
-  
-        // Validation des champs
-        if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
-          return res.status(400).json({ message: 'Tous les champs sont requis.' });
-        }
-  
-        const result = await db.run(
-          `INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          [name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit]
-        );
-  
-        res.status(201).json({
-          message: 'Produit créé avec succès',
-          product: {
-            id: result.lastID,
-            name,
-            category,
-            unitPrice,
-            wholesalePrice,
-            unit,
-            wholesaleUnit,
-            reduction: reduction || 0,
-            imageURL: image ? `/uploads/${image}` : null
-          }
-        });
-  
-      } catch (error) {
-        console.error('Erreur lors de la création du produit :', error);
-        res.status(500).json({ message: 'Erreur serveur' });
+  '/',
+  verifyJWT,
+  checkRole(['admin', 'superadmin']),
+  upload.single('image'),
+  async (req, res) => {
+    try {
+      const {
+        name,
+        category,
+        unitPrice,
+        wholesalePrice,
+        unit,
+        wholesaleUnit,
+        reduction // 👈 Ajouté ici
+      } = req.body;
+
+      const image = req.file ? req.file.filename : null;
+
+      if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
+        return res.status(400).json({ message: 'Tous les champs sont requis.' });
       }
+
+      const result = await db.run(
+        `INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction || 0]
+      );
+
+      res.status(201).json({
+        message: 'Produit créé avec succès',
+        product: {
+          id: result.lastID,
+          name,
+          category,
+          unitPrice,
+          wholesalePrice,
+          unit,
+          wholesaleUnit,
+          reduction: reduction || 0,
+          imageURL: image ? `/uploads/${image}` : null
+        }
+      });
+
+    } catch (error) {
+      console.error('Erreur lors de la création du produit :', error);
+      res.status(500).json({ message: 'Erreur serveur' });
     }
-  );
+  }
+);
+
   
 
 /**

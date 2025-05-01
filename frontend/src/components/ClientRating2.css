@@ -1,0 +1,272 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+img {
+	max-width: 100%;
+}
+
+body {
+	font-family: "Roboto Slab", serif;
+	font-size: 15px;
+	line-height: 1.67;
+	color: #444;
+	padding: 60px 0;
+}
+
+.section-title {
+	font-size: 28px;
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+	font-weight: 400;
+	display: inline-block;
+	position: relative;
+}
+.section-title:after,
+.section-title:before {
+	content: "";
+	position: absolute;
+	bottom: 0;
+}
+.section-title:after {
+	height: 2px;
+	background-color: rgba(252, 92, 15, 0.46);
+	left: 25%;
+	right: 25%;
+}
+
+.section-title:before {
+	width: 15px;
+	height: 15px;
+	border: 3px solid #fff;
+	background-color: #fc5c0f;
+	left: 50%;
+	transform: translatex(-50%);
+	bottom: -6px;
+	z-index: 9;
+	border-radius: 50%;
+}
+
+/* CAROUSEL STARTS */
+.feedback-slider-item {
+	position: relative;
+	padding: 60px;
+	margin-top: -40px;
+}
+
+.customer-name {
+	margin-top: 15px;
+	margin-bottom: 25px;
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.feedback-slider-item p {
+	line-height: 1.875;
+}
+
+.customer-rating {
+	background-color: #eee;
+	border: 3px solid #fff;
+	color: rgba(1, 1, 1, 0.702);
+	font-weight: 700;
+	border-radius: 50%;
+	position: absolute;
+	width: 47px;
+	height: 47px;
+	line-height: 44px;
+	font-size: 15px;
+	right: 0;
+	top: 77px;
+	text-indent: -3px;
+}
+
+.thumb-prev .customer-rating {
+	top: -20px;
+	left: 0;
+	right: auto;
+}
+
+.thumb-next .customer-rating {
+	top: -20px;
+	right: 0;
+}
+
+.customer-rating i {
+	color: rgb(251, 90, 13);
+	position: absolute;
+	top: 10px;
+	right: 5px;
+	font-weight: 600;
+	font-size: 12px;
+}
+
+/* GREY BACKGROUND COLOR OF THE ACTIVE SLIDER */
+.feedback-slider-item:after {
+	content: "";
+	position: absolute;
+	left: 20px;
+	right: 20px;
+	bottom: 0;
+	top: 103px;
+	background-color: #f6f6f6;
+	border: 1px solid rgba(251, 90, 13, 0.1);
+	border-radius: 10px;
+	z-index: -1;
+}
+
+/* Slick Next and Prev Button */
+.slick-prev,
+.slick-next {
+  position: absolute;
+  z-index: 99;
+  top: 50%; /* Centrer verticalement */
+  transform: translateY(-50%);
+  width: 40px;  /* Réduire la largeur des boutons */
+  height: 40px; /* Réduire la hauteur des boutons */
+  background-color: transparent; /* Pas de fond */
+  border-radius: 50%; /* Boutons ronds */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.slick-next {
+	right: 10px;
+}
+
+.slick-prev {
+	left: 10px;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+	opacity: 0.8;
+}
+
+/* Thumb images */
+.slick-slide .feedback-slider-thumb img {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.slick-slide .feedback-slider-thumb:hover {
+	opacity: 0.8;
+}
+
+/* Dots */
+.slick-dots {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 35px;
+	display: flex !important;
+	justify-content: center;
+}
+
+.slick-dots li button:before {
+	font-size: 12px;
+	color: rgba(251, 90, 13, 0.6);
+}
+
+.slick-dots li.slick-active button:before {
+	color: rgb(251, 90, 13);
+}
+
+/* RESPONSIVE */
+@media screen and (max-width: 767px) {
+	.feedback-slider-item:after {
+		left: 30px;
+		right: 30px;
+	}
+
+	.slick-prev,
+	.slick-next {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+	.slick-prev {
+		left: 0;
+	}
+	.slick-next {
+		right: 0;
+	}
+}
+
+/* extra */
+.copyright {
+	text-align: center;
+	margin-top: 30px;
+	font-size: 1.6rem;
+	background-color: #ededed;
+}
+.copyright a {
+	display: inline-block;
+	padding: 15px 2px;
+}
+.copyright a:not(:last-child):after {
+	content: "/";
+	margin-left: 10px;
+}
+
+.toptal {
+	color: #204ecf;
+}
+
+.upstack {
+	color: #008bf7;
+}
+
+.upwork {
+	color: #37a000;
+}
+
+.fiverr {
+	color: #1dbf73;
+}
+
+.jobs {
+	color: magenta;
+	text-decoration: underline;
+	margin-top: -15px;
+}
+
+/* Styles pour les images des clients */
+.feedback-slider-item img {
+    width: 100px; /* Taille fixe pour les images */
+    height: 100px; /* Taille fixe pour les images */
+    border-radius: 50%; /* Forme circulaire */
+    object-fit: cover; /* Assurer que l'image garde sa proportion tout en remplissant l'espace */
+    margin-bottom: 20px; /* Espacement sous l'image */
+  }
+  
+  .customer-name {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    font-size: 20px;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+  
+  .slick-prev:before,
+.slick-next:before {
+  font-size: 24px; /* Taille des flèches */
+  color: black; /* Couleur des flèches (noir) */
+  content: ''; /* Supprimer le texte par défaut */
+}
+
+.slick-prev:before {
+  content: '←'; /* Flèche gauche */
+}
+
+.slick-next:before {
+  content: '→'; /* Flèche droite */
+}
