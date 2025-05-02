@@ -1,7 +1,7 @@
 .flip-card {
   background-color: transparent;
-  width: 200px;
-  height: 360px;
+  width: 300px; /* Agrandi */
+  height: 480px; /* Agrandi */
   perspective: 1000px;
 }
 
@@ -31,8 +31,8 @@
 }
 
 .product-card {
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 2px solid #ff6f00;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
@@ -41,6 +41,9 @@
   flex-direction: column;
   background-size: cover;
   background-position: center;
+  padding: 10px;
+  border: 1px solid transparent;
+  background-color: #fff;
 }
 
 .retail-background {
@@ -53,7 +56,7 @@
 
 .product-card-image-container {
   position: relative;
-  height: 150%;
+  height: 220px; /* Agrandi */
   overflow: hidden;
   border-bottom: 3px solid #ff6f00;
 }
@@ -63,11 +66,23 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.product-image-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  z-index: 0;
 }
 
 .product-card-body {
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.95);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -76,60 +91,94 @@
 }
 
 .product-card-title {
-  font-size: 1rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: #000000 !important;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   text-transform: uppercase;
 }
 
 .product-card-description {
-  font-size: 0.65rem;
+  font-size: 0.9rem;
   color: #555;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .product-card-price-rating {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
-
 
 .product-card-rating {
-  font-size: 0.65rem;
+  font-size: 0.9rem;
   color: #ff9800;
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }
 
-.product-quantity button {
+.star-rating {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.star-icon {
+  color: gold;
+  font-size: 1.6rem;
+  stroke: black;
+  stroke-width: 1;
+  cursor: pointer;
+}
+
+.product-quantity {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.product-quantity span {
+  font-weight: bold;
+  color: #000;
+  font-size: 1rem;
+}
+
+.product-quantity button,
+.quantity-button {
   background-color: #ff6f00;
   border: none;
   color: white;
-  padding: 2px 5px; /* Réduit ici */
-  font-size: 0.6rem; /* Un poil plus petit */
-  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  width: 24px;
-  height: 24px;
-
+  width: 32px;
+  height: 32px;
 }
 
-.product-quantity button:hover {
+.quantity-button.wholesale {
+  background-color: #28a745;
+}
+
+.product-quantity button:hover,
+.quantity-button:hover {
   background-color: #333333;
 }
 
 .product-card-button {
   background-color: #ff6f00;
   color: white;
-  padding: 6px 10px;
+  padding: 10px 14px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 1rem;
   transition: background-color 0.3s ease;
-  width: auto;
   max-width: 90%;
   margin: 0 auto;
 }
@@ -138,115 +187,48 @@
   background-color: #e65100;
 }
 
-.product-quantity span {
-  font-weight: bold;
-  color: #000;
-  font-size: 0.75rem;
-  margin: 0 6px;
-}
-
-.product-quantity {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 8px;
-}
-
-.quantity-button {
-  border: none;
-  color: white;
-  padding: 2px 5px;
-  font-size: 0.6rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  width: 24px;
-  height: 24px;
-}
-
-.quantity-button.client {
-  background-color: #ff6f00;
-}
-
-.quantity-button.wholesale {
-  background-color: #28a745;
-}
-
-.quantity-button:hover {
-  background-color: #333333;
-}
-.product-card-rating {
-  display: flex;
-  justify-content: center; /* Centre les étoiles horizontalement */
-  margin-top: 10px; /* Un petit espace au-dessus des étoiles */
-}
-
-.star-rating {
-  display: flex;
-  justify-content: center; /* Centre les étoiles horizontalement */
-  gap: 5px; /* Ajuste l'espacement entre les étoiles */
-}
-
-.star-icon {
-  color: gold;
-  font-size: 1.2rem; /* Ajuste la taille des étoiles */
-  stroke: black;
-  stroke-width: 1;
-  cursor: pointer; /* Le curseur devient un pointeur quand on survole une étoile */
-}
-
-
-
 .product-price-display {
-  font-size: 1.5rem; /* Taille plus grande pour le prix par unité */
+  font-size: 1.8rem;
   font-weight: bold;
-  color: #ff6f00; /* Couleur orange pour le prix */
+  color: #ff6f00;
 }
 
 .price-discounted {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .old-price {
   color: red;
   text-decoration: line-through;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-weight: bold;
-  
 }
 
 .new-price {
-  color: #28a745; /* Vert éclatant */
-  font-size: 1.4rem;
+  color: #28a745;
+  font-size: 1.6rem;
   font-weight: 700;
-  margin-bottom: -20px;
+  margin-bottom: -10px;
 }
 
-.reduction-badge {
+.reduction-badge,
+.badge-promo {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 10px;
+  left: 10px;
   background-color: #ff6200;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
-  padding: 2px 6px;
-  border-radius: 8px;
+  padding: 6px 10px;
+  border-radius: 10px;
   z-index: 1;
 }
 
 .badge-promo {
-  position: absolute;
-  top: 8px;
-  left: 8px;
+  font-size: 0.9rem;
   background-color: #ff6f00;
-  color: white;
-  font-size: 0.7rem;
-  font-weight: bold;
-  padding: 4px 6px;
-  border-radius: 6px;
 }
