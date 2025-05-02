@@ -3,13 +3,17 @@ import { Container, Row, Col } from 'react-bootstrap';
 import ProductCard from './ProductCard';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const ProductGrid = ({ products, clientType }) => { // Ajout de clientType ici
+const ProductGrid = ({ products, clientType }) => {
   return (
-    <Container>
-      <Row className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-6 flex flex-wrap justify-start gap-4">
+    <Container className="d-flex justify-content-center">
+      <Row className="justify-content-center g-4">
         {products.map((product) => (
-          <Col key={product.id} className="w-full sm:w-1/2 md:w-1/6">
-            <ProductCard product={product} clientType={clientType} /> {/* Passage de clientType */}
+          <Col 
+            key={product.id} 
+            xs={12} sm={6} md={4} lg={3} // Configuration responsive
+            className="d-flex justify-content-center"
+          >
+            <ProductCard product={product} clientType={clientType} />
           </Col>
         ))}
       </Row>
