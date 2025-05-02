@@ -164,7 +164,6 @@ const Cart = () => {
   variant="danger"
   onClick={() => {
     removeFromCart(product.productId); // Appelle ta fonction de suppression
-    window.location.reload(); // Rafraîchit la page immédiatement après
   }}
   style={{
     backgroundColor: '#ff6f00',
