@@ -56,7 +56,10 @@ const Home = ({ clientType }) => {
       <Container className="mt-4">
         <ProductsSection />
         <CustomCarousel />
-        <Services />
+        <section id="services">
+  <Services />
+</section>
+
         <Testimonials />
       </Container>
     </div>

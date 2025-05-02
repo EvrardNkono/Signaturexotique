@@ -85,3 +85,6 @@ header, footer {
 .footer-links a:hover {
   color: #ffbb33;
 }
+html {
+  scroll-behavior: smooth;
+}

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom'; // Importation pour récupérer les paramètres de l'URL
+import { useLocation } from 'react-router-dom';
 import { Container, Button, Alert } from 'react-bootstrap';
 import { Typography } from '@mui/material';
 import ProductGrid from '../components/ProductGrid';
 import Filters from '../components/Filters';
 import { useCart } from '../context/CartContext';
-import { API_URL } from '../config';  // Utilisation du contexte
+import { API_URL } from '../config';
 
 const Catalogue = () => {
   const [allProducts, setAllProducts] = useState([]);
@@ -14,9 +14,8 @@ const Catalogue = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const location = useLocation();
-  const categoryFilter = new URLSearchParams(location.search).get('categorie'); // Récupération de la catégorie de l'URL
+  const categoryFilter = new URLSearchParams(location.search).get('categorie');
 
-  // Fonction pour charger les produits
   const fetchProducts = async () => {
     try {
       const response = await fetch(`${API_URL}/admin/product`);
@@ -28,20 +27,19 @@ const Catalogue = () => {
   };
 
   useEffect(() => {
-    fetchProducts(); // Charger les produits au démarrage
+    fetchProducts();
   }, []);
 
   useEffect(() => {
     if (categoryFilter) {
       const filtered = allProducts.filter((product) => {
-        // Vérification que la catégorie existe et est une chaîne valide
         return product?.categorie?.toLowerCase() === categoryFilter.toLowerCase();
       });
-      setFilteredProducts(filtered); // Mettre à jour les produits filtrés
+      setFilteredProducts(filtered);
     } else {
-      setFilteredProducts(allProducts); // Afficher tous les produits si aucune catégorie
+      setFilteredProducts(allProducts);
     }
-  }, [categoryFilter, allProducts]); // Refaire ce calcul si la catégorie ou les produits changent
+  }, [categoryFilter, allProducts]);
 
   const handleClientTypeChange = () => {
     const confirmChange = window.confirm(
@@ -50,7 +48,7 @@ const Catalogue = () => {
 
     if (confirmChange) {
       changeClientType(clientType === 'retail' ? 'wholesale' : 'retail');
-      clearCart(); // Vider le panier après avoir changé de type
+      clearCart();
     }
   };
 
@@ -59,33 +57,29 @@ const Catalogue = () => {
   return (
     <Container className="my-5">
       <Typography variant="h4" gutterBottom>
-        Catalogue de Produits
+        CATALOGUE DE PRODUITS
       </Typography>
 
-      {/* Message d'erreur */}
       {errorMessage && (
         <Alert variant="danger">
           {errorMessage}
         </Alert>
       )}
 
-      {/* 🔁 Bouton de bascule */}
       <div className="mb-3 text-end">
         <Button
           variant={clientType === 'retail' ? 'outline-success' : 'outline-warning'}
           onClick={handleClientTypeChange}
         >
-          Passer en mode {clientType === 'retail' ? 'Grossiste' : 'Particulier'}
+          Passer en mode {clientType === 'retail' ? 'GROSSISTE' : 'PARTICULIER'}
         </Button>
       </div>
 
-      {/* Filtres */}
       <Filters onFilterChange={(filtered) => setFilteredProducts(filtered)} />
 
-      {/* Affichage des produits */}
       {filteredProducts.length === 0 ? (
         <Typography variant="h6" className="mt-4">
-          Aucun produit ne correspond à votre recherche.
+          AUCUN PRODUIT NE CORRESPOND À VOTRE RECHERCHE.
         </Typography>
       ) : (
         <ProductGrid products={productsToDisplay} clientType={clientType} />

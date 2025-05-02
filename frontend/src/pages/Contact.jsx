@@ -10,7 +10,6 @@ const Contact = () => {
   });
   const [responseMessage, setResponseMessage] = useState('');
 
-  // Fonction pour gérer les changements dans les champs du formulaire
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -19,19 +18,16 @@ const Contact = () => {
     }));
   };
 
-  // Fonction pour soumettre le formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validation basique des champs
     if (!formData.name || !formData.email || !formData.message) {
       setResponseMessage('Tous les champs sont requis.');
       return;
     }
   
     try {
-      // Remarque : Changez l'URL ici pour qu'elle pointe vers l'API du backend
-      const response = await fetch(`${API_URL}/modules/contact/emailRoutes`, {  // Remplacer '/admin/contact/send-email' par '/api/send-email'
+      const response = await fetch(`${API_URL}/modules/contact/emailRoutes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +39,7 @@ const Contact = () => {
   
       if (response.ok) {
         setResponseMessage('Message envoyé avec succès!');
-        setFormData({ name: '', email: '', message: '' });  // Réinitialiser le formulaire
+        setFormData({ name: '', email: '', message: '' });
       } else {
         setResponseMessage('Erreur lors de l\'envoi du message.');
       }
@@ -51,7 +47,6 @@ const Contact = () => {
       setResponseMessage('Une erreur est survenue lors de l\'envoi du message.');
     }
   };
-  
 
   return (
     <div className="contact-section">
@@ -66,7 +61,7 @@ const Contact = () => {
           </Col>
           <Col md={6}>
             <div className="contact-form p-4 rounded shadow">
-              <h2 className="text-center mb-4 text-uppercase">Contactez-nous</h2>
+              <h2 className="text-center mb-4 text-uppercase">CONTACTEZ-NOUS</h2>
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formName" className="mb-3">
                   <Form.Label>Nom</Form.Label>

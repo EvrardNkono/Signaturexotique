@@ -17,3 +17,11 @@
     color: #34495e;
   }
   
+  .products-section .carousel-item img {
+    height: 350px; /* ajuste si besoin */
+    object-fit: cover;
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  

@@ -6,20 +6,21 @@ import './Services.css';
 const services = [
   {
     title: "Livraison partout en France",
-    description: "Nous assurons une livraison rapide et sécurisée partout en France, du nord au sud, de l'est à l'ouest.",
-    image: "assets/livraison-france.png", // Assurez-vous que l'image est dans le dossier public/images
+    description: "Livraison gratuite de 0 à 20 km, puis 5€ entre 21 et 30 km, 10€ de 31 à 40 km. Au-delà, nous expédions avec soin partout en France. 🚚",
+
+    image: "assets/livraison-france.jpg", // Assurez-vous que l'image est dans le dossier public/images
   },
   {
     title: "Expédition en Europe",
-    description: "Nous expédions également nos produits dans toute l'Europe avec un service fiable et rapide.",
-    image: "assets/expedition-europe.png", // Assurez-vous que l'image est dans le dossier public/images
+    description: "Nous expédions également nos produits dans toute l'Europe avec un service fiable, rapide, soigné et toujours à l'écoute de vos besoins. 🌍",
+    image: "assets/expedition-europe.jpg", // Assurez-vous que l'image est dans le dossier public/images
   },
 ];
 
 const Services = () => {
   return (
     <div className="services-section">
-      <h2 className="section-title">Nos Services</h2>
+      <h2 className="section-title">NOS SERVICES</h2>
       <Row>
         {services.map((service, index) => (
           <Col md={6} key={index}>

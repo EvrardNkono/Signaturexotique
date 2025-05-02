@@ -21,9 +21,11 @@ import Profile from './pages/Profile';
 import AccessDenied from './pages/AccessDenied'; // <-- ✨ nouveau import
 import BonPlans from './pages/BonPlans'; // 🔥 Import de ta page de Bons Plans
 import RecipePage from './pages/RecipePage';
-
+import AboutUs from './pages/AboutUs';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 
 
@@ -42,6 +44,7 @@ const App = () => {
                 <Route path="/panier" element={<Cart />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/recettes" element={<RecipePage />} />
+                <Route path="/aboutus" element={<AboutUs />} />
 
                 {/* ✅ Route protégée pour le dashboard */}
                 <Route 
