@@ -16,29 +16,71 @@ const ProductsSection = () => (
           <Carousel.Item>
             <img
               className="d-block w-100 rounded shadow"
-              src="/assets/aa (5).jpg"
+              src="/assets/aa (1).jpg"
               alt="Produit exotique 1"
             />
           </Carousel.Item>
           <Carousel.Item>
             <img
               className="d-block w-100 rounded shadow"
-              src="/assets/aa (6).jpg"
+              src="/assets/aa (2).jpg"
               alt="Produit exotique 2"
             />
           </Carousel.Item>
           <Carousel.Item>
             <img
               className="d-block w-100 rounded shadow"
-              src="/assets/aa (7).jpg"
+              src="/assets/aa (3).jpg"
               alt="Produit exotique 3"
             />
           </Carousel.Item>
           <Carousel.Item>
             <img
               className="d-block w-100 rounded shadow"
-              src="/assets/aa (8).jpg"
+              src="/assets/aa (4).jpg"
               alt="Produit exotique 4"
+            />
+          </Carousel.Item>
+          <Carousel.Item>
+            <img
+              className="d-block w-100 rounded shadow"
+              src="/assets/aa (51).jpg"
+              alt="Produit exotique 5"
+            />
+          </Carousel.Item>
+          <Carousel.Item>
+            <img
+              className="d-block w-100 rounded shadow"
+              src="/assets/aa (61).jpg"
+              alt="Produit exotique 6"
+            />
+          </Carousel.Item>
+          <Carousel.Item>
+            <img
+              className="d-block w-100 rounded shadow"
+              src="/assets/aa (71).jpg"
+              alt="Produit exotique 7"
+            />
+          </Carousel.Item>
+          <Carousel.Item>
+            <img
+              className="d-block w-100 rounded shadow"
+              src="/assets/aa (81).jpg"
+              alt="Produit exotique 8"
+            />
+          </Carousel.Item>
+          <Carousel.Item>
+            <img
+              className="d-block w-100 rounded shadow"
+              src="/assets/aa (91).jpg"
+              alt="Produit exotique 9"
+            />
+          </Carousel.Item>
+          <Carousel.Item>
+            <img
+              className="d-block w-100 rounded shadow"
+              src="/assets/aa (100).jpg"
+              alt="Produit exotique 10"
             />
           </Carousel.Item>
         </Carousel>
