@@ -6,7 +6,7 @@ import StarRating from './StarRating'; // Import du composant
 import { API_URL } from '../config';
 
 const ProductCard = ({ product, clientType }) => {
-  const { addToCart, updateCartQuantity, cart } = useCart();
+  const { addToCart, updateCartQuantity, removeFromCart, cart } = useCart();
   const [flipped, setFlipped] = useState(false);
   const [quantityInCart, setQuantityInCart] = useState(0);
   const originalPrice = clientType === 'wholesale' && product.wholesalePrice
@@ -57,31 +57,30 @@ const discountedPrice = product.reduction > 0
       return;
     }
   
-    if (cartItem.quantity > 0) {
-      const newQuantity = cartItem.quantity - 1;
+    const newQuantity = cartItem.quantity - 1;  // Décrémente la quantité
   
-      // Met à jour la quantité via l'API
+    if (newQuantity > 0) {
+      // Si la nouvelle quantité est positive, on met à jour la quantité dans le panier
       updateCartQuantity(cartItem.id, newQuantity)
         .then(response => {
-          console.log('Réponse de l\'API après mise à jour :', response);  // Ajout d'un log pour voir la réponse complète
+          console.log('Réponse de l\'API après mise à jour :', response);
           if (response && response.message === 'Quantité mise à jour avec succès') {
-            setCart(prevCart =>
-              prevCart.map(item =>
-                item.productId === cartItem.productId
-                  ? { ...item, quantity: newQuantity }
-                  : item
-              )
-            );
-            console.log('Panier après mise à jour:', prevCart);
+            setQuantityInCart(newQuantity); // Met à jour la quantité localement
           } else {
-            //console.error('Erreur lors de la mise à jour ou réponse invalide', response);
+            console.error('Erreur lors de la mise à jour de la quantité');
           }
         })
         .catch(error => {
           console.error('Erreur dans la requête API :', error);
         });
+    } else {
+      // Si la quantité est zéro, on supprime l'article du panier
+      removeFromCart(product.id);  // Supprimer du panier
+      setQuantityInCart(0); // Mettre la quantité à zéro
     }
   };
+  
+  
   
   
   

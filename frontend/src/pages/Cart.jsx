@@ -9,19 +9,12 @@ import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-
-//import stripePromise from './stripe'; // ajuste le chemin
-
-
-//const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
-
-console.log(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const Cart = () => {
   const {
     cart,
     removeFromCart,
-    clearCartFromBackend, // Utilisation de clearCartFromBackend ici
+    updateCartQuantity, // Ajout de la fonction updateCartQuantity
+    clearCartFromBackend,
     clientType
   } = useCart();
 
@@ -35,6 +28,32 @@ const Cart = () => {
 
   // Récupérer les IDs des produits déjà dans le panier
   const productIdsInCart = cart.map(product => product.productId);
+
+  // Fonction de mise à jour de la quantité (augmenter ou diminuer)
+  const changeQuantity = (productId, type) => {
+    const product = cart.find(item => item.productId === productId);
+    if (!product) return;
+  
+    let newQuantity = product.quantity;
+  
+    if (type === 'increase') {
+      newQuantity += 1;
+    } else if (type === 'decrease') {
+      if (newQuantity > 1) {
+        newQuantity -= 1;
+      } else if (newQuantity === 1) {
+        // Si la quantité atteint 1, on appelle removeFromCart pour le retirer du panier
+        removeFromCart(productId); 
+        return; // Arrêter l'exécution ici pour éviter de réduire la quantité à 0
+      }
+    }
+  
+    // Appel à updateCartQuantity uniquement si la quantité est supérieure à 0
+    if (newQuantity > 0) {
+      updateCartQuantity(product.id, newQuantity);
+    }
+  };
+  
 
   // Redirige vers la page de paiement
   const handleOrder = async () => {
@@ -88,10 +107,6 @@ const Cart = () => {
       }
     }
   };
-  
-  
-  
-  
 
   useEffect(() => {
     console.log('Panier mis à jour:', cart);
@@ -124,22 +139,42 @@ const Cart = () => {
                           {product.name}
                         </Card.Title>
                         <p><strong>Prix Unitaire:</strong> {price} €</p>
-                        <p><strong>Quantité:</strong> {product.quantity}</p>
+                        <div className="d-flex align-items-center">
+                          <Button
+                            variant="outline-secondary"
+                            onClick={() => changeQuantity(product.productId, 'decrease')}
+                            style={{ marginRight: '10px' }}
+                          >
+                            -
+                          </Button>
+                          <p><strong>Quantité:</strong> {product.quantity}</p>
+                          <Button
+                            variant="outline-secondary"
+                            onClick={() => changeQuantity(product.productId, 'increase')}
+                            style={{ marginLeft: '10px' }}
+                          >
+                            +
+                          </Button>
+                        </div>
                         <p><strong>Total :</strong> {price * product.quantity} €</p>
                       </Card.Body>
                     </Col>
                     <Col md={2} className="d-flex align-items-center justify-content-center">
-                      <Button
-                        variant="danger"
-                        onClick={() => removeFromCart(product.productId)}
-                        style={{
-                          backgroundColor: '#ff6f00',
-                          borderColor: '#ff6f00',
-                          color: 'white'
-                        }}
-                      >
-                        Supprimer
-                      </Button>
+                    <Button
+  variant="danger"
+  onClick={() => {
+    removeFromCart(product.productId); // Appelle ta fonction de suppression
+    window.location.reload(); // Rafraîchit la page immédiatement après
+  }}
+  style={{
+    backgroundColor: '#ff6f00',
+    borderColor: '#ff6f00',
+    color: 'white'
+  }}
+>
+  Supprimer
+</Button>
+
                     </Col>
                   </Row>
                 </Card>
@@ -155,7 +190,7 @@ const Cart = () => {
             <h4>Total : {totalPrice.toFixed(2)} €</h4>
             <Button
               variant="outline-danger"
-              onClick={clearCartFromBackend} // Appel de clearCartFromBackend
+              onClick={clearCartFromBackend}
               style={{ marginRight: '15px', borderColor: '#ff6f00', color: '#ff6f00' }}
             >
               Vider le panier

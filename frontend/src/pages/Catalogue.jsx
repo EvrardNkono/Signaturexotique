@@ -6,6 +6,7 @@ import ProductGrid from '../components/ProductGrid';
 import Filters from '../components/Filters';
 import { useCart } from '../context/CartContext';
 import { API_URL } from '../config';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const Catalogue = () => {
   const [allProducts, setAllProducts] = useState([]);

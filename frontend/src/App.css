@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Rye&display=swap');
 /* Reset et mise à l'échelle globale */
 * {
   margin: 0;
@@ -87,4 +88,15 @@ header, footer {
 }
 html {
   scroll-behavior: smooth;
+}
+
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Rye', cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
