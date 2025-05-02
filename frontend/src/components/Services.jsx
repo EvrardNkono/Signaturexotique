@@ -6,7 +6,7 @@ import './Services.css';
 const services = [
   {
     title: "Livraison partout en France",
-    description: "Livraison gratuite dans un rayon de 20 km en partant du magasin, puis 5€ de frais entre 21 et 30 km, 10€ de frais de 31 à 40 km. Au-delà, nous expédions avec soin partout en France. 🚚",
+    description: "Livraison gratuite dans un rayon de 20 km en partant du magasin, puis 5€ de frais de 21 à 30 km, 10€ de frais de 31 à 40 km. Au-delà, nous expédions avec soin partout en France. 🚚",
 
     image: "assets/livraison-france.jpg", // Assurez-vous que l'image est dans le dossier public/images
   },
