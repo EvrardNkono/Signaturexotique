@@ -17,7 +17,7 @@ const Footer = () => {
                 <i className="fas fa-map-marker-alt"></i>
                 <div className="cta-text">
                   <h4>TROUVEZ NOUS</h4>
-                  <span>1010 Avenue, sw 54321, Paris</span>
+                  <span>Adresse : 12 rue de draveil, 91260 juvisy-sur-orge</span>
                 </div>
               </div>
             </Col>
