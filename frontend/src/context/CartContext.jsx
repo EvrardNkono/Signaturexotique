@@ -139,7 +139,7 @@ export const CartProvider = ({ children }) => {
         throw new Error('Token manquant, impossible de continuer.');
       }
   
-      const res = await fetch(`${API_URL}/modules/cart/cart/${productId}`, {
+      const res = await fetch(`${API_URL}/modules/cart/cart/${productId}?force=true`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -154,22 +154,11 @@ export const CartProvider = ({ children }) => {
   
       // Mise à jour de l'état local sans refaire une requête GET
       setCart(prevCart => {
-        const updatedCart = prevCart.map(item => {
-          if (item.productId === productId) {
-            // Si la quantité est plus grande que 1, on décrémente la quantité
-            if (item.quantity > 1) {
-              return { ...item, quantity: item.quantity - 1 };
-            } else {
-              // Si la quantité est 1, on supprime le produit
-              return null;
-            }
-          }
-          return item;
-        }).filter(item => item !== null); // Filtre pour retirer les éléments null
-  
-        console.log('Panier mis à jour localement après suppression:', updatedCart);
+        const updatedCart = prevCart.filter(item => item.productId !== productId);
+        console.log('Panier mis à jour localement après suppression complète :', updatedCart);
         return updatedCart;
       });
+      
       
       console.log(`Produit avec ID ${productId} retiré du panier.`);
   
