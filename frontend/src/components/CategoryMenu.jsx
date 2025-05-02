@@ -3,7 +3,7 @@ import './CategoryMenu.css';
 
 const CategoryMenu = ({ categories, onSelectCategory }) => (
   <div className="category-menu">
-    <h3>Catégories</h3>
+    <h3>CATÉGORIES</h3>
     <ul>
       {categories.map((category) => (
         <li key={category} onClick={() => onSelectCategory(category)}>

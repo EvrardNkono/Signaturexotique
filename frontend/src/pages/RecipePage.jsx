@@ -156,7 +156,7 @@ const RecipePage = () => {
 
   return (
     <div className="recipe-page">
-      <h1 className="page-title">Nos Délicieuses Recettes Africaines</h1>
+      <h1 className="page-title">NOS DÉLICIEUSES RECETTES DU MONDE</h1>
       <div className="recipe-list">
         {recipes.map((recipe) => (
           <div key={recipe.id} className="recipe-card">

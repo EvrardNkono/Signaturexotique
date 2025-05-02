@@ -4,19 +4,19 @@ import './Testimonials.css';
 
 const testimonials = [
   {
-    name: 'Client A',
+    name: 'Morgane',
     photo: '/assets/clientA.png',
     rating: 5,
     text: 'Les produits sont frais et de qualité ! Très satisfait.',
   },
   {
-    name: 'Client B',
+    name: 'Keliane',
     photo: '/assets/clientB.png',
     rating: 4,
     text: "J'adore leurs fruits tropicaux, un vrai délice !",
   },
   {
-    name: 'Client C',
+    name: 'Magalie',
     photo: '/assets/clientC.png',
     rating: 5,
     text: 'Livraison rapide, et produits toujours au top !',
@@ -26,7 +26,7 @@ const testimonials = [
 const Testimonials = () => {
   return (
     <Container className="my-5">
-      <h2 className="section-title text-center mb-4">Avis Clients</h2>
+      <h2 className="section-title text-center mb-4">AVIS DES CLIENTS</h2>
       <Row className="justify-content-center">
         {testimonials.map((testimonial, idx) => (
           <Col key={idx} md={4} className="mb-4">

@@ -35,13 +35,12 @@ const ClientRating2 = () => {
     arrows: true,
     autoplay: true, // Ajout de l'autoplay
     autoplaySpeed: 3000, // Temps de changement entre les slides (en ms)
- 
   };
 
   return (
     <section className="customer-feedback">
       <div className="container text-center">
-        <h2 className="section-title">Ce que nos clients disent sur nos promotions 💬</h2>
+        <h2 className="section-title text-uppercase">CE QUE NOS CLIENTS DISENT SUR NOS PROMOTIONS 💬</h2>
         <Slider {...settings}>
           {feedbacks.map((feedback, index) => (
             <div key={index} className="feedback-slider-item">

@@ -11,7 +11,7 @@ const Recommendations = () => {
 
   return (
     <div className="recommendations-wrapper mt-5">
-      <h4 style={{ color: '#ff6f00' }}>Produits recommandés pour vous</h4>
+      <h4 style={{ color: '#ff6f00' }}>PRODUITS RECOMMANDÉS POUR VOUS</h4>
       {uniqueProductIds.map((productId) => (
         <div key={productId} className="mb-4">
           <RecommendationsGrid productId={productId} />

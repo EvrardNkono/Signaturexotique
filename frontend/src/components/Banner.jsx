@@ -11,13 +11,13 @@ const Banner = () => {
         <div className="banner-slide slide1">
           <div className="banner-content slide1-content">
             <h1>
-              Jusqu’à -40% sur notre poivre rare 🌶️
+              JUSQU’À -40% SUR NOTRE POIVRE RARE 🌶️
             </h1>
             <p>
               Originaire de Pendja, Cameroun 🇨🇲, notre poivre blanc et noir est un trésor culinaire. Saisissez l’occasion de relever vos plats avec finesse !
             </p>
             <Button variant="success" as={Link} to="/catalogue">
-              Je découvre le poivre d’exception
+              Je découvre la promo
             </Button>
           </div>
         </div>
@@ -28,7 +28,7 @@ const Banner = () => {
         <div className="banner-slide slide2">
           <div className="banner-content">
             <h1>
-              Faites-vous plaisir ! 🛒
+              FAITES-VOUS PLAISIR ! 🛒
             </h1>
             <p>
               Explorez nos produits et composez votre panier gourmand en quelques clics. C’est bon, rapide et malin !
@@ -45,12 +45,12 @@ const Banner = () => {
         <div className="banner-slide slide3">
           <div className="banner-content">
             <h1>
-              Nos Bons Plans n’attendent pas ! 💥
+              NOS BONS PLANS N’ATTENDENT PAS ! 💥
             </h1>
             <p>
               Produits d’exception, prix mini. Mais attention : nos surprises sont limitées dans le temps… soyez futé !
             </p>
-            <Button variant="dark" as={Link} to="/bons-plans">
+            <Button variant="dark" as={Link} to="/bonplans">
               Voir les bons plans
             </Button>
           </div>
@@ -62,7 +62,7 @@ const Banner = () => {
         <div className="banner-slide slide4">
           <div className="banner-content">
             <h1>
-              Voyagez avec nos recettes 🍲🌍
+              VOYAGEZ AVEC NOS RECETTES 🍲🌍
             </h1>
             <p>
               Laissez-vous inspirer par nos idées gourmandes et donnez du peps à vos repas !
@@ -79,14 +79,16 @@ const Banner = () => {
         <div className="banner-slide slide5">
           <div className="banner-content">
             <h1>
-              Livraison offerte près de chez vous 🚚
+              LIVRAISON OFFERTE PRÈS DE CHEZ VOUS 🚚
             </h1>
             <p>
               Gratuit dans un rayon de 40 km. Expédition partout en Europe selon nos conditions. Pratique, non ?
             </p>
-            <Button variant="primary" as={Link} to="/livraison">
-              En savoir plus
-            </Button>
+            <Button variant="primary" as="a" href="#services">
+  En savoir plus
+</Button>
+
+
           </div>
         </div>
       </Carousel.Item>
