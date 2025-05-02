@@ -45,6 +45,7 @@ router.post('/', authmiddleware, (req, res) => {
 
 // ➖ Supprimer un produit (via productId)
 router.delete('/:productId', authmiddleware, (req, res) => {
+  console.log('DELETE /cart/:productId appelé avec :', req.params.productId);
   const user_id = req.user.id; // Récupérer l'ID de l'utilisateur à partir du token JWT
   const { productId } = req.params;
   console.log('[DELETE] Produit à supprimer :', productId);
