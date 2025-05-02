@@ -14,9 +14,9 @@ const Banner = () => {
               JUSQU’À -40% SUR NOTRE POIVRE RARE 🌶️
             </h1>
             <p>
-              Originaire de Pendja, Cameroun 🇨🇲, notre poivre blanc et noir est un trésor culinaire. Saisissez l’occasion de relever vos plats avec finesse !
+              Originaire de Pendja, Cameroun, notre poivre blanc et noir est un trésor culinaire. Saisissez l’occasion de relever vos plats avec finesse !
             </p>
-            <Button variant="success" as={Link} to="/catalogue">
+            <Button variant="success" as={Link} to="/bonplans">
               Je découvre la promo
             </Button>
           </div>
@@ -82,7 +82,7 @@ const Banner = () => {
               LIVRAISON OFFERTE PRÈS DE CHEZ VOUS 🚚
             </h1>
             <p>
-              Gratuit dans un rayon de 40 km. Expédition partout en Europe selon nos conditions. Pratique, non ?
+              Gratuit dans un rayon de 20 km. Expédition partout en France et En Europe selon nos conditions. Pratique, non ?
             </p>
             <Button variant="primary" as="a" href="#services">
   En savoir plus

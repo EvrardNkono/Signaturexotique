@@ -6,13 +6,13 @@ import './Services.css';
 const services = [
   {
     title: "Livraison partout en France",
-    description: "Livraison gratuite de 0 à 20 km, puis 5€ entre 21 et 30 km, 10€ de 31 à 40 km. Au-delà, nous expédions avec soin partout en France. 🚚",
+    description: "Livraison gratuite dans un rayon de 20 km en partant du magasin, puis 5€ de frais entre 21 et 30 km, 10€ de frais de 31 à 40 km. Au-delà, nous expédions avec soin partout en France. 🚚",
 
     image: "assets/livraison-france.jpg", // Assurez-vous que l'image est dans le dossier public/images
   },
   {
     title: "Expédition en Europe",
-    description: "Nous expédions également nos produits dans toute l'Europe avec un service fiable, rapide, soigné et toujours à l'écoute de vos besoins. 🌍",
+    description: "Nous expédions également nos produits dans toute l'Europe avec un service fiable, rapide, soigné et toujours à l'écoute de vos besoins alors n'attendez pas commendez chez nous. 🌍",
     image: "assets/expedition-europe.jpg", // Assurez-vous que l'image est dans le dossier public/images
   },
 ];
