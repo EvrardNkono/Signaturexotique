@@ -15,7 +15,7 @@ if (!fs.existsSync(uploadDir)) {
 
 // Middleware
 app.use(cors());
-app.options('*', cors()); // Pour gérer les requêtes preflight
+
 app.use(express.json()); // Suffit, plus besoin de body-parser
 app.use('/uploads', express.static(uploadDir)); // Sert les images
 
