@@ -60,7 +60,7 @@ const Footer = () => {
                 </div>
                 <div className="signature-logo mt-3">
                   <img src="assets/signature.png" alt="Logo Signature Exotique" style={{ maxWidth: '150px', height: 'auto' }} />
-                  <p style={{ color: 'white', marginTop: '10px' }}>Notre marque d'épices Signature Exotique</p>
+                  <p style={{ color: 'white', marginTop: '10px' }}>Notre marque Signature Exotique</p>
                 </div>
               </div>
             </Col>
