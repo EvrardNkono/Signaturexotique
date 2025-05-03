@@ -58,3 +58,42 @@ h1, h2, h3, .section-title, .card-title {
     color: #333333;
   }
   
+  .services-section {
+    padding: 50px 0;
+    text-align: center;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 30px;
+  }
+  
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 350px; /* Cette valeur s'ajustera selon la taille de la carte la plus grande */
+  }
+  
+  .service-card img {
+    max-height: 150px; /* Garde les images d'une taille raisonnable */
+    object-fit: cover; /* Pour que les images s'ajustent bien à la taille du conteneur */
+  }
+  
+  .service-card .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .service-card .card-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .service-card .card-text {
+    font-size: 0.9rem;
+    flex-grow: 1;
+  }
+  

@@ -16,14 +16,14 @@ const ProductsSection = () => (
           <Carousel.Item>
             <img
               className="d-block w-100 rounded shadow"
-              src="/assets/aa (1).jpg"
+              src="/assets/aa (11).jpg"
               alt="Produit exotique 1"
             />
           </Carousel.Item>
           <Carousel.Item>
             <img
               className="d-block w-100 rounded shadow"
-              src="/assets/aa (2).jpg"
+              src="/assets/aa (22).jpg"
               alt="Produit exotique 2"
             />
           </Carousel.Item>
@@ -37,7 +37,7 @@ const ProductsSection = () => (
           <Carousel.Item>
             <img
               className="d-block w-100 rounded shadow"
-              src="/assets/aa (4).jpg"
+              src="/assets/aa (44).jpg"
               alt="Produit exotique 4"
             />
           </Carousel.Item>
