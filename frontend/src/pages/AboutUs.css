@@ -1,92 +1,105 @@
-@import url('https://fonts.googleapis.com/css2?family=Rye&display=swap');
-
 .about-us-container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fff;
-  color: #111;
-  padding: 40px 0;
-}
-
-.about-us-section {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin: 60px auto;
-  max-width: 1200px;
-  padding: 0 20px;
-}
-
-.about-us-section.reverse {
-  flex-direction: row-reverse;
-}
-
-.about-us-text {
-  flex: 1;
-  padding: 20px;
-}
-
-.about-us-text h2,
-.about-us-cta h3 {
-  font-family: 'Rye', cursive;
-  font-size: 3rem;
-  text-transform: uppercase;
-  color: #ff6600;
-  letter-spacing: 1px;
-}
-
-
-.about-us-text p {
-  font-size: 1.1rem;
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-
-.about-us-image {
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.about-us-image img {
-  max-width: 100%;
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.about-us-cta {
-  text-align: center;
-  background-color: #000;
-  color: white;
-  padding: 60px 20px;
-}
-
-.about-us-cta h3 {
-  font-family: 'Amatic SC', cursive;
-  font-size: 2.5rem;
-  color: #ff6600;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.about-us-cta p {
-  font-size: 1.1rem;
-  margin-bottom: 30px;
-}
-
-.about-us-cta button {
-  background-color: #ff6600;
-  color: #fff;
-  padding: 14px 28px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.about-us-cta button:hover {
-  background-color: #e65c00;
-}
+    padding: 3rem 2rem;
+    max-width: 1100px;
+    margin: auto;
+  }
+  
+  .accordion-section {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
+  }
+  
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    background-color: #fff9f3;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  
+  .accordion-header:hover {
+    background-color: #ffe6cc;
+  }
+  
+  .accordion-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #e67e22;
+  }
+  
+  .accordion-content {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding: 1rem 0;
+    gap: 1rem;
+  }
+  
+  .accordion-image {
+    flex: 1 1 300px;
+    text-align: center;
+  }
+  
+  .accordion-image img {
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .accordion-text {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .accordion-text p {
+    font-size: 1.1rem;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  .accordion-text blockquote {
+    font-style: italic;
+    background-color: #fff4e6;
+    padding: 1rem;
+    border-left: 4px solid #e67e22;
+    border-radius: 6px;
+    color: #6a3f14;
+  }
+  
+  .about-us-cta {
+    background: #fff4e6;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 4rem;
+  }
+  
+  .about-us-cta h3 {
+    font-size: 1.6rem;
+    color: #e67e22;
+  }
+  
+  .about-us-cta p {
+    font-size: 1.1rem;
+    margin: 1rem 0;
+  }
+  
+  .about-us-cta button {
+    background-color: #e67e22;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  
+  .about-us-cta button:hover {
+    background-color: #cf711f;
+  }
+  

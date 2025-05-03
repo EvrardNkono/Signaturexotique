@@ -1,0 +1,54 @@
+.biography-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+  }
+  
+  .biography-images-top,
+  .biography-images-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .biography-image {
+    width: 32%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .biography-text p {
+    font-size: 1.1em;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    color: #444;
+    text-align: justify;
+  }
+  
+  .biography-text p:last-child {
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .biography-images-top,
+    .biography-images-bottom {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .biography-image {
+      width: 90%;
+      height: auto;
+    }
+  
+    .biography-text p {
+      font-size: 1em;
+    }
+  }
+  
