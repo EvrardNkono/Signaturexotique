@@ -87,6 +87,7 @@ const Login = () => {
         console.log(data.token);
         login(data.token);
         setMessage(data.message);
+        window.location.reload();
         navigate(from, { replace: true });
       } else {
         setError(data.error || 'Une erreur inconnue est survenue.');

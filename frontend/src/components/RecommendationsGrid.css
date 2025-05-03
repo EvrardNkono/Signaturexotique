@@ -35,3 +35,14 @@
     margin-top: auto; /* Pousse le bouton vers le bas de la carte */
   }
   
+  .recommendation-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .recommendation-card {
+    width: 100%;
+    max-width: 300px;
+  }
+  
