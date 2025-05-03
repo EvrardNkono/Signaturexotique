@@ -46,19 +46,26 @@ const Footer = () => {
           <Row>
             <Col xl={4} lg={4} className="mb-50">
               <div className="footer-widget">
-                <div className="footer-logo">
-                  <Link to="/"><img src="assets/logo.png" className="img-fluid" alt="logo" /></Link>
-                </div>
-                <div className="footer-text">
-                  <p>Meka France, spécialiste des produits exotiques et agroalimentaires d’Afrique, d’Asie et des Caraïbes.</p>
-                </div>
-                <div className="footer-social-icon">
+              <div className="footer-logo">
+  <Link to="/"><img src="assets/logo.png" className="img-fluid" alt="logo Meka France" /></Link>
+</div>
+<div className="footer-text">
+  <p>Meka France, spécialiste des produits exotiques et agroalimentaires d’Afrique, d’Asie et des Caraïbes.</p>
+</div>
+<div className="footer-social-icon">
   <span>Suivez-nous</span>
   <a href="#"><i className="fab fa-facebook-f facebook-bg"></i></a>
   <a href="#"><i className="fab fa-tiktok tiktok-bg"></i></a>
   <a href="#"><i className="fab fa-instagram instagram-bg"></i></a>
   <a href="#"><i className="fab fa-snapchat-ghost snapchat-bg"></i></a>
 </div>
+{/* Logo Signature Exotique */}
+<div className="signature-logo mt-3">
+  <img src="assets/signature.png" alt="Logo Signature Exotique" style={{ maxWidth: '150px', height: 'auto' }} />
+  <p style={{ color: 'white', marginTop: '10px' }}>Notre marque d'épice Signature Exotique</p>
+</div>
+
+                
 
               </div>
             </Col>

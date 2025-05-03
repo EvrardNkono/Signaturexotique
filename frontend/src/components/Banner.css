@@ -77,6 +77,10 @@
 .slide5 {
   background-image: url('/assets/13 (5).png');
 }
+.slide6 {
+  background-image: url('/assets/13 (6).png');
+}
+
 
 /* Responsive - Petits écrans */
 @media (max-width: 768px) {
@@ -95,6 +99,10 @@
   .slide5 {
     background-image: url('/assets/12 (3).png');
   }
+  .slide6 {
+    background-image: url('/assets/12 (6).png');
+  }
+
 
   .banner-content h1 {
     font-size: 2rem;

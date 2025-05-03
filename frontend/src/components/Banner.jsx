@@ -93,6 +93,26 @@ const Banner = () => {
         </div>
       </Carousel.Item>
 
+    {/* Slide 6 - Signature Exotique */}
+<Carousel.Item>
+  <div className="banner-slide slide6"> {/* ou slide-signature */}
+    <div className="banner-content">
+      <h1>
+        UNE NOUVELLE SAVEUR ARRIVE DANS VOTRE CUISINE 🌿
+      </h1>
+      <p>
+        Découvrez <strong>Signature Exotique</strong>, notre propre gamme d’épices artisanales pour transformer chaque plat en voyage culinaire. 
+        Des mélanges savamment dosés, des arômes puissants, et un goût d’ailleurs… bientôt disponibles !
+      </p>
+      <Button variant="info" as={Link} to="/newsletter">
+        Je découvre
+      </Button>
+    </div>
+  </div>
+</Carousel.Item>
+
+
+
     </Carousel>
   );
 };

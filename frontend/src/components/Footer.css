@@ -142,3 +142,11 @@
 .footer-menu ul li a:hover {
   color: #ff6600;
 }
+
+.signature-logo img {
+  transition: transform 0.3s ease-in-out;
+}
+
+.signature-logo img:hover {
+  transform: scale(1.05);
+}
