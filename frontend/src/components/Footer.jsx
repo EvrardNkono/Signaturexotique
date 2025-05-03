@@ -1,7 +1,4 @@
-
 import './Footer.css';
-
-
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -17,7 +14,7 @@ const Footer = () => {
                 <i className="fas fa-map-marker-alt"></i>
                 <div className="cta-text">
                   <h4>TROUVEZ NOUS</h4>
-                  <span>Adresse : 12 rue de draveil, 91260 juvisy-sur-orge</span>
+                  <span>Adresse : 12 rue de Draveil, 91260 Juvisy-sur-Orge</span>
                 </div>
               </div>
             </Col>
@@ -46,27 +43,25 @@ const Footer = () => {
           <Row>
             <Col xl={4} lg={4} className="mb-50">
               <div className="footer-widget">
-              <div className="footer-logo">
-  <Link to="/"><img src="assets/logo.png" className="img-fluid" alt="logo Meka France" /></Link>
-</div>
-<div className="footer-text">
-  <p>Meka France, spécialiste des produits exotiques et agroalimentaires d’Afrique, d’Asie et des Caraïbes.</p>
-</div>
-<div className="footer-social-icon">
-  <span>Suivez-nous</span>
-  <a href="#"><i className="fab fa-facebook-f facebook-bg"></i></a>
-  <a href="#"><i className="fab fa-tiktok tiktok-bg"></i></a>
-  <a href="#"><i className="fab fa-instagram instagram-bg"></i></a>
-  <a href="#"><i className="fab fa-snapchat-ghost snapchat-bg"></i></a>
-</div>
-{/* Logo Signature Exotique */}
-<div className="signature-logo mt-3">
-  <img src="assets/signature.png" alt="Logo Signature Exotique" style={{ maxWidth: '150px', height: 'auto' }} />
-  <p style={{ color: 'white', marginTop: '10px' }}>Notre marque d'épice Signature Exotique</p>
-</div>
-
-                
-
+                <div className="footer-logo">
+                  <Link to="/">
+                    <img src="assets/logo.png" className="img-fluid" alt="logo Meka France" />
+                  </Link>
+                </div>
+                <div className="footer-text">
+                  <p>Meka France, spécialiste des produits exotiques et agroalimentaires d’Afrique, d’Asie et des Caraïbes.</p>
+                </div>
+                <div className="footer-social-icon">
+                  <span>Suivez-nous</span>
+                  <a href="#"><i className="fab fa-facebook-f facebook-bg"></i></a>
+                  <a href="#"><i className="fab fa-tiktok tiktok-bg"></i></a>
+                  <a href="#"><i className="fab fa-instagram instagram-bg"></i></a>
+                  <a href="#"><i className="fab fa-snapchat-ghost snapchat-bg"></i></a>
+                </div>
+                <div className="signature-logo mt-3">
+                  <img src="assets/signature.png" alt="Logo Signature Exotique" style={{ maxWidth: '150px', height: 'auto' }} />
+                  <p style={{ color: 'white', marginTop: '10px' }}>Notre marque d'épices Signature Exotique</p>
+                </div>
               </div>
             </Col>
 
@@ -94,12 +89,15 @@ const Footer = () => {
                 <div className="footer-text mb-25">
                   <p>Recevez nos actus et bons plans, inscrivez-vous ci-dessous.</p>
                 </div>
-                <div className="subscribe-form">
-                  <form action="#">
-                    <input type="text" placeholder="Email" />
-                    <button><i className="fab fa-telegram-plane"></i></button>
-                  </form>
-                </div>
+                <div className="subscribe-form" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+  <form action="#">
+    <input type="email" placeholder="Email" required style={{ padding: '10px', fontSize: '16px', width: '100%', maxWidth: '300px', borderRadius: '5px' }} />
+    <button type="submit" style={{ backgroundColor: 'orange', color: 'white', padding: '10px 20px', fontSize: '16px', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px', width: '100%', maxWidth: '300px' }}>
+      S'inscrire
+    </button>
+  </form>
+</div>
+
               </div>
             </Col>
           </Row>
