@@ -215,15 +215,26 @@ export const CartProvider = ({ children }) => {
 
   const clearCartFromBackend = async () => {
     try {
+      const token = localStorage.getItem('authToken');
+  
       const res = await fetch(`${API_URL}/modules/cart/cart`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
-
+  
       if (!res.ok) throw new Error('Erreur lors du vidage du panier');
-
-      const updatedCart = await fetch(`${API_URL}/modules/cart/cart`).then(res => res.json());
+  
+      const updatedCart = await fetch(`${API_URL}/modules/cart/cart`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      }).then(res => res.json());
+  
       console.log('Données du backend après vidage:', updatedCart);
-      
+  
       if (Array.isArray(updatedCart)) {
         setCart(updatedCart);
       } else {
@@ -233,6 +244,7 @@ export const CartProvider = ({ children }) => {
       console.error(err);
     }
   };
+  
 
   return (
     <CartContext.Provider value={{

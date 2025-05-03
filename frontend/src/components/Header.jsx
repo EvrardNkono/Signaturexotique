@@ -83,6 +83,7 @@ const Header = () => {
           
           // Redirection vers la page d'accueil
           navigate('/');
+          window.location.reload(); // 🔄 Rechargement complet de la page
           
           // Fermer le menu de navigation
           handleLinkClick();
