@@ -1,0 +1,74 @@
+.pourquoi-commander {
+    background: linear-gradient(135deg, #ffa500 0%, #fff8e1 100%);
+    padding: 60px 20px;
+    color: #2d2d2d;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .section-title {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #000;
+  }
+  
+  .section-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 50px;
+    color: #444;
+  }
+  
+  .avantages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+  
+  .avantage {
+    background: white;
+    padding: 30px 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .avantage:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .icon {
+    font-size: 3rem;
+    color: #ffa500;
+    margin-bottom: 15px;
+  }
+  
+  .avantage h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #222;
+  }
+  
+  .avantage p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .cta {
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: #000;
+    color: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  

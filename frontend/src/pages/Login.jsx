@@ -104,7 +104,10 @@ const Login = () => {
       </div>
 
       <div className="login-form">
-        <h2>Connexion</h2>
+      <h2 className="text-center mb-4 text-uppercase" style={{ fontFamily: 'Rye, sans-serif' }}>
+ CONNEXION
+</h2>
+
         {message && <p>{message}</p>}
         {error && <p className="error">{error}</p>}
 

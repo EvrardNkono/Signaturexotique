@@ -1,0 +1,39 @@
+/* SocialFollow.css */
+.social-follow {
+    position: fixed;
+    bottom: 20px; /* Position fixe en bas de la page */
+    right: 20px;  /* Position fixe à droite de la page */
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* Centrer les icônes horizontalement */
+    z-index: 9999; /* S'assurer que les icônes sont toujours au-dessus de tout autre élément */
+  }
+  
+  .social-icon {
+    font-size: 2.5rem; /* Taille des icônes */
+    color: #fff;  /* Couleur par défaut des icônes */
+    margin: 10px 0;  /* Espacement entre les icônes */
+    transition: color 0.3s ease;  /* Effet de transition sur la couleur au survol */
+  }
+  
+  .social-icon:hover {
+    color: #00aced; /* Effet hover (bleu clair, peut être ajusté pour chaque icône) */
+  }
+  
+  /* Couleurs spécifiques pour chaque icône */
+  .social-follow a:nth-child(1) .social-icon {
+    color: #3b5998; /* Facebook */
+  }
+  
+  .social-follow a:nth-child(2) .social-icon {
+    color: #fffc00; /* Snapchat */
+  }
+  
+  .social-follow a:nth-child(3) .social-icon {
+    color: #e4405f; /* Instagram */
+  }
+  
+  .social-follow a:nth-child(4) .social-icon {
+    color: #008d47; /* TikTok */
+  }
+  

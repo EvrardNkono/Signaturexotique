@@ -60,7 +60,10 @@ const Register = () => {
   return (
     <div className="form-page">
       <div className="form-container">
-        <h2>S'inscrire</h2>
+      <h2 className="text-center mb-4 text-uppercase" style={{ fontFamily: 'Rye, sans-serif' }}>
+  S'INSCRIRE
+</h2>
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <div className="icon-wrapper"><FaUser /></div>

@@ -1,0 +1,113 @@
+.newsletter-page {
+    background-color: #f9f9f9;
+    padding: 50px 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .title {
+    font-size: 3rem;
+    text-align: center;
+    color: #ff5722; /* Orange */
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .intro {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+  }
+  
+  .bloc {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    color: rgb(255, 255, 255);
+    padding: 60px 30px;
+    margin-bottom: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .bloc:hover {
+    transform: scale(1.05);
+  }
+  
+  .bloc-content {
+    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre pour améliorer la lisibilité */
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .bloc h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+  
+  .bloc p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .bloc ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .bloc ul li {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  
+  .teaser-banner {
+    font-size: 1.2rem;
+    color: #ff5722;
+    font-weight: bold;
+    padding: 15px;
+    border: 2px dashed #ff5722;
+    margin-top: 20px;
+    display: inline-block;
+  }
+  
+  @media (max-width: 768px) {
+    .bloc {
+      padding: 40px 20px;
+    }
+  
+    .bloc h2 {
+      font-size: 1.5rem;
+    }
+  
+    .bloc p {
+      font-size: 0.9rem;
+    }
+  
+    .teaser-banner {
+      font-size: 1rem;
+    }
+  }
+  
+  .bloc-recipes {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    position: relative;
+  }
+  
+  .bloc-recipes .bloc-content {
+    background: rgba(0, 0, 0, 0.5); /* Pour un bon contraste */
+    padding: 2rem;
+    border-radius: 10px;
+  }
+  
