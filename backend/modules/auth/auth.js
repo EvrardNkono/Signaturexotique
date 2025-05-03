@@ -56,7 +56,7 @@ router.post('/login', (req, res) => {
       const token = jwt.sign(
         { email: user.email, id: user.id, role: user.role },  // Payload (information de l'utilisateur)
         process.env.JWT_SECRET, // Clé secrète (mettre ça dans .env)
-        { expiresIn: '1h' } // Durée de validité du token (ici 1 heure)
+        { expiresIn: '7d' } // Durée de validité du token (ici 1 heure)
       );
 
       // On exclut le mot de passe avant de répondre
