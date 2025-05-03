@@ -42,7 +42,7 @@
 
 .slick-prev::after, .slick-next::after {
   font-size: 18px;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .slick-prev::after {

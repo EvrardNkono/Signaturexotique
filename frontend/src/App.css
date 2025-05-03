@@ -100,3 +100,7 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+/* Dans App.css ou ton fichier global CSS */
+.MuiTypography-root {
+  font-family: 'Rye', sans-serif;
+}

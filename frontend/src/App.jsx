@@ -24,6 +24,8 @@ import RecipePage from './pages/RecipePage';
 import AboutUs from './pages/AboutUs';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
+import SocialFollow from './components/SocialFollow'; // Ajuste le chemin si nécessaire
+import NewsletterPage from './pages/NewsletterPage';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
@@ -45,7 +47,7 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/recettes" element={<RecipePage />} />
                 <Route path="/aboutus" element={<AboutUs />} />
-
+                <Route path="/newsletter" element={<NewsletterPage />} />
                 {/* ✅ Route protégée pour le dashboard */}
                 <Route 
                   path="/dashboard" 
@@ -68,6 +70,7 @@ const App = () => {
               </Routes>
             </main>
             <Footer />
+            <SocialFollow />
           </Router>
         </SearchProvider>
       </CartProvider>

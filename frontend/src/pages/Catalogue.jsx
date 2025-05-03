@@ -57,9 +57,10 @@ const Catalogue = () => {
 
   return (
     <Container className="my-5">
-      <Typography variant="h4" gutterBottom>
-        CATALOGUE DE PRODUITS
-      </Typography>
+      <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Rye, sans-serif' }}>
+  CATALOGUE DE PRODUITS
+</Typography>
+
 
       {errorMessage && (
         <Alert variant="danger">

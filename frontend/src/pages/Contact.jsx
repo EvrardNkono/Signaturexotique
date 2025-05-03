@@ -61,7 +61,10 @@ const Contact = () => {
           </Col>
           <Col md={6}>
             <div className="contact-form p-4 rounded shadow">
-              <h2 className="text-center mb-4 text-uppercase">CONTACTEZ-NOUS</h2>
+            <h2 className="text-center mb-4 text-uppercase" style={{ fontFamily: 'Rye, sans-serif' }}>
+  CONTACTEZ-NOUS
+</h2>
+
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formName" className="mb-3">
                   <Form.Label>Nom</Form.Label>

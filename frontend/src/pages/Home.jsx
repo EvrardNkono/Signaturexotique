@@ -7,6 +7,7 @@ import ProductsSection from '../components/ProductsSection';
 import CustomCarousel from '../components/CustomCarousel';
 import Services from '../components/Services';
 import Testimonials from '../components/Testimonials';
+import PourquoiCommander from '../components/PourquoiCommander';
 import { API_URL } from '../config';
 
 const Home = ({ clientType }) => {
@@ -54,12 +55,13 @@ const Home = ({ clientType }) => {
       )}
 
       <Container className="mt-4">
+      
         <ProductsSection />
         <CustomCarousel />
         <section id="services">
   <Services />
 </section>
-
+<PourquoiCommander />
         <Testimonials />
       </Container>
     </div>
