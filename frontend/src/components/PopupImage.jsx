@@ -3,49 +3,41 @@ import { API_URL } from '../config'; // ou le bon chemin relatif
 import './PopupImage.css';
 
 const PopupImage = () => {
-  const [popupData, setPopupData] = useState(null);
-  const [visible, setVisible] = useState(true);
+  const [popups, setPopups] = useState([]);
+  const [currentPopup, setCurrentPopup] = useState(0);
 
   useEffect(() => {
-    const fetchPopup = async () => {
+    const fetchPopups = async () => {
       try {
-        const response = await fetch(`${API_URL}/popup`);
+        const response = await fetch(`${API_URL}/popups`);
         const data = await response.json();
-        setPopupData(data);
+        setPopups(data);
       } catch (err) {
-        console.error('Erreur lors du chargement du popup :', err);
+        console.error('Erreur lors du chargement des popups :', err);
       }
     };
 
-    fetchPopup();
-
-    const timerLoop = setInterval(() => {
-      setVisible(true);
-    }, 60000); // réapparaît toutes les 60s
-
-    return () => clearInterval(timerLoop);
+    fetchPopups();
   }, []);
 
   useEffect(() => {
-    if (visible) {
-      const hide = setTimeout(() => {
-        setVisible(false);
-      }, 30000); // reste affiché 30s
-      return () => clearTimeout(hide);
-    }
-  }, [visible]);
+    const interval = setInterval(() => {
+      setCurrentPopup((prev) => (prev + 1) % popups.length); // On boucle à travers les popups
+    }, 10000); // Change de popup toutes les 10 secondes
 
-  if (!popupData || !popupData.image_url || !visible) return null;
+    return () => clearInterval(interval); // Cleanup si besoin
+  }, [popups]);
 
-  
-  console.log("popupData :", popupData);
+  if (popups.length === 0) return null;
+
+  const popup = popups[currentPopup];
 
   return (
     <div className="popup-container">
       <div className="popup-content">
-        <button className="popup-close" onClick={() => setVisible(false)}>✕</button>
-        <img src={`${API_URL}${popupData.image_url}`} alt="Popup" />
-        {popupData.message && <p>{popupData.message}</p>}
+        <button className="popup-close" onClick={() => setPopups([])}>✕</button>
+        <img src={`${API_URL}${popup.image_url}`} alt="Popup" />
+        {popup.message && <p>{popup.message}</p>}
       </div>
     </div>
   );
