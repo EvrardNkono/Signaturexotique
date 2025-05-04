@@ -26,6 +26,7 @@ import Success from './pages/Success';
 import Cancel from './pages/Cancel';
 import SocialFollow from './components/SocialFollow'; // Ajuste le chemin si nécessaire
 import NewsletterPage from './pages/NewsletterPage';
+import PopupImage from './components/PopupImage';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
@@ -69,6 +70,7 @@ const App = () => {
 <Route path="/cancel" element={<Cancel />} />
               </Routes>
             </main>
+            <PopupImage />
             <Footer />
             <SocialFollow />
           </Router>

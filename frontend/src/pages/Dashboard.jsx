@@ -3,6 +3,7 @@ import { Container, Row, Col, Form, Button, Card, Table, Badge } from 'react-boo
 import './AdminPage.css'; // Fichier CSS personnalisé
 import OrderList from '../components/OrderList';
 import { API_URL } from '../config'; 
+import PopupUploader from '../components/PopupUploader'
 
 const AdminPage = () => {
   const [categories, setCategories] = useState([]);
@@ -267,7 +268,7 @@ return (
         </Form>
       </Card.Body>
     </Card>
-
+    <PopupUploader/>
     {/* Section : Créer un Produit */}
     <Card className="admin-section mb-4">
       <Card.Body>

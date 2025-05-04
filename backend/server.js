@@ -31,6 +31,7 @@ const authRoutes = require('./modules/auth/auth');
 const categoryHomeRouter = require('./modules/admin/categoryhome');
 const recommendationRoutes = require('./routes/recommendations');
 const stripeRoutes = require('./modules/payement/stripe'); // adapte selon ton arborescence
+const popupRoutes = require('./modules/admin/popup');
 
 // Utilisation des routes
 app.use('/admin/category', categoryRoutes);
@@ -38,6 +39,7 @@ app.use('/admin/product', productRoutes);
 app.use('/admin', filterRoutes); // Contient le GET /admin/product?...
 // J’active les routes d’authentification sur /auth
 app.use('/auth', authRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
  // Met à jour avec le nouveau nom du fichier
 
@@ -59,7 +61,8 @@ app.use('/admin/search', searchRoutes);  // Utiliser la route de recherche ici
 app.use('/admin/categoryhome', categoryHomeRouter); // Utiliser les routes de catégorie
 app.use('/modules/contact/emailRoutes', emailRoutes);
 app.use('/routes/recommendations', recommendationRoutes);
-
+app.use('/admin', popupRoutes); // pour POST
+app.use('/', popupRoutes); // pour GET /popup
 app.use('/payement', stripeRoutes);
 
 // Lancement du serveur
