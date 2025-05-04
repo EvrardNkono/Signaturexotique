@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { API_URL } from '../config'; // ou le bon chemin relatif
+import { API_URL } from '../config';
 import './PopupImage.css';
 
 const PopupImage = () => {
   const [popups, setPopups] = useState([]);
   const [currentPopup, setCurrentPopup] = useState(0);
+  const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
     const fetchPopups = async () => {
@@ -21,21 +22,32 @@ const PopupImage = () => {
   }, []);
 
   useEffect(() => {
+    if (popups.length === 0) return;
+
     const interval = setInterval(() => {
-      setCurrentPopup((prev) => (prev + 1) % popups.length); // On boucle à travers les popups
+      setCurrentPopup((prev) => (prev + 1) % popups.length);
     }, 10000); // Change de popup toutes les 10 secondes
 
-    return () => clearInterval(interval); // Cleanup si besoin
+    return () => clearInterval(interval);
   }, [popups]);
 
-  if (popups.length === 0) return null;
+  // Gérer la réapparition après fermeture
+  const handleClose = () => {
+    setShowPopup(false);
+
+    setTimeout(() => {
+      setShowPopup(true);
+    }, 30000); // Réaffiche après 30 secondes
+  };
+
+  if (popups.length === 0 || !showPopup) return null;
 
   const popup = popups[currentPopup];
 
   return (
     <div className="popup-container">
       <div className="popup-content">
-        <button className="popup-close" onClick={() => setPopups([])}>✕</button>
+        <button className="popup-close" onClick={handleClose}>✕</button>
         <img src={`${API_URL}${popup.image_url}`} alt="Popup" />
         {popup.message && <p>{popup.message}</p>}
       </div>
