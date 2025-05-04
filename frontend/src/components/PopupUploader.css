@@ -1,0 +1,39 @@
+.popup-upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: #fff;
+    padding: 20px;
+    border: 2px dashed #ff9800;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: 20px auto;
+    font-family: sans-serif;
+  }
+  
+  .popup-upload-form input[type="file"] {
+    margin-bottom: 1rem;
+  }
+  
+  .popup-upload-form button {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .popup-upload-form button:hover {
+    background-color: #e68900;
+  }
+  
+  .popup-upload-form p {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #4caf50;
+  }
+  
