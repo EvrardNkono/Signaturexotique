@@ -1,23 +1,66 @@
-import React, { useState } from 'react';
-import { API_URL } from '../config'; // ou le bon chemin relatif
+import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 import './PopupUploader.css';
 
 const PopupUploader = () => {
-  const [image, setImage] = useState(null);
-  const [message, setMessage] = useState(''); // Message que l'admin souhaite saisir
-  const [responseMessage, setResponseMessage] = useState(''); // Message de réponse après upload
+  const [images, setImages] = useState([null, null, null]);
+  const [messages, setMessages] = useState(['', '', '']);
+  const [existingImages, setExistingImages] = useState(['', '', '']);
+  const [responseMessage, setResponseMessage] = useState('');
+
+  // Récupérer les popups existants au chargement
+  useEffect(() => {
+    const fetchPopups = async () => {
+      try {
+        const res = await fetch(`${API_URL}/popups`);
+        const data = await res.json();
+
+        const imgs = ['', '', ''];
+        const msgs = ['', '', ''];
+
+        data.forEach((popup, index) => {
+          imgs[index] = popup.image_url || '';
+          msgs[index] = popup.message || '';
+        });
+
+        setExistingImages(imgs);
+        setMessages(msgs);
+      } catch (err) {
+        console.error('Erreur récupération popups :', err);
+      }
+    };
+
+    fetchPopups();
+  }, []);
+
+  const handleImageChange = (e, index) => {
+    const newImages = [...images];
+    newImages[index] = e.target.files[0];
+    setImages(newImages);
+  };
+
+  const handleMessageChange = (e, index) => {
+    const newMessages = [...messages];
+    newMessages[index] = e.target.value;
+    setMessages(newMessages);
+  };
 
   const handleUpload = async (e) => {
     e.preventDefault();
 
-    if (!image || !message) {
-      setResponseMessage('Veuillez télécharger une image et ajouter un message.');
-      return;
-    }
-
     const formData = new FormData();
-    formData.append('image', image);
-    formData.append('message', message); // Ajouter le message au formData
+
+    images.forEach((img, index) => {
+      if (img) {
+        formData.append('images', img, `image_${index + 1}`); // image_1, image_2...
+      } else {
+        formData.append(`existing_image_${index + 1}`, existingImages[index]);
+      }
+    });
+
+    messages.forEach((msg, index) => {
+      formData.append(`message_${index + 1}`, msg);
+    });
 
     try {
       const response = await fetch(`${API_URL}/admin/popup`, {
@@ -35,27 +78,43 @@ const PopupUploader = () => {
 
   return (
     <form className="popup-upload-form" onSubmit={handleUpload}>
-      <div>
-        <input 
-          type="file" 
-          accept="image/*" 
-          onChange={e => setImage(e.target.files[0])} 
-        />
-      </div>
+      {[0, 1, 2].map((index) => (
+        <div key={index} style={{ marginBottom: '30px' }}>
+          <h4>Popup {index + 1}</h4>
 
-      <div>
-        <textarea 
-          value={message} 
-          onChange={(e) => setMessage(e.target.value)} 
-          placeholder="Saisissez un message pour le popup" 
-          rows="4"
-          style={{ width: '100%', marginTop: '10px', padding: '10px' }}
-        />
-      </div>
+          <input 
+            type="file" 
+            name={`image_${index + 1}`} 
+            accept="image/*"
+            onChange={(e) => handleImageChange(e, index)} 
+          />
 
-      <button type="submit" style={{ marginTop: '10px' }}>Uploader le popup</button>
+          {existingImages[index] && !images[index] && (
+            <div>
+              <p>Image actuelle :</p>
+              <img 
+                src={existingImages[index]} 
+                alt={`Image ${index + 1}`} 
+                style={{ width: '100px', marginTop: '10px' }} 
+              />
+            </div>
+          )}
 
-      {responseMessage && <p>{responseMessage}</p>} {/* Message de réponse */}
+          <textarea 
+            value={messages[index]} 
+            onChange={(e) => handleMessageChange(e, index)} 
+            placeholder={`Saisissez un message pour le popup ${index + 1}`} 
+            rows="4"
+            style={{ width: '100%', marginTop: '10px', padding: '10px' }}
+          />
+        </div>
+      ))}
+
+      <button type="submit" style={{ marginTop: '10px' }}>
+        Uploader les popups
+      </button>
+
+      {responseMessage && <p>{responseMessage}</p>}
     </form>
   );
 };
