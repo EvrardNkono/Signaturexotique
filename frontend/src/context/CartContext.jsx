@@ -85,49 +85,68 @@ export const CartProvider = ({ children }) => {
   
       console.log('Prix à utiliser :', priceToUse);
   
-      const res = await fetch(`${API_URL}/modules/cart/cart`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // Assurez-vous que le token est bien ajouté ici
-        },
-        body: JSON.stringify({
-          productId: product.id,
-          quantity: 1,
-          price: priceToUse,  
-          clientType,         
-          unitPrice: product.unitPrice,
-          wholesalePrice: product.wholesalePrice
-        }),
-      });
+      // Vérifier si le produit est déjà dans le panier
+      const existingProduct = cart.find(item => item.productId === product.id);
   
-      const data = await res.json();
-      console.log('Réponse du backend:', data);
+      if (existingProduct) {
+        // Si le produit existe, mettre à jour la quantité
+        const updatedCart = cart.map(item =>
+          item.productId === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+        setCart(updatedCart); // Met à jour le panier dans l'état local
   
-      if (!res.ok) {
-        throw new Error(data.error || 'Erreur lors de l’ajout au panier');
-      }
-  
-      const updatedCartResponse = await fetch(`${API_URL}/modules/cart/cart`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const updatedCart = await updatedCartResponse.json();
-      console.log('Réponse du panier mis à jour:', updatedCart);  // Ajoute ceci pour debugger
-
-      if (Array.isArray(updatedCart)) {
-        console.log('Panier mis à jour:', updatedCart);
-        setCart(updatedCart);
+        // Mettre à jour le panier côté backend
+        await updateCartQuantity(existingProduct.id, existingProduct.quantity + 1);
       } else {
-        console.error('Erreur: Le panier mis à jour n\'est pas un tableau.', updatedCart);
+        // Si le produit n'est pas dans le panier, on l'ajoute
+        const res = await fetch(`${API_URL}/modules/cart/cart`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            productId: product.id,
+            quantity: 1,
+            price: priceToUse,  
+            clientType,         
+            unitPrice: product.unitPrice,
+            wholesalePrice: product.wholesalePrice
+          }),
+        });
+  
+        const data = await res.json();
+        console.log('Réponse du backend:', data);
+  
+        if (!res.ok) {
+          throw new Error(data.error || 'Erreur lors de l’ajout au panier');
+        }
+  
+        const updatedCartResponse = await fetch(`${API_URL}/modules/cart/cart`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+  
+        const updatedCart = await updatedCartResponse.json();
+        console.log('Réponse du panier mis à jour:', updatedCart);  // Ajoute ceci pour debugger
+  
+        if (Array.isArray(updatedCart)) {
+          console.log('Panier mis à jour:', updatedCart);
+          setCart(updatedCart);
+        } else {
+          console.error('Erreur: Le panier mis à jour n\'est pas un tableau.', updatedCart);
+        }
       }
     } catch (err) {
       console.error('Erreur:', err);
     }
   };
+  
   
   const removeFromCart = async (productId) => {
     console.log("=== REQUÊTE DE SUPPRESSION VERS BACKEND ===");

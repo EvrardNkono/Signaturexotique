@@ -40,29 +40,35 @@ router.post(
   checkRole(['admin', 'superadmin']),
   upload.single('image'),
   async (req, res) => {
+    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction, lotQuantity, lotPrice } = req.body;
+    const image = req.file ? req.file.filename : null;
+
+    // Validation des champs obligatoires
+    if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
+      return res.status(400).json({ message: 'Tous les champs sont requis.' });
+    }
+
     try {
-      const {
+      // Création de l'insertion SQL en ajoutant les champs de lot seulement s'ils existent
+      const insertSql = `
+        INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction, lotQuantity, lotPrice)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+
+      const result = await db.run(insertSql, [
         name,
         category,
         unitPrice,
         wholesalePrice,
+        image,
         unit,
         wholesaleUnit,
-        reduction // 👈 Ajouté ici
-      } = req.body;
+        reduction || 0,  // Si aucune réduction n'est fournie, on garde 0 comme valeur par défaut
+        lotQuantity || null,  // Si la quantité de lot est vide, on la garde à null
+        lotPrice || null,     // Si le prix de lot est vide, on le garde à null
+      ]);
 
-      const image = req.file ? req.file.filename : null;
-
-      if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
-        return res.status(400).json({ message: 'Tous les champs sont requis.' });
-      }
-
-      const result = await db.run(
-        `INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction || 0]
-      );
-
+      // Réponse après création
       res.status(201).json({
         message: 'Produit créé avec succès',
         product: {
@@ -74,6 +80,8 @@ router.post(
           unit,
           wholesaleUnit,
           reduction: reduction || 0,
+          lotQuantity: lotQuantity || null,  // Si le champ est non défini, il sera `null`
+          lotPrice: lotPrice || null,        // Idem pour le prix de lot
           imageURL: image ? `/uploads/${image}` : null
         }
       });
@@ -85,6 +93,7 @@ router.post(
   }
 );
 
+
   
 
 /**
@@ -95,31 +104,36 @@ router.post(
  * Accès : Public
  */
 router.get('/', async (req, res) => {
-    try {
-        const { nom, categorie, prixMax } = req.query;
+  try {
+    const { nom, categorie, prixMax } = req.query;
 
-        let query = 'SELECT * FROM products WHERE 1=1';
+    let query = 'SELECT * FROM products WHERE 1=1';
 
-        if (nom) {
-            query += ` AND nom LIKE '%${nom}%'`;
-        }
-
-        if (categorie) {
-            query += ` AND categorie = '${categorie}'`;
-        }
-
-        if (prixMax) {
-            query += ` AND prix <= ${prixMax}`;
-        }
-
-        const products = await dbAll(query);
-        res.json(products);
-
-    } catch (err) {
-        console.error('Erreur récupération produits :', err);
-        res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
+    // Filtrage par nom (colonne "name")
+    if (nom) {
+      query += ` AND name LIKE '%${nom}%'`;
     }
+
+    // Filtrage par catégorie (colonne "category")
+    if (categorie) {
+      query += ` AND category = '${categorie}'`;
+    }
+
+    // Filtrage par prix max (colonne "unitPrice")
+    if (prixMax) {
+      query += ` AND unitPrice <= ${prixMax}`;
+    }
+
+    const products = await dbAll(query);
+    res.json(products);
+
+  } catch (err) {
+    console.error('Erreur récupération produits :', err);
+    res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
+  }
 });
+
+
 
 /**
  * ============================================
@@ -135,10 +149,10 @@ router.put(
   upload.single('image'),
   async (req, res) => {
     const { id } = req.params;
-    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction } = req.body;
+    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction, lotQuantity, lotPrice } = req.body;
     const image = req.file ? req.file.filename : null;
 
-    // Validation des champs
+    // Validation des champs obligatoires
     if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
       return res.status(400).json({ message: 'Tous les champs sont requis.' });
     }
@@ -151,15 +165,18 @@ router.put(
         return res.status(404).json({ message: 'Produit non trouvé' });
       }
 
-      // Prépare la requête UPDATE avec la réduction
+      // Préparation de l'update
       const updateSql = `
         UPDATE products
-        SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, reduction = ?
+        SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, reduction = ?, 
+            lotQuantity = ?, lotPrice = ?
         WHERE id = ?
       `;
 
+      // Si image existe, on utilise la nouvelle image, sinon on garde l'existante
       const imageToUpdate = image || product.image;
 
+      // Mise à jour dans la base de données
       await db.run(updateSql, [
         name,
         category,
@@ -168,11 +185,13 @@ router.put(
         imageToUpdate,
         unit,
         wholesaleUnit,
-        reduction || 0,  // Si aucune réduction n'est fournie, on garde 0 comme valeur par défaut
+        reduction || 0,  // Si la réduction est vide, on la garde à 0
+        lotQuantity || null,  // Si lotQuantity est vide, on le garde à null
+        lotPrice || null,     // Idem pour lotPrice
         id
       ]);
 
-      // Répond avec les infos mises à jour
+      // Réponse après mise à jour
       res.status(200).json({
         message: 'Produit mis à jour avec succès',
         product: {
@@ -183,17 +202,21 @@ router.put(
           wholesalePrice,
           unit,
           wholesaleUnit,
-          reduction: reduction || 0,  // Inclut la réduction dans la réponse
+          reduction: reduction || 0,
+          lotQuantity: lotQuantity || null,  // Si le champ lotQuantity n'est pas fourni, il est null
+          lotPrice: lotPrice || null,        // Idem pour lotPrice
           imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null
         }
       });
 
     } catch (error) {
-      console.error('Erreur mise à jour produit :', error);
+      console.error('Erreur lors de la mise à jour du produit :', error);
       res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 );
+
+
 
   
 
@@ -206,39 +229,63 @@ router.put(
  */
 router.post('/cart', verifyJWT, async (req, res) => {
   const { cart } = req.body;
-  const userId = req.user.id; // Utilisation de l'ID utilisateur à partir du token JWT
+  const userId = req.user.id;
 
-  // Vérifier que le panier existe
-  if (!cart || !cart.length) {
+  if (!Array.isArray(cart) || cart.length === 0) {
     return res.status(400).json({ message: 'Le panier est vide.' });
   }
 
   try {
-    // Pour chaque produit du panier, soit on l'ajoute soit on met à jour la quantité
     for (const item of cart) {
-      const { productId, quantity, price, clientType } = item;
+      const { productId, quantity: incomingQty, clientType } = item;
 
-      // Vérifier si le produit est déjà dans le panier de cet utilisateur
-      const existingItem = await db.get('SELECT * FROM cart WHERE user_id = ? AND productId = ?', [userId, productId]);
+      const product = await db.get('SELECT * FROM products WHERE id = ?', [productId]);
+      if (!product) continue;
 
-      if (existingItem) {
-        // Si le produit existe déjà, on met à jour la quantité
-        const updatedQuantity = existingItem.quantity + quantity;
+      const unitPrice = clientType === 'retail' ? product.price_retail : product.price_wholesale;
+      const lotQty = product.lot_quantity;
+      const lotPrice = product.lot_price;
 
-        await db.run('UPDATE cart SET quantity = ? WHERE user_id = ? AND productId = ?', [updatedQuantity, userId, productId]);
+      const existing = await db.get(
+        'SELECT * FROM cart WHERE user_id = ? AND productId = ?',
+        [userId, productId]
+      );
+
+      let totalQty = incomingQty;
+      if (existing) totalQty += existing.quantity;
+
+      let finalTotalPrice;
+      if (lotQty && lotPrice && totalQty >= lotQty) {
+        const lots = Math.floor(totalQty / lotQty);
+        const rest = totalQty % lotQty;
+        finalTotalPrice = lots * lotPrice + rest * unitPrice;
       } else {
-        // Sinon on l'ajoute
-        await db.run('INSERT INTO cart (productId, quantity, price, clientType, user_id) VALUES (?, ?, ?, ?, ?)', 
-          [productId, quantity, price, clientType, userId]);
+        finalTotalPrice = totalQty * unitPrice;
+      }
+
+      const finalUnitPrice = finalTotalPrice / totalQty;
+
+      if (existing) {
+        await db.run(
+          'UPDATE cart SET quantity = ?, price = ? WHERE user_id = ? AND productId = ?',
+          [totalQty, finalUnitPrice, userId, productId]
+        );
+      } else {
+        await db.run(
+          'INSERT INTO cart (productId, quantity, price, clientType, user_id) VALUES (?, ?, ?, ?, ?)',
+          [productId, incomingQty, finalUnitPrice, clientType, userId]
+        );
       }
     }
 
-    res.status(200).json({ message: 'Panier mis à jour avec succès.' });
+    res.status(200).json({ message: 'Panier mis à jour avec les bons prix (lot inclus).' });
   } catch (err) {
-    console.error('Erreur lors de la mise à jour du panier:', err);
+    console.error('Erreur panier:', err);
     res.status(500).json({ message: 'Erreur serveur.' });
   }
 });
+
+
 
 
 
