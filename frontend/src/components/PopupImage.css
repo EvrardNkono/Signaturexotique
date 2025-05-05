@@ -1,7 +1,7 @@
 .popup-container {
   position: fixed;
-  bottom: 30px;
-  left: 30px; /* 🔄 changé de right à left */
+  top: 200px; /* Positionné en haut sur grand écran */
+  left: 30px; /* Toujours sur la gauche */
   background: white;
   border: 2px solid #ff9800;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -66,5 +66,13 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Media Query pour les petits écrans */
+@media (max-width: 768px) {
+  .popup-container {
+    top: auto;
+    bottom: 30px;  /* Positionné en bas sur petit écran */
   }
 }

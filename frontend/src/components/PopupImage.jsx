@@ -37,7 +37,7 @@ const PopupImage = () => {
 
     setTimeout(() => {
       setShowPopup(true);
-    }, 30000); // Réaffiche après 30 secondes
+    }, 100000); // Réaffiche après 30 secondes
   };
 
   if (popups.length === 0 || !showPopup) return null;
