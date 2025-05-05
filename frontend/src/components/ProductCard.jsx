@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { Card } from 'react-bootstrap';
 import './ProductCard.css';
-import StarRating from './StarRating'; // Import du composant 
+import StarRating from './StarRating'; // Import du composant
 import { API_URL } from '../config';
 
 const ProductCard = ({ product, clientType }) => {
   const { addToCart, updateCartQuantity, removeFromCart, cart } = useCart();
   const [flipped, setFlipped] = useState(false);
   const [quantityInCart, setQuantityInCart] = useState(0);
+  const [reductionLevel, setReductionLevel] = useState(0); // Niveau de réduction par lot
+  const [fireworkTimeout, setFireworkTimeout] = useState(null); // Pour gérer la durée de l'animation
 
   const originalPrice = clientType === 'wholesale' && product.wholesalePrice
     ? product.wholesalePrice
@@ -34,6 +36,7 @@ const ProductCard = ({ product, clientType }) => {
 
   const unitLabel = product.unit || 'unité';
 
+  // Gère l'ajout au panier et le message de réduction
   const handleAddToCart = () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
@@ -42,6 +45,11 @@ const ProductCard = ({ product, clientType }) => {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       cart.push({ ...product, price: priceToDisplay });
       localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    // Vérifie si la quantité ajoutée est un multiple du lot
+    if (product.lotQuantity && quantityInCart > 0 && (quantityInCart + 1) % product.lotQuantity === 0) {
+      setReductionLevel(prev => prev + 1); // Augmente le niveau de réduction
     }
   };
 
@@ -125,11 +133,6 @@ const ProductCard = ({ product, clientType }) => {
               )}
             </div>
 
-            {/* StarRating désactivé temporairement */}
-            {/* <div className="product-card-rating">
-              <StarRating defaultRating={product.rating || 4} />
-            </div> */}
-
             <div className="product-quantity">
               <button
                 className={`quantity-button ${clientType}`}
@@ -200,6 +203,13 @@ const ProductCard = ({ product, clientType }) => {
           </Card.Body>
         </div>
       </div>
+
+      {/* Badge de réduction par lot */}
+      {reductionLevel > 0 && (
+        <div className="lot-discount-badge">
+          Réduction par lot {reductionLevel} 🎉
+        </div>
+      )}
     </div>
   );
 };

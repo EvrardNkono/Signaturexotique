@@ -28,6 +28,8 @@ import SocialFollow from './components/SocialFollow'; // Ajuste le chemin si né
 import NewsletterPage from './pages/NewsletterPage';
 import PopupImage from './components/PopupImage';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
