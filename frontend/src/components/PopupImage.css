@@ -1,3 +1,15 @@
+@keyframes blinkAttention {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(255, 175, 102, 0.4); /* Ombre légère */
+    background-color: #fff8f0; /* couleur de fond normale */
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(255, 69, 0, 0.8); /* Ombre plus intense */
+    background-color: #ffebcd; /* Fond légèrement plus lumineux pour accentuer l'effet */
+  }
+}
+
+
 .popup-container {
   position: fixed;
   top: 200px;
@@ -8,12 +20,14 @@
   padding: 1.2rem;
   border-radius: 16px;
   z-index: 9999;
-  animation: fadeIn 0.5s ease;
+  animation: fadeIn 0.5s ease, blinkAttention 1s infinite ease-in-out; /* Clignotement plus rapide */
   width: 25vw;
   max-width: 320px;
   min-width: 220px;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
+
+
 
 .popup-content {
   display: flex;
