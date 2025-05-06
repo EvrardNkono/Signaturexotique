@@ -1,0 +1,29 @@
+/* ProductGrid.css */
+
+/* Éviter que les cartes prennent trop de place */
+.product-grid-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.product-card {
+  margin: 0 auto;  /* Centre les cartes à l'intérieur de chaque colonne */
+  width: 100%; /* Permet à chaque carte d'être réactive sans excéder sa taille */
+  max-width: 250px; /* Assure que la carte ne dépasse pas 250px de large */
+}
+
+@media (max-width: 576px) {
+  .product-card {
+    max-width: 100%; /* Les cartes prennent toute la largeur sur les très petits écrans */
+  }
+}
+
+.row {
+  gap: 15px; /* Réduit l'espace entre les cartes */
+}
+
+@media (max-width: 768px) {
+  .row {
+    gap: 10px; /* Espace plus petit sur les écrans moyens */
+  }
+}
