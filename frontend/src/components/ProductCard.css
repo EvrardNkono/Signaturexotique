@@ -10,25 +10,35 @@
   width: 100%;
   height: 100%;
   text-align: center;
-  transition: transform 0.6s;
+  transition: transform 0.8s ease-in-out; /* Durée d'animation plus longue */
   transform-style: preserve-3d;
 }
 
+/* Applique la rotation uniquement sur l'axe Y lors de la classe "flipped" */
 .flip-card.flipped .flip-card-inner {
   transform: rotateY(180deg);
 }
 
+/* Pas besoin de rotateY(180deg) ici */
+.flip-card-back {
+  backface-visibility: hidden;
+}
+
+/* Pour rendre l'avant et l'arrière invisibles sous certains angles */
 .flip-card-front,
 .flip-card-back {
   position: absolute;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden;
+  backface-visibility: hidden; /* Cache les faces quand elles sont retournées */
 }
 
+/* Par défaut, l'arrière est orienté vers l'arrière */
 .flip-card-back {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg); /* On garde cette orientation */
 }
+
+
 
 .product-card {
   border-radius: 16px;
