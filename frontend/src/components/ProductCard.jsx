@@ -24,10 +24,20 @@ const ProductCard = ({ product, clientType }) => {
     ? `${API_URL}/uploads/${product.image}`
     : '';
 
-  useEffect(() => {
-    const cartItem = cart.find(item => item.productId === product.id);
-    setQuantityInCart(cartItem ? cartItem.quantity : 0);
-  }, [cart, product.id]);
+    useEffect(() => {
+      const cartItem = cart.find(item => item.productId === product.id);
+      const qty = cartItem ? cartItem.quantity : 0;
+      setQuantityInCart(qty);
+    
+      if (product.lotQuantity && qty >= product.lotQuantity) {
+        // Peu importe si c’est un multiple ou pas, tant que c’est supérieur ou égal
+        setReductionLevel(Math.floor(qty / product.lotQuantity)); // Optionnel si tu veux un "niveau"
+      } else {
+        setReductionLevel(0);
+      }
+    }, [cart, product.id, product.lotQuantity]);
+    
+    
 
   const priceToDisplay =
     clientType === 'wholesale' && product.wholesalePrice
