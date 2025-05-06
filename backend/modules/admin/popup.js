@@ -22,48 +22,56 @@ const upload = multer({ storage });
 
 // POST /admin/popup pour accepter jusqu'à 3 fichiers
 router.post('/popup', upload.array('images'), async (req, res) => {
-    try {
-      const messages = [
-        req.body.message_1 || null,
-        req.body.message_2 || null,
-        req.body.message_3 || null
-      ];
-  
-      const existingImages = [
-        req.body.existing_image_1 || null,
-        req.body.existing_image_2 || null,
-        req.body.existing_image_3 || null
-      ];
-  
-      const newImages = Array(3).fill(null);
-      if (req.files) {
-        req.files.forEach((file, i) => {
-          const index = parseInt(file.originalname.split('_')[1]) - 1; // image_1, image_2...
-          newImages[index] = '/uploads/' + file.filename;
-        });
-      }
-  
-      // Supprimer les anciennes entrées et remettre les nouvelles
-      await db.run('DELETE FROM popup_settings');
-  
-      const values = [];
-      for (let i = 0; i < 3; i++) {
-        const image = newImages[i] || existingImages[i] || null;
-        const message = messages[i] || '';
-        values.push(image, message);
-      }
-  
-      await db.run(
-        'INSERT INTO popup_settings (image_url, message) VALUES (?, ?), (?, ?), (?, ?)',
-        values
-      );
-  
-      res.json({ success: true, message: 'Popups mis à jour', images: newImages, messages });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, error: 'Erreur lors de l’enregistrement des popups.' });
+  try {
+    const messages = [
+      req.body.message_1 || '',
+      req.body.message_2 || '',
+      req.body.message_3 || ''
+    ];
+
+    const titles = [
+      req.body.title_1 || '',
+      req.body.title_2 || '',
+      req.body.title_3 || ''
+    ];
+
+    const existingImages = [
+      req.body.existing_image_1 || null,
+      req.body.existing_image_2 || null,
+      req.body.existing_image_3 || null
+    ];
+
+    const newImages = Array(3).fill(null);
+    if (req.files) {
+      req.files.forEach((file) => {
+        const index = parseInt(file.originalname.split('_')[1]) - 1; // image_1, image_2...
+        newImages[index] = '/uploads/' + file.filename;
+      });
     }
-  });
+
+    // Supprimer les anciennes entrées
+    await db.run('DELETE FROM popup_settings');
+
+    const values = [];
+    for (let i = 0; i < 3; i++) {
+      const image = newImages[i] || existingImages[i] || null;
+      const message = messages[i] || '';
+      const title = titles[i] || '';
+      values.push(image, message, title);
+    }
+
+    await db.run(
+      `INSERT INTO popup_settings (image_url, message, title) VALUES (?, ?, ?), (?, ?, ?), (?, ?, ?)`,
+      values
+    );
+
+    res.json({ success: true, message: 'Popups mis à jour', images: newImages, messages, titles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Erreur lors de l’enregistrement des popups.' });
+  }
+});
+
   
 
 

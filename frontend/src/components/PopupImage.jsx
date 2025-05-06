@@ -26,18 +26,16 @@ const PopupImage = () => {
 
     const interval = setInterval(() => {
       setCurrentPopup((prev) => (prev + 1) % popups.length);
-    }, 10000); // Change de popup toutes les 10 secondes
+    }, 10000); // Changement toutes les 10 sec
 
     return () => clearInterval(interval);
   }, [popups]);
 
-  // Gérer la réapparition après fermeture
   const handleClose = () => {
     setShowPopup(false);
-
     setTimeout(() => {
       setShowPopup(true);
-    }, 100000); // Réaffiche après 30 secondes
+    }, 100000); // Réaffiche après un moment
   };
 
   if (popups.length === 0 || !showPopup) return null;
@@ -49,7 +47,9 @@ const PopupImage = () => {
       <div className="popup-content">
         <button className="popup-close" onClick={handleClose}>✕</button>
         <img src={`${API_URL}${popup.image_url}`} alt="Popup" />
-        {popup.message && <p>{popup.message}</p>}
+
+        {popup.title && <h3 className="popup-title">{popup.title}</h3>}
+        {popup.message && <p className="popup-message">{popup.message}</p>}
       </div>
     </div>
   );
