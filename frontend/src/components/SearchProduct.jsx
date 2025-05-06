@@ -23,9 +23,7 @@ const SearchProduct = () => {
         placeholder="Rechercher un produit..."
         className="search-input"
       />
-      <button type="submit" className="search-button" aria-label="Rechercher">
-        <i className="bi bi-search"></i>
-      </button>
+      
     </form>
   );
 };
