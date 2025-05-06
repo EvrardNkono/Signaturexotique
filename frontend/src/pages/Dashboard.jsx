@@ -26,8 +26,9 @@ const [reductionInput, setReductionInput] = useState(''); // Champ pour entrer l
     unit: '',
     wholesaleUnit: '',
     reduction: 0,
-    lotQuantity: '',  // 👈 Quantité du lot (facultatif)
-    lotPrice: '',      // 👈 Prix du lot (facultatif)
+    lotQuantity: '',
+    lotPrice: '',
+    inStock: true, // 🟢 On ajoute ça
   });
   
 
@@ -126,7 +127,7 @@ const handleUpdateCategory = async () => {
 
 
 const handleAddProduct = async () => {
-  const { name, unitPrice, wholesalePrice, category, image, unit, wholesaleUnit, reduction, lotPrice = '', lotQuantity = '' } = product;
+  const { name, unitPrice, wholesalePrice, category, image, unit, wholesaleUnit, reduction, lotPrice = '', lotQuantity = '', inStock } = product;
 
   if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit) {
 
@@ -140,9 +141,11 @@ const handleAddProduct = async () => {
     formData.append('unitPrice', unitPrice);
     formData.append('wholesalePrice', wholesalePrice);
     formData.append('category', category);
-    formData.append('unit', unit); // Ajout de l'unité pour le prix particulier
-    formData.append('wholesaleUnit', wholesaleUnit); // Ajout du prix de gros
-    formData.append('reduction', reduction); // Ajout du champ réduction
+    formData.append('unit', unit);  // Ajout de l'unité pour le prix particulier
+    formData.append('wholesaleUnit', wholesaleUnit);  // Ajout du prix de gros
+    formData.append('reduction', reduction);  // Ajout du champ réduction
+    formData.append('inStock', inStock);  // Ajout de l'état de stock
+
     if (image) {
       formData.append('image', image);  // Si l'image existe
     }
@@ -207,6 +210,7 @@ const handleAddProduct = async () => {
           reduction: 0,
           lotQuantity: '',     // Réinitialiser la quantité du lot
           lotPrice: '',        // Réinitialiser le prix du lot
+          inStock: true,       // Réinitialiser l'état de stock à true (ou selon le besoin)
         });
       } else {
         alert('Produit créé avec succès, mais la réponse est invalide.');
@@ -217,9 +221,9 @@ const handleAddProduct = async () => {
       console.error('Erreur lors de la requête:', error);
       alert(`Erreur serveur : ${error.message}`);
     }
-    
   }
 };
+
 
 
 
@@ -238,15 +242,18 @@ const handleEditProduct = (prod) => {
     image: null, // L'image reste null ici, elle sera gérée via le champ de téléchargement d'image dans le formulaire
     lotQuantity: prod.lotQuantity || null,  // Si l'article a une quantité de lot, elle est pré-remplie
     lotPrice: prod.lotPrice || null, // Pré-remplissage du prix par lot si disponible
+    inStock: prod.inStock || true, // Pré-remplissage de l'état de stock (par défaut, on met true si non défini)
   });
 };
+
 
 
   
 
 // Envoyer la mise à jour d'un produit existant
+// Envoyer la mise à jour d'un produit existant
 const handleUpdateProduct = async () => {
-  const { name, unitPrice, wholesalePrice, category, unit, wholesaleUnit, reduction, image, lotQuantity, lotPrice } = product;
+  const { name, unitPrice, wholesalePrice, category, unit, wholesaleUnit, reduction, image, lotQuantity, lotPrice, inStock } = product;
 
   if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit && editingProduct) {
     const formData = new FormData();
@@ -257,6 +264,7 @@ const handleUpdateProduct = async () => {
     formData.append('unit', unit); // Ajout de l'unité pour le prix particulier
     formData.append('wholesaleUnit', wholesaleUnit); // Ajout de l'unité pour le prix de gros
     formData.append('reduction', reduction); // Ajout du champ réduction
+    formData.append('inStock', inStock); // Ajout de l'état de stock (inStock)
     if (image) formData.append('image', image); // Si l'image est présente, l'ajouter à la requête
 
     // Ajout des champs lotQuantity et lotPrice si présents
@@ -292,7 +300,17 @@ const handleUpdateProduct = async () => {
       setProducts(updatedList); // Met à jour l'état avec le produit mis à jour
       setEditingProduct(null); // Fin de l'édition
       setProduct({
-        name: '', unitPrice: '', wholesalePrice: '', category: '', unit: '', wholesaleUnit: '', reduction: 0, image: null, lotQuantity: '', lotPrice: '',
+        name: '', 
+        unitPrice: '', 
+        wholesalePrice: '', 
+        category: '', 
+        unit: '', 
+        wholesaleUnit: '', 
+        reduction: 0, 
+        image: null, 
+        lotQuantity: '', 
+        lotPrice: '',
+        inStock: true, // Réinitialisation de l'état de stock (peut être modifié en fonction de ton besoin)
       }); // Réinitialisation des champs du formulaire
 
     } catch (error) {
@@ -303,6 +321,8 @@ const handleUpdateProduct = async () => {
     alert('Veuillez remplir tous les champs obligatoires.');
   }
 };
+
+
 
 
 return (
@@ -413,6 +433,16 @@ return (
               </Form.Group>
             </Col>
           </Row>
+          <Form.Group controlId="formInStock">
+  <Form.Check
+    type="checkbox"
+    label="Produit en stock"
+    checked={product.inStock}
+    onChange={(e) =>
+      setProduct({ ...product, inStock: e.target.checked })
+    }
+  />
+</Form.Group>
 
           {/* Champ pour la réduction */}
           <Form.Group>
