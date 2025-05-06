@@ -10,14 +10,13 @@
   border-bottom: 4px solid black; /* Bord plus épais */
 }
 
-
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
-  height: 150px; /* même hauteur que le logo */
+  height: 120px; /* Réduction de la hauteur du header pour mieux s'adapter */
 }
 
 /* Logo */
@@ -31,7 +30,7 @@
 
 .logo img {
   display: block;
-  height: 100%;
+  height: 100px; /* Réduction de la taille du logo */
   object-fit: contain;
 }
 
@@ -55,11 +54,10 @@
   background-color: #e65c00; /* Effet de survol légèrement plus foncé */
 }
 
-
 /* Liens */
 .nav-links {
   display: flex;
-  gap: 20px;
+  gap: 15px;  /* Réduction de l'écart entre les liens */
   align-items: center;
   flex-wrap: wrap;
 }
@@ -68,7 +66,9 @@
   color: rgb(255, 102, 0);
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.9rem; /* Réduction de la taille de la police des liens */
   position: relative;
+  padding: 8px 12px; /* Ajustement de l'espacement autour des liens */
 }
 
 /* Quantité du panier */
@@ -102,7 +102,7 @@
     background-color: #f7f0f0;
     width: 100%;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px; /* Réduction de l'écart dans le menu mobile */
     padding: 0px;
     height: 0;
     overflow: hidden;
@@ -111,7 +111,6 @@
     border-top: none; /* Optionnel : on enlève la bordure du haut si elle touche déjà le header */
     border-radius: 0 0 8px 8px; /* Coins arrondis en bas, pour l’effet boîte */
   }
-  
 
   .nav-links.open {
     height: auto;
@@ -127,7 +126,7 @@
   }
 
   .logo img {
-    height: 100px; /* réduire légèrement sur mobile si besoin */
+    height: 90px; /* Réduction légère du logo sur mobile */
   }
 
   .navbar {
@@ -206,6 +205,7 @@
   margin: 3px 0;
   transition: 0.3s;
 }
+
 .nav-link-style {
   cursor: pointer;
   color: #ff6600;
@@ -242,23 +242,27 @@
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
+
 .nav-links a,
 .nav-links .nav-link-style,
 .profile-link,
 .bonplans-link,
 .recettes-link {
   font-family: 'Rye', cursive;
-  font-size: 1.1rem;
+  font-size: 0.7rem; /* Taille réduite pour une meilleure lisibilité */
   color: #eb4706;
   text-transform: uppercase;
   text-decoration: none;
-  margin: 0 10px;
+  margin: -10px;
   transition: color 0.3s ease;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  
 }
+
 .nav-links a:hover {
   color: #342f25;
 }
+
 .category-dropdown .category-item {
   font-family: 'Rye', cursive;
   text-transform: uppercase;
@@ -282,4 +286,8 @@
   .custom-header {
     padding-bottom: 20px;
   }
+}
+
+.search-bar-container {
+  margin-left: -300px; /* Ajuste ici selon le déplacement souhaité */
 }
