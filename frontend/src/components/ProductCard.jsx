@@ -136,7 +136,7 @@ const ProductCard = ({ product, clientType }) => {
             {/* Badge de rupture de stock */}
             {!product.inStock && (
   <div className="out-of-stock-banner">
-    🚫 Rupture de stock<br />Ce produit est victime de son succès !
+    🚫 Rupture de stock<br />
   </div>
 )}
 

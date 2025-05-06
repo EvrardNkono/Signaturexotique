@@ -7,7 +7,8 @@ import './ProductGrid.css'; // Assurez-vous que le CSS est bien importé
 const ProductGrid = ({ products, clientType }) => {
   return (
     <Container className="product-grid-container">
-      <Row className="justify-content-center">
+      {/* Ajout de gaps responsive entre les cartes */}
+      <Row className="justify-content-center g-1 g-sm-2 g-md-3 g-lg-4">
         {products.map((product) => (
           <Col 
             key={product.id} 
