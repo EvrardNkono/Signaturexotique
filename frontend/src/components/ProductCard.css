@@ -10,35 +10,25 @@
   width: 100%;
   height: 100%;
   text-align: center;
-  transition: transform 0.8s ease-in-out; /* Durée d'animation plus longue */
+  transition: transform 0.6s;
   transform-style: preserve-3d;
 }
 
-/* Applique la rotation uniquement sur l'axe Y lors de la classe "flipped" */
 .flip-card.flipped .flip-card-inner {
   transform: rotateY(180deg);
 }
 
-/* Pas besoin de rotateY(180deg) ici */
-.flip-card-back {
-  backface-visibility: hidden;
-}
-
-/* Pour rendre l'avant et l'arrière invisibles sous certains angles */
 .flip-card-front,
 .flip-card-back {
   position: absolute;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden; /* Cache les faces quand elles sont retournées */
+  backface-visibility: hidden;
 }
 
-/* Par défaut, l'arrière est orienté vers l'arrière */
 .flip-card-back {
-  transform: rotateY(180deg); /* On garde cette orientation */
+  transform: rotateY(180deg);
 }
-
-
 
 .product-card {
   border-radius: 16px;
@@ -243,157 +233,31 @@
   background-color: #ff6f00;
 }
 
-.product-card {
-  position: relative;
-  /* Autres styles */
-}
-
+/* Badge réduction par lot */
 .lot-discount-badge {
   position: absolute;
   top: 10px;
-  right: 10px;
-  background-color: #0d6903;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
+  left: 10px;
+  background-color: #ff9800;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-weight: bold;
-  font-size: 14px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 0.9rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.4s ease;
   z-index: 10;
 }
 
-.lot-discount-badge::before {
-  content: "⭐ ";
-  margin-right: 5px;
-  font-size: 18px;
-}
-
-/* Animation du badge (optionnel) */
-.lot-discount-badge {
-  animation: slideIn 0.5s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-
-@media (min-width: 1024px) {
-  .flip-card {
-    width: 360px; /* Plus large */
-    height: 560px; /* Plus haute */
-  }
-
-  .product-card-image-container {
-    height: 260px; /* Image plus grande */
-  }
-
-  .product-card-title {
-    font-size: 1.6rem; /* Titre plus grand */
-  }
-
-  .product-card-description {
-    font-size: 1.05rem;
-  }
-
-  .product-card-price-rating {
-    font-size: 1.1rem;
-  }
-
-  .product-card-button {
-    font-size: 1.1rem;
-    padding: 12px 18px;
-  }
-
-  .product-price-display,
-  .new-price {
-    font-size: 2rem;
-  }
-
-  .old-price {
-    font-size: 1.3rem;
-  }
-
-  .lot-discount-badge,
-  .reduction-badge,
-  .badge-promo {
-    font-size: 1.1rem;
-    padding: 8px 12px;
-  }
-
-  .star-icon {
-    font-size: 1.8rem;
-  }
-
-  .product-quantity span {
-    font-size: 1.1rem;
-  }
-
-  .product-quantity button,
-  .quantity-button {
-    width: 36px;
-    height: 36px;
-    font-size: 0.9rem;
-  }
-}
-
-
-.flip-card,
-.product-card,
-.product-card-title,
-.product-card-button {
-  transition: all 0.3s ease-in-out;
-}
-
+/* Badge rupture de stock */
 .out-of-stock-banner {
-  background-color: #d32f2f;
+  margin-top: 10px;
+  background-color: #dc3545; /* Rouge danger */
   color: #fff;
-  font-size: 1.2rem;
+  padding: 8px 10px;
+  border-radius: 6px;
   font-weight: bold;
-  padding: 12px 16px;
   text-align: center;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  animation: pulse 1.5s ease-in-out infinite alternate;
-  line-height: 1.5;
-}
-
-@media (min-width: 1024px) {
-  .out-of-stock-banner {
-    font-size: 1.4rem;
-    padding: 16px 20px;
-  }
-}
-
-@keyframes pulse {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.02);
-  }
-}
-
-.product-card {
-  width: 100%;
-  max-width: 100%;
-}
-
-.product-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center; /* ou space-between si tu veux un alignement plein */
-  gap: 20px;
-  row-gap: 40px;
+  font-size: 0.95rem;
+  animation: fadeIn 0.5s ease;
 }
