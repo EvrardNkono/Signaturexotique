@@ -32,7 +32,7 @@ const categoryHomeRouter = require('./modules/admin/categoryhome');
 const recommendationRoutes = require('./routes/recommendations');
 const stripeRoutes = require('./modules/payement/stripe'); // adapte selon ton arborescence
 const popupRoutes = require('./modules/admin/popup');
-
+const recetteRoutes = require('./routes/recetteRoutes');
 // Utilisation des routes
 app.use('/admin/category', categoryRoutes);
 app.use('/admin/product', productRoutes);
@@ -64,6 +64,10 @@ app.use('/routes/recommendations', recommendationRoutes);
 app.use('/admin', popupRoutes); // pour POST
 app.use('/', popupRoutes); // pour GET /popup
 app.use('/payement', stripeRoutes);
+
+app.use('/recetteRoutes', recetteRoutes); // les routes des recettes sont maintenant accessibles via /api/recettes
+
+
 
 // Lancement du serveur
 app.listen(5000, () => {

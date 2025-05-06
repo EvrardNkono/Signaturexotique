@@ -1,17 +1,18 @@
 .popup-container {
   position: fixed;
-  top: 200px; /* Positionné en haut sur grand écran */
-  left: 30px; /* Toujours sur la gauche */
-  background: white;
-  border: 2px solid #ff9800;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  padding: 1rem;
-  border-radius: 12px;
+  top: 200px;
+  right: 30px;
+  background: #fff8f0; /* couleur crème douce */
+  border: 2px solid #ffaf66; /* orange pastel doux */
+  box-shadow: 0 6px 20px rgba(255, 175, 102, 0.4); /* ombre chaude */
+  padding: 1.2rem;
+  border-radius: 16px;
   z-index: 9999;
   animation: fadeIn 0.5s ease;
   width: 25vw;
-  max-width: 300px;
-  min-width: 200px;
+  max-width: 320px;
+  min-width: 220px;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .popup-content {
@@ -24,44 +25,47 @@
 .popup-content img {
   width: 100%;
   height: auto;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .popup-content p {
   margin: 0;
-  font-weight: bold;
-  color: #333;
+  font-weight: 500;
+  color: #5a3e2b; /* marron doux */
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  line-height: 1.4;
 }
 
 .popup-close {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  background: #ff9800;
+  top: -12px;
+  right: -12px;
+  background: #ffaf66;
   border: none;
-  font-size: 20px;
+  font-size: 18px;
   color: white;
   cursor: pointer;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   transition: background 0.3s;
 }
 
 .popup-close:hover {
-  background: #e68900;
+  background: #e6944f;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
@@ -69,10 +73,12 @@
   }
 }
 
-/* Media Query pour les petits écrans */
 @media (max-width: 768px) {
   .popup-container {
     top: auto;
-    bottom: 30px;  /* Positionné en bas sur petit écran */
+    bottom: 30px;
+    right: 20px;
+    left: 20px;
+    width: auto;
   }
 }

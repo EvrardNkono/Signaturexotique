@@ -3,7 +3,9 @@ import { Container, Row, Col, Form, Button, Card, Table, Badge } from 'react-boo
 import './AdminPage.css'; // Fichier CSS personnalisé
 import OrderList from '../components/OrderList';
 import { API_URL } from '../config'; 
-import PopupUploader from '../components/PopupUploader'
+import PopupUploader from '../components/PopupUploader';
+import AdminRecipeForm from '../components/AdminRecipeForm';
+
 
 const AdminPage = () => {
   const [categories, setCategories] = useState([]);
@@ -12,6 +14,7 @@ const AdminPage = () => {
 const [editCategoryInput, setEditCategoryInput] = useState(''); // Nom modifié
 const [reductionInput, setReductionInput] = useState(''); // Champ pour entrer la réduction
   const [editingProduct, setEditingProduct] = useState(null); // Produit en cours d'édition
+ 
 
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState({
@@ -498,6 +501,8 @@ return (
       </Card.Body>
     </Card>
 
+<AdminRecipeForm />
+      
     {/* Section : Commandes reçues */}
     <Card className="admin-section mb-4">
       <Card.Body>
