@@ -2,20 +2,17 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import ProductCard from './ProductCard';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './ProductGrid.css'; // 💡 Ajout du fichier CSS personnalisé
+import './ProductGrid.css'; // Assurez-vous que le CSS est bien importé
 
 const ProductGrid = ({ products, clientType }) => {
   return (
     <Container className="product-grid-container">
-      <Row className="justify-content-center g-2"> {/* Modifié pour réduire l'espacement entre les colonnes */}
+      <Row className="justify-content-center">
         {products.map((product) => (
-          <Col
-            key={product.id}
-            xs={12}
-            sm={6}
-            md={4}
-            lg={3}
-            className="d-flex justify-content-center" // ✅ recentre les cartes
+          <Col 
+            key={product.id} 
+            xs={12} sm={6} md={4} lg={3}
+            className="d-flex justify-content-center"
           >
             <ProductCard product={product} clientType={clientType} />
           </Col>

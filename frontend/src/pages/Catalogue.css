@@ -89,4 +89,9 @@ h1, h2, h3, h4 .section-title, .card-title {
   .filter-section select {
     margin: 10px 0;
   }
-  
+  /* ProductGrid.css */
+.catalogue-container {
+  width: 60%; /* Permet de prendre toute la largeur */
+  padding-left: 0;
+  padding-right: 0;
+}

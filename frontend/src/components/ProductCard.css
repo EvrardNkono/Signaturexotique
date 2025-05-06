@@ -349,21 +349,41 @@
   background-color: #d32f2f;
   color: #fff;
   font-size: 1.2rem;
-  font-weight: 600;
-  padding: 10px 16px;
+  font-weight: bold;
+  padding: 12px 16px;
   text-align: center;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 16px;
-  line-height: 1.4; /* Contrôle vertical */
-  display: inline-block; /* Évite l'étirement vertical */
-  max-width: 100%;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  animation: pulse 1.5s ease-in-out infinite alternate;
+  line-height: 1.5;
 }
 
+@media (min-width: 1024px) {
+  .out-of-stock-banner {
+    font-size: 1.4rem;
+    padding: 16px 20px;
+  }
+}
 
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.02);
+  }
+}
 
+.product-card {
+  width: 100%;
+  max-width: 100%;
+}
 
-
-
-
-
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* ou space-between si tu veux un alignement plein */
+  gap: 20px;
+  row-gap: 40px;
+}

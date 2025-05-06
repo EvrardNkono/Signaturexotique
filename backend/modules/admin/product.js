@@ -239,10 +239,6 @@ router.put(
 );
 
 
-
-
-  
-
 /**
  * ============================================
  *          AJOUTER UN PRODUIT AU PANIER

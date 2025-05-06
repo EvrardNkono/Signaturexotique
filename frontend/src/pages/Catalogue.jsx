@@ -56,7 +56,7 @@ const Catalogue = () => {
   const productsToDisplay = filteredProducts.length > 0 ? filteredProducts : allProducts;
 
   return (
-    <Container className="my-5">
+    <Container className="catalogue-container my-4">
       <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Rye, sans-serif' }}>
   CATALOGUE DE PRODUITS
 </Typography>
