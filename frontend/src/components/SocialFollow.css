@@ -10,10 +10,12 @@
   }
   
   .social-icon {
-    font-size: 2.5rem; /* Taille des icônes */
+    font-size: 2rem; /* Taille des icônes */
     color: #fff;  /* Couleur par défaut des icônes */
     margin: 10px 0;  /* Espacement entre les icônes */
     transition: color 0.3s ease;  /* Effet de transition sur la couleur au survol */
+    border-style: initial;
+    border-color: #00aced;
   }
   
   .social-icon:hover {
@@ -26,7 +28,7 @@
   }
   
   .social-follow a:nth-child(2) .social-icon {
-    color: #fffc00; /* Snapchat */
+    color: #ffa600; /* Snapchat */
   }
   
   .social-follow a:nth-child(3) .social-icon {

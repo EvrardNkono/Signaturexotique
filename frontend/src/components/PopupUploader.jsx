@@ -5,6 +5,7 @@ import './PopupUploader.css';
 const PopupUploader = () => {
   const [images, setImages] = useState([null, null, null]);
   const [messages, setMessages] = useState(['', '', '']);
+  const [titles, setTitles] = useState(['', '', '']); // Ajout des titres
   const [existingImages, setExistingImages] = useState(['', '', '']);
   const [responseMessage, setResponseMessage] = useState('');
 
@@ -17,14 +18,17 @@ const PopupUploader = () => {
 
         const imgs = ['', '', ''];
         const msgs = ['', '', ''];
+        const ttl = ['', '', '']; // Ajouter un tableau pour les titres
 
         data.forEach((popup, index) => {
           imgs[index] = popup.image_url || '';
           msgs[index] = popup.message || '';
+          ttl[index] = popup.title || ''; // Initialiser les titres existants
         });
 
         setExistingImages(imgs);
         setMessages(msgs);
+        setTitles(ttl); // Mettre à jour les titres existants
       } catch (err) {
         console.error('Erreur récupération popups :', err);
       }
@@ -45,6 +49,12 @@ const PopupUploader = () => {
     setMessages(newMessages);
   };
 
+  const handleTitleChange = (e, index) => {
+    const newTitles = [...titles];
+    newTitles[index] = e.target.value;
+    setTitles(newTitles);
+  };
+
   const handleUpload = async (e) => {
     e.preventDefault();
 
@@ -60,6 +70,10 @@ const PopupUploader = () => {
 
     messages.forEach((msg, index) => {
       formData.append(`message_${index + 1}`, msg);
+    });
+
+    titles.forEach((title, index) => { // Ajouter les titres
+      formData.append(`title_${index + 1}`, title);
     });
 
     try {
@@ -81,6 +95,14 @@ const PopupUploader = () => {
       {[0, 1, 2].map((index) => (
         <div key={index} style={{ marginBottom: '30px' }}>
           <h4>Popup {index + 1}</h4>
+
+          <input
+            type="text"
+            value={titles[index]}
+            onChange={(e) => handleTitleChange(e, index)} 
+            placeholder={`Titre du popup ${index + 1}`}
+            style={{ width: '100%', marginTop: '10px', padding: '10px' }}
+          />
 
           <input 
             type="file" 
