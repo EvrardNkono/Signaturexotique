@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rye&display=swap');
+
 .custom-header {
   background-color: #ffffff;
   padding: 0 20px;
@@ -97,7 +99,7 @@
     position: absolute;
     top: 100%;
     left: 0;
-    background-color: #000;
+    background-color: #f7f0f0;
     width: 100%;
     flex-direction: column;
     gap: 15px;
@@ -105,7 +107,11 @@
     height: 0;
     overflow: hidden;
     transition: height 0.4s ease;
+    border: 5px solid orange; /* Bordure orange */
+    border-top: none; /* Optionnel : on enlève la bordure du haut si elle touche déjà le header */
+    border-radius: 0 0 8px 8px; /* Coins arrondis en bas, pour l’effet boîte */
   }
+  
 
   .nav-links.open {
     height: auto;
@@ -235,4 +241,45 @@
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
+}
+.nav-links a,
+.nav-links .nav-link-style,
+.profile-link,
+.bonplans-link,
+.recettes-link {
+  font-family: 'Rye', cursive;
+  font-size: 1.1rem;
+  color: #eb4706;
+  text-transform: uppercase;
+  text-decoration: none;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+  letter-spacing: 1px;
+}
+.nav-links a:hover {
+  color: #342f25;
+}
+.category-dropdown .category-item {
+  font-family: 'Rye', cursive;
+  text-transform: uppercase;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+  letter-spacing: 1px;
+}
+
+.category-dropdown .category-item:hover {
+  background-color: #fff3e6;
+}
+
+@media (max-width: 1500px) and (min-width: 769px) {
+  .navbar {
+    height: auto;
+    padding: 20px 0;
+    flex-wrap: wrap; /* déjà présent mais on le rappelle */
+  }
+
+  .custom-header {
+    padding-bottom: 20px;
+  }
 }
