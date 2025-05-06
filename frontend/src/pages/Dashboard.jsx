@@ -324,7 +324,6 @@ const handleUpdateProduct = async () => {
 
 
 
-
 return (
   <Container className="admin-container py-5">
     <h2 className="admin-title text-center mb-5">🛠️ Panneau d’administration Signature Exotique</h2>
