@@ -102,7 +102,6 @@
     bottom: 30px;
     right: 20px;
     left: 20px;
-    width: auto;
     width: 25vw; /* 25% de la largeur de l'écran */
   }
 }
