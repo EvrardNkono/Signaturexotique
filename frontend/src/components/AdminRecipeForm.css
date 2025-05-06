@@ -1,0 +1,91 @@
+/* Container principal du formulaire */
+.admin-recipe-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Titre du formulaire */
+.admin-recipe-form h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Groupes de champs du formulaire */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 1.1rem;
+  color: #555;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Bouton de soumission */
+.submit-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+/* Aperçu de l'image */
+.image-preview {
+  margin-top: 15px;
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+/* Style pour les inputs de type "file" */
+input[type="file"] {
+  margin-top: 10px;
+  padding: 10px;
+}
+
+/* Pour les petits écrans (responsive) */
+@media (max-width: 768px) {
+  .admin-recipe-form {
+    padding: 15px;
+  }
+
+  .submit-button {
+    font-size: 1rem;
+  }
+}
