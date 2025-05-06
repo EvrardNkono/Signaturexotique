@@ -140,10 +140,6 @@ const ProductCard = ({ product, clientType }) => {
   </div>
 )}
 
-
-
-
-
             {/* Quantité et boutons */}
             <div className="product-quantity">
               <button
