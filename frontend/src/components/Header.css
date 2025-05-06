@@ -245,7 +245,6 @@
 
 .nav-links a,
 .nav-links .nav-link-style,
-.profile-link,
 .bonplans-link,
 .recettes-link {
   font-family: 'Rye', cursive;
@@ -253,7 +252,20 @@
   color: #eb4706;
   text-transform: uppercase;
   text-decoration: none;
-  margin: -10px;
+  margin: -15px;
+  transition: color 0.3s ease;
+  letter-spacing: 0.5px;
+  
+}
+
+.profile-link
+ {
+  font-family: 'Rye', cursive;
+  font-size: 0.7rem; /* Taille réduite pour une meilleure lisibilité */
+  color: #eb4706;
+  text-transform: uppercase;
+  text-decoration: none;
+  margin-left: 20px !important;
   transition: color 0.3s ease;
   letter-spacing: 0.5px;
   
@@ -291,3 +303,4 @@
 .search-bar-container {
   margin-left: 50px; /* Ajuste ici selon le déplacement souhaité */
 }
+
