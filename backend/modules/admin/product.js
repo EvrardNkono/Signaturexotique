@@ -40,7 +40,18 @@ router.post(
   checkRole(['admin', 'superadmin']),
   upload.single('image'),
   async (req, res) => {
-    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction, lotQuantity, lotPrice } = req.body;
+    const {
+      name,
+      category,
+      unitPrice,
+      wholesalePrice,
+      unit,
+      wholesaleUnit,
+      reduction,
+      lotQuantity,
+      lotPrice,
+      inStock,  // On récupère la donnée inStock
+    } = req.body;
     const image = req.file ? req.file.filename : null;
 
     // Validation des champs obligatoires
@@ -48,11 +59,14 @@ router.post(
       return res.status(400).json({ message: 'Tous les champs sont requis.' });
     }
 
+    // Validation de inStock (par défaut à true si non fourni)
+    const stockStatus = inStock === undefined ? 1 : inStock === 'true' ? 1 : 0;
+
     try {
-      // Création de l'insertion SQL en ajoutant les champs de lot seulement s'ils existent
+      // Création de l'insertion SQL en ajoutant inStock et les champs de lot seulement s'ils existent
       const insertSql = `
-        INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction, lotQuantity, lotPrice)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction, lotQuantity, lotPrice, inStock)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const result = await db.run(insertSql, [
@@ -66,6 +80,7 @@ router.post(
         reduction || 0,  // Si aucune réduction n'est fournie, on garde 0 comme valeur par défaut
         lotQuantity || null,  // Si la quantité de lot est vide, on la garde à null
         lotPrice || null,     // Si le prix de lot est vide, on le garde à null
+        stockStatus,          // Ajout de la valeur inStock
       ]);
 
       // Réponse après création
@@ -82,6 +97,7 @@ router.post(
           reduction: reduction || 0,
           lotQuantity: lotQuantity || null,  // Si le champ est non défini, il sera `null`
           lotPrice: lotPrice || null,        // Idem pour le prix de lot
+          inStock: stockStatus === 1,        // Affichage de inStock comme un booléen
           imageURL: image ? `/uploads/${image}` : null
         }
       });
@@ -92,6 +108,7 @@ router.post(
     }
   }
 );
+
 
 
   
@@ -149,7 +166,7 @@ router.put(
   upload.single('image'),
   async (req, res) => {
     const { id } = req.params;
-    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction, lotQuantity, lotPrice } = req.body;
+    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction, lotQuantity, lotPrice, inStock } = req.body;
     const image = req.file ? req.file.filename : null;
 
     // Validation des champs obligatoires
@@ -165,11 +182,14 @@ router.put(
         return res.status(404).json({ message: 'Produit non trouvé' });
       }
 
+      // Traitement de l'état du stock (inStock)
+      const stockStatus = inStock === undefined ? product.inStock : (inStock === 'true' ? 1 : 0);
+
       // Préparation de l'update
       const updateSql = `
         UPDATE products
         SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, reduction = ?, 
-            lotQuantity = ?, lotPrice = ?
+            lotQuantity = ?, lotPrice = ?, inStock = ?
         WHERE id = ?
       `;
 
@@ -188,6 +208,7 @@ router.put(
         reduction || 0,  // Si la réduction est vide, on la garde à 0
         lotQuantity || null,  // Si lotQuantity est vide, on le garde à null
         lotPrice || null,     // Idem pour lotPrice
+        stockStatus,          // Mise à jour du statut du stock
         id
       ]);
 
@@ -205,7 +226,8 @@ router.put(
           reduction: reduction || 0,
           lotQuantity: lotQuantity || null,  // Si le champ lotQuantity n'est pas fourni, il est null
           lotPrice: lotPrice || null,        // Idem pour lotPrice
-          imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null
+          imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null,
+          inStock: stockStatus  // On retourne le nouveau statut du stock
         }
       });
 
@@ -215,6 +237,7 @@ router.put(
     }
   }
 );
+
 
 
 

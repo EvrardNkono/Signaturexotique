@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import { Card } from 'react-bootstrap';
+import { Card, Button, Badge } from 'react-bootstrap';
 import './ProductCard.css';
 import StarRating from './StarRating'; // Import du composant
 import { API_URL } from '../config';
@@ -133,10 +133,17 @@ const ProductCard = ({ product, clientType }) => {
               )}
             </div>
 
+            {/* Badge de rupture de stock */}
+            {!product.inStock && (
+              <Badge bg="danger" className="mb-2">Ce produit est victime de son success</Badge>
+            )}
+
+            {/* Quantité et boutons */}
             <div className="product-quantity">
               <button
                 className={`quantity-button ${clientType}`}
                 onClick={handleRemoveOne}
+                disabled={!product.inStock} // Désactive le bouton si en rupture de stock
               >
                 -
               </button>
@@ -144,18 +151,24 @@ const ProductCard = ({ product, clientType }) => {
               <button
                 className={`quantity-button ${clientType}`}
                 onClick={handleAddToCart}
+                disabled={!product.inStock} // Désactive le bouton si en rupture de stock
               >
                 +
               </button>
             </div>
 
-            <button
-              className="product-card-button"
-              onClick={handleAddToCart}
-              style={{ backgroundColor: mainColor, borderColor: mainColor }}
-            >
-              Ajouter au panier
-            </button>
+            {/* Bouton ajouter au panier */}
+            <Button
+  style={{
+    backgroundColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00', // Vert pour le grossiste, orange pour le détail
+    borderColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00'
+  }}
+  disabled={!product.inStock}
+  onClick={handleAddToCart}
+>
+  {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
+</Button>
+
 
             <button
               className="product-card-button"
