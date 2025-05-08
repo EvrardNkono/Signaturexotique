@@ -204,15 +204,24 @@ const Cart = () => {
             <Recommendations excludeProductIds={cart.map(p => p.productId)} />
           </div>
 
-          <div className="text-right mt-3 cart-summary" style={{ color: '#ff6f00' }}>
-            <h4>Total : {totalPrice.toFixed(2)} €</h4>
-            <Button variant="outline-danger" onClick={clearCartFromBackend} style={{ marginRight: '15px', borderColor: '#ff6f00', color: '#ff6f00' }}>
-              Vider le panier
-            </Button>
-            <Button variant="outline-success" onClick={handleOrder} style={{ borderColor: '#28a745', color: '#28a745' }}>
-              Passer la commande
-            </Button>
-          </div>
+          <div className="cart-summary">
+  <h4 className="cart-total">Total : {totalPrice.toFixed(2)} €</h4>
+  <div className="cart-actions">
+    <Button
+      variant="outline-danger"
+      onClick={clearCartFromBackend}
+    >
+      Vider le panier
+    </Button>
+    <Button
+      variant="outline-success"
+      onClick={handleOrder}
+    >
+      Passer la commande
+    </Button>
+  </div>
+</div>
+
         </>
       )}
     </Container>
