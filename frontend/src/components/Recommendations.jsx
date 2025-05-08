@@ -57,7 +57,10 @@ const Recommendations = () => {
 
   return (
     <div className="recommendations-wrapper mt-5">
-      <h4 style={{ color: '#121212' }}>PRODUITS RECOMMANDÉS POUR VOUS</h4>
+      <h4 style={{ color: '#121212', fontSize: '28px' }}>
+  PRODUITS RECOMMANDÉS POUR VOUS
+</h4>
+
       <RecommendationsGrid products={recommendedProducts} />
     </div>
   );

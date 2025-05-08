@@ -58,23 +58,30 @@
 }
 
 .recommendation-card .card-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #5a3e2b;
-  margin-bottom: 8px;
+  font-size: 1.2rem; /* légèrement plus grand */
+  font-weight: 700;
+  color: #1a1a1a; /* noir plus profond */
+  margin-bottom: 10px;
 }
 
 .recommendation-card .text-muted {
-  font-size: 0.9rem;
-  color: #a86d3c;
+  font-size: 1.5rem; /* un peu plus grand */
+  font-weight: bold;
+  color: #000000; /* brun foncé qui ressort bien */
 }
 
 .recommendation-card .btn {
-  background-color: #ff6f00;
-  border-color: #ff6f00;
+  background-color: #000000;
+  border-color: #000000;
   color: white;
   font-weight: bold;
   border-radius: 6px;
   margin-top: 10px;
   width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.recommendation-card .btn:hover {
+  background-color: #222;
+  border-color: #222;
 }
