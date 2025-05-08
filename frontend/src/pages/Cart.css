@@ -115,10 +115,38 @@
 /* Zone d'actions pour vider le panier et passer la commande */
 .cart-summary {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   padding-top: 20px;
+  gap: 15px;
 }
+
+.cart-total {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff6f00;
+  flex: 1 1 auto;
+  min-width: 150px;
+}
+
+.cart-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+  min-width: 240px;
+}
+
+.cart-actions button {
+  flex: 1 1 100px;
+  max-width: 180px;
+  height: 50px;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
 
 .cart-summary h4 {
   font-size: 1.5rem;
