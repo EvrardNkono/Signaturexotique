@@ -6,7 +6,7 @@ import './Header.css';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
-
+import AddToCartPopup from './AddToCartPopup';
 
 const Header = () => {
   const { cart } = useCart();
@@ -16,13 +16,35 @@ const Header = () => {
   const [categories, setCategories] = useState([]);
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-
+  const [lastAddedItem, setLastAddedItem] = useState(null);
   useEffect(() => {
+    // 1. Charger les catégories
     fetch(`${API_URL}/admin/category`)
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error('Erreur chargement catégories:', err));
+  
+    // 2. Écouter les ajouts au panier
+    const handleItemAdded = (e) => {
+      setLastAddedItem(e.detail);
+  
+      // Auto-hide le popup après 3 secondes
+      const timer = setTimeout(() => {
+        setLastAddedItem(null);
+      }, 3000);
+  
+      // Nettoyage au cas où on reçoit un autre ajout rapidement
+      return () => clearTimeout(timer);
+    };
+  
+    window.addEventListener('itemAdded', handleItemAdded);
+  
+    // 3. Nettoyage à la désactivation du composant
+    return () => {
+      window.removeEventListener('itemAdded', handleItemAdded);
+    };
   }, []);
+  
 
   const handleLinkClick = () => {
     setMenuOpen(false);
@@ -65,6 +87,8 @@ const Header = () => {
     🛒
     {cartQuantity > 0 && <span className="cart-quantity">{cartQuantity}</span>}
   </Link>
+  {lastAddedItem && <AddToCartPopup item={lastAddedItem} />}
+
 
   {!isAuthenticated ? (
     <>
@@ -115,7 +139,8 @@ const Header = () => {
           ))}
         </div>
       )}
-    </header>
+    </header >
+    
   );
 };
 

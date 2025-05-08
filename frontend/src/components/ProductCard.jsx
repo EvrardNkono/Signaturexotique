@@ -61,6 +61,18 @@ const ProductCard = ({ product, clientType }) => {
     if (product.lotQuantity && quantityInCart > 0 && (quantityInCart + 1) % product.lotQuantity === 0) {
       setReductionLevel(prev => prev + 1); // Augmente le niveau de réduction
     }
+    window.dispatchEvent(
+      new CustomEvent('itemAdded', {
+        detail: {
+          ...product,
+          price: priceToDisplay,
+          image: fullImagePath, // 🔥 Ajoute le bon chemin complet !
+          quantity: 3
+        }
+      })
+    );
+    
+    
   };
 
   const handleRemoveOne = () => {

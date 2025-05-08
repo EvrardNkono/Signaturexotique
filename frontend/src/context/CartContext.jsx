@@ -71,8 +71,9 @@ export const CartProvider = ({ children }) => {
     }
     setClientType(newClientType); // Mettre à jour le type de client
   };
+  const [lastAddedItem, setLastAddedItem] = useState(null);
 
-  const addToCart = async (product) => {
+  const addToCart = async (product, quantity) => {
     console.log("=== REQUÊTE VERS BACKEND ===");
     console.log("Produit envoyé :", product);
     console.log("Client Type :", clientType);
@@ -159,6 +160,7 @@ export const CartProvider = ({ children }) => {
       console.error('Erreur:', err);
       alert('Une erreur est survenue lors de l\'ajout au panier.');
     }
+    setLastAddedItem({ ...product, quantity });
   };
   
   
@@ -290,7 +292,8 @@ export const CartProvider = ({ children }) => {
       removeFromCart,
       updateCartQuantity,
       clearCartFromBackend,
-      changeClientType, 
+      changeClientType,
+      lastAddedItem, 
     }}>
       {children}
     </CartContext.Provider>
