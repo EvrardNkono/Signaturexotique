@@ -18,21 +18,21 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import PrivateRoute from './components/PrivateRoute';
 import Profile from './pages/Profile';
-import AccessDenied from './pages/AccessDenied'; // <-- ✨ nouveau import
-import BonPlans from './pages/BonPlans'; // 🔥 Import de ta page de Bons Plans
+import AccessDenied from './pages/AccessDenied';
+import BonPlans from './pages/BonPlans';
 import RecipePage from './pages/RecipePage';
 import AboutUs from './pages/AboutUs';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
-import SocialFollow from './components/SocialFollow'; // Ajuste le chemin si nécessaire
+import SocialFollow from './components/SocialFollow';
 import NewsletterPage from './pages/NewsletterPage';
 import PopupImage from './components/PopupImage';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-
+// Import du composant ScrollToTop
+import ScrollToTop from './components/ScrollToTop'; // à créer
 
 const App = () => {
   return (
@@ -40,18 +40,18 @@ const App = () => {
       <CartProvider>
         <SearchProvider>
           <Router>
+            <ScrollToTop /> {/* Ajout du composant ScrollToTop ici */}
             <Header />
             <main>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/catalogue" element={<Catalogue />} />
-                <Route path="/bonplans" element={<BonPlans />} /> 
+                <Route path="/bonplans" element={<BonPlans />} />
                 <Route path="/panier" element={<Cart />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/recettes" element={<RecipePage />} />
                 <Route path="/aboutus" element={<AboutUs />} />
                 <Route path="/newsletter" element={<NewsletterPage />} />
-                {/* ✅ Route protégée pour le dashboard */}
                 <Route 
                   path="/dashboard" 
                   element={
@@ -60,16 +60,13 @@ const App = () => {
                     </PrivateRoute>
                   } 
                 />
-
-                {/* ✅ Page en cas d'accès refusé */}
                 <Route path="/access-denied" element={<AccessDenied />} />
-
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/success" element={<Success />} />
-<Route path="/cancel" element={<Cancel />} />
+                <Route path="/cancel" element={<Cancel />} />
               </Routes>
             </main>
             <PopupImage />
