@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rye&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rye&display=swap'); 
 
 .custom-header {
   background-color: #ffffff;
@@ -60,6 +60,7 @@
   gap: 15px;  /* Réduction de l'écart entre les liens */
   align-items: center;
   flex-wrap: wrap;
+  visibility: visible; /* Assurer que le menu est visible par défaut */
 }
 
 .nav-links a {
@@ -95,6 +96,7 @@
     display: flex;
   }
 
+  /* Menu en mode mobile */
   .nav-links {
     position: absolute;
     top: 100%;
@@ -103,17 +105,19 @@
     width: 100%;
     flex-direction: column;
     gap: 12px; /* Réduction de l'écart dans le menu mobile */
-    padding: 0px;
+    padding: 0;
     height: 0;
     overflow: hidden;
     transition: height 0.4s ease;
     border: 5px solid orange; /* Bordure orange */
     border-top: none; /* Optionnel : on enlève la bordure du haut si elle touche déjà le header */
     border-radius: 0 0 8px 8px; /* Coins arrondis en bas, pour l’effet boîte */
+    visibility: hidden; /* Cacher les liens par défaut */
   }
 
   .nav-links.open {
     height: auto;
+    visibility: visible; /* Afficher les liens lorsque le menu est ouvert */
   }
 
   .search-bar-container {
@@ -186,6 +190,10 @@
   .dropdown-content a {
     padding-left: 0;
   }
+  .nav-links {
+    gap: 30px; /* Plus d’espace entre les liens en mobile */
+    padding: 10px 0;
+  }
 }
 
 /* === Bouton menu burger pour catégories === */
@@ -255,20 +263,17 @@
   margin: -15px;
   transition: color 0.3s ease;
   letter-spacing: 0.5px;
-  
 }
 
-.profile-link
- {
+.profile-link {
   font-family: 'Rye', cursive;
   font-size: 0.7rem; /* Taille réduite pour une meilleure lisibilité */
   color: #eb4706;
   text-transform: uppercase;
   text-decoration: none;
-  margin-left: 20px !important;
+  margin-left: 15px !important;
   transition: color 0.3s ease;
   letter-spacing: 0.5px;
-  
 }
 
 .nav-links a:hover {
@@ -304,3 +309,6 @@
   margin-left: 50px; /* Ajuste ici selon le déplacement souhaité */
 }
 
+.logout-link {
+  margin-left: 6px !important; /* ajuste selon l'espacement désiré */
+}
