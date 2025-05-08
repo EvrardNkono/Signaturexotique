@@ -89,7 +89,7 @@ const Header = () => {
           // Fermer le menu de navigation
           handleLinkClick();
         }}
-        className="nav-link-style"
+        className="nav-link-style logout-link"
       >
         Déconnexion
       </span>

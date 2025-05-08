@@ -53,7 +53,7 @@ const NewsletterPage = () => {
         {/* Bloc 4 - Teasing saisonnier */}
         <div className="bloc bloc-season" style={{ backgroundImage: `url(${seasonImage})` }}>
           <div className="bloc-content">
-            <h2>🌾 La saison des arachides approche…</h2>
+            <h2>La saison change, vos envies aussi 🌱 Découvrez nos produits du moment</h2>
             <p>
               Préparez-vous pour une sélection exceptionnelle de produits de saison. <br />
               Et ce n’est que le début ! Manioc, gingembre, hibiscus, feuilles africaines… Le meilleur est à venir 🌺
