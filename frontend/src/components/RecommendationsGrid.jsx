@@ -58,7 +58,8 @@ const RecommendationsGrid = () => {
 
   return (
     <div className="recommendation-section mt-3">
-      <h6>Vous aimerez peut-être aussi :</h6>
+      <h6 style={{ color: '#ff6f00' }}>Vous aimerez peut-être aussi :</h6>
+
       <Row>
         {recommendations.map((product) => {
           const adjustedPrice = getAdjustedPrice(product);
