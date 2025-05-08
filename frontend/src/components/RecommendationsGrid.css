@@ -71,3 +71,9 @@
   width: 100%;
   max-width: 280px;
 }
+.recommendation-section h6 {
+  color: #ff6f00; /* Couleur orange vif */
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
