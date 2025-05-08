@@ -1,35 +1,60 @@
-/* recommendationsGrid.css */
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 10px 4px rgba(255, 140, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 24px 10px rgba(255, 100, 0, 1);
+  }
+  100% {
+    box-shadow: 0 0 10px 4px rgba(255, 140, 0, 0.6);
+  }
+}
 
 .recommendation-card {
+  max-width: 280px;
+  width: 100%;
+  margin: 0 auto;
+  /* elements*/
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   border: 1px solid #ffdeba;
-  padding: 16px;
-  background: linear-gradient(145deg, #fffaf5, #fff3e6); /* fond chaleureux */
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(255, 175, 102, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  background-image: url('/assets/recommendations.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 10px !important;
+  animation: glowPulse 1.5s infinite ease-in-out;
 }
 
-.recommendation-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(255, 160, 80, 0.3);
+
+.card-content-wrapper {
+  background: rgba(255, 255, 255, 0.89); /* semi-transparent */
+  border-radius: 10px;
+  padding: 8px;
+  width: 100%;
+  max-width: 100%; /* pour laisser de l'espace sur les bords */
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.recommendation-card .card-img-top {
+.card-img-top {
+  width: 100%;
   max-height: 180px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .recommendation-card .card-body {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  text-align: center;
+  padding: 0;
+  width: 100%;
 }
 
 .recommendation-card .card-title {
@@ -37,43 +62,19 @@
   font-weight: 600;
   color: #5a3e2b;
   margin-bottom: 8px;
-  text-align: center;
 }
 
 .recommendation-card .text-muted {
   font-size: 0.9rem;
   color: #a86d3c;
-  text-align: center;
 }
 
 .recommendation-card .btn {
-  margin-top: auto;
-  background-color: #ffaf66;
-  border: none;
+  background-color: #ff6f00;
+  border-color: #ff6f00;
   color: white;
   font-weight: bold;
-  transition: background 0.3s ease;
   border-radius: 6px;
-}
-
-.recommendation-card .btn:hover {
-  background-color: #e28e3d;
-}
-
-.recommendation-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-.recommendation-card {
+  margin-top: 10px;
   width: 100%;
-  max-width: 280px;
-}
-.recommendation-section h6 {
-  color: #ff6f00; /* Couleur orange vif */
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
 }

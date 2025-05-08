@@ -62,38 +62,37 @@ const RecommendationsGrid = () => {
       <Row>
         {recommendations.map((product) => {
           const adjustedPrice = getAdjustedPrice(product);
-
+  
           return (
-            <Col key={product.id} xs={12} md={4} className="mb-3">
+            <Col key={product.id} xs={12} sm={6} md={4} lg={3} className="mb-3 d-flex justify-content-center">
               <Card className="recommendation-card">
-                <Card.Img
-                  variant="top"
-                  src={`${API_URL}/uploads/${product.image}`}
-                  alt={product.name}
-                  className="card-img-top"
-                />
-                <Card.Body>
-                  <Card.Title>{product.name}</Card.Title>
-                  <p className="text-muted">{adjustedPrice} €</p>
-                  <Button
-                    variant="outline-primary"
-                    onClick={() => {
-                      addToCart({
-                        ...product,
-                        price: adjustedPrice,
-                        unitPrice: product.unitPrice,
-                        wholesalePrice: product.wholesalePrice,
-                      });
-                    }}
-                    style={{
-                      backgroundColor: '#ff6f00',
-                      borderColor: '#ff6f00',
-                      color: 'white',
-                    }}
-                  >
-                    Ajouter au panier
-                  </Button>
-                </Card.Body>
+                <div className="card-content-wrapper">
+                  {/* Image du produit */}
+                  <Card.Img
+                    variant="top"
+                    src={`${API_URL}/uploads/${product.image}`}
+                    alt={product.name}
+                    className="card-img-top"
+                  />
+                  {/* Infos produit */}
+                  <Card.Body>
+                    <Card.Title>{product.name}</Card.Title>
+                    <p className="text-muted">{adjustedPrice} €</p>
+                    <Button
+                      variant="outline-primary"
+                      onClick={() => {
+                        addToCart({
+                          ...product,
+                          price: adjustedPrice,
+                          unitPrice: product.unitPrice,
+                          wholesalePrice: product.wholesalePrice,
+                        });
+                      }}
+                    >
+                      Ajouter au panier
+                    </Button>
+                  </Card.Body>
+                </div>
               </Card>
             </Col>
           );
@@ -101,6 +100,8 @@ const RecommendationsGrid = () => {
       </Row>
     </div>
   );
+  
+  
 };
 
 export default RecommendationsGrid;
