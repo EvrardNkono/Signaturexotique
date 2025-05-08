@@ -37,7 +37,7 @@ const RecommendationsGrid = () => {
           (product) => !productNamesInCart.has(normalizeName(product.name))
         );
 
-        setRecommendations(filtered.slice(0, 9));
+        setRecommendations(filtered.slice(0, 12));
       } catch (error) {
         console.error('Erreur lors de la récupération des recommandations:', error);
       }
