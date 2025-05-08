@@ -81,7 +81,14 @@ export const CartProvider = ({ children }) => {
     console.log('Prix de gros du produit:', product.wholesalePrice);
   
     try {
-      const priceToUse = clientType === 'wholesale' ? product.wholesalePrice : product.price;
+      // Vérification si le prix est disponible
+      const priceToUse = clientType === 'wholesale' && product.wholesalePrice ? product.wholesalePrice : product.price;
+  
+      if (!priceToUse) {
+        console.error('Le prix du produit est manquant !');
+        alert('Ce produit n\'a pas de prix disponible.');
+        return; // Arrête la fonction si le prix est manquant
+      }
   
       console.log('Prix à utiliser :', priceToUse);
   
@@ -110,20 +117,22 @@ export const CartProvider = ({ children }) => {
           body: JSON.stringify({
             productId: product.id,
             quantity: 1,
-            price: priceToUse,  
-            clientType,         
+            price: priceToUse,
+            clientType,
             unitPrice: product.unitPrice,
             wholesalePrice: product.wholesalePrice
           }),
         });
   
-        const data = await res.json();
-        console.log('Réponse du backend:', data);
-  
         if (!res.ok) {
+          const data = await res.json();
           throw new Error(data.error || 'Erreur lors de l’ajout au panier');
         }
   
+        const data = await res.json();
+        console.log('Réponse du backend:', data);
+  
+        // Récupérer le panier mis à jour après ajout
         const updatedCartResponse = await fetch(`${API_URL}/modules/cart/cart`, {
           method: 'GET',
           headers: {
@@ -132,8 +141,12 @@ export const CartProvider = ({ children }) => {
           },
         });
   
+        if (!updatedCartResponse.ok) {
+          throw new Error('Erreur lors de la récupération du panier mis à jour');
+        }
+  
         const updatedCart = await updatedCartResponse.json();
-        console.log('Réponse du panier mis à jour:', updatedCart);  // Ajoute ceci pour debugger
+        console.log('Réponse du panier mis à jour:', updatedCart);
   
         if (Array.isArray(updatedCart)) {
           console.log('Panier mis à jour:', updatedCart);
@@ -144,8 +157,12 @@ export const CartProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Erreur:', err);
+      alert('Une erreur est survenue lors de l\'ajout au panier.');
     }
   };
+  
+  
+  
   
   
   const removeFromCart = async (productId) => {
