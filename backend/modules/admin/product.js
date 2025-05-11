@@ -50,7 +50,8 @@ router.post(
       reduction,
       lotQuantity,
       lotPrice,
-      inStock,  // On récupère la donnée inStock
+      inStock,
+      weight // Nouveaux champs pour le poids
     } = req.body;
     const image = req.file ? req.file.filename : null;
 
@@ -65,8 +66,11 @@ router.post(
     try {
       // Création de l'insertion SQL en ajoutant inStock et les champs de lot seulement s'ils existent
       const insertSql = `
-        INSERT INTO products (name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction, lotQuantity, lotPrice, inStock)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO products (
+          name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction,
+          lotQuantity, lotPrice, inStock, weight
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const result = await db.run(insertSql, [
@@ -81,6 +85,7 @@ router.post(
         lotQuantity || null,  // Si la quantité de lot est vide, on la garde à null
         lotPrice || null,     // Si le prix de lot est vide, on le garde à null
         stockStatus,          // Ajout de la valeur inStock
+        weight || null        // Ajout du poids, si non fourni, on garde `null`
       ]);
 
       // Réponse après création
@@ -98,6 +103,7 @@ router.post(
           lotQuantity: lotQuantity || null,  // Si le champ est non défini, il sera `null`
           lotPrice: lotPrice || null,        // Idem pour le prix de lot
           inStock: stockStatus === 1,        // Affichage de inStock comme un booléen
+          weight: weight || null,            // Envoie également le poids
           imageURL: image ? `/uploads/${image}` : null
         }
       });
@@ -122,7 +128,7 @@ router.post(
  */
 router.get('/', async (req, res) => {
   try {
-    const { nom, categorie, prixMax } = req.query;
+    const { nom, categorie, prixMax, poidsMin, poidsMax } = req.query;
 
     let query = 'SELECT * FROM products WHERE 1=1';
 
@@ -141,6 +147,16 @@ router.get('/', async (req, res) => {
       query += ` AND unitPrice <= ${prixMax}`;
     }
 
+    // Filtrage par poids min (colonne "weight")
+    if (poidsMin) {
+      query += ` AND weight >= ${poidsMin}`;
+    }
+
+    // Filtrage par poids max (colonne "weight")
+    if (poidsMax) {
+      query += ` AND weight <= ${poidsMax}`;
+    }
+
     const products = await dbAll(query);
     res.json(products);
 
@@ -149,6 +165,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
   }
 });
+
 
 
 
@@ -166,7 +183,7 @@ router.put(
   upload.single('image'),
   async (req, res) => {
     const { id } = req.params;
-    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction, lotQuantity, lotPrice, inStock } = req.body;
+    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction, lotQuantity, lotPrice, inStock, weight } = req.body;
     const image = req.file ? req.file.filename : null;
 
     // Validation des champs obligatoires
@@ -189,12 +206,14 @@ router.put(
       const updateSql = `
         UPDATE products
         SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, reduction = ?, 
-            lotQuantity = ?, lotPrice = ?, inStock = ?
+            lotQuantity = ?, lotPrice = ?, inStock = ?, weight = ?
         WHERE id = ?
       `;
 
       // Si image existe, on utilise la nouvelle image, sinon on garde l'existante
       const imageToUpdate = image || product.image;
+      // Si poids existe, on met à jour, sinon on garde l'existant
+      const weightToUpdate = weight || product.weight;
 
       // Mise à jour dans la base de données
       await db.run(updateSql, [
@@ -209,6 +228,7 @@ router.put(
         lotQuantity || null,  // Si lotQuantity est vide, on le garde à null
         lotPrice || null,     // Idem pour lotPrice
         stockStatus,          // Mise à jour du statut du stock
+        weightToUpdate,       // Mise à jour du poids
         id
       ]);
 
@@ -227,7 +247,8 @@ router.put(
           lotQuantity: lotQuantity || null,  // Si le champ lotQuantity n'est pas fourni, il est null
           lotPrice: lotPrice || null,        // Idem pour lotPrice
           imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null,
-          inStock: stockStatus  // On retourne le nouveau statut du stock
+          inStock: stockStatus,             // Nouveau statut du stock
+          weight: weightToUpdate           // Poids mis à jour
         }
       });
 
@@ -237,6 +258,7 @@ router.put(
     }
   }
 );
+
 
 
 /**

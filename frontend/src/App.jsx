@@ -30,6 +30,7 @@ import PopupImage from './components/PopupImage';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DeliveryForm from './pages/DeliveryForm'; // ✅ c’est une page, donc on le traite comme tel
 
 // Import du composant ScrollToTop
 import ScrollToTop from './components/ScrollToTop'; // à créer
@@ -67,6 +68,8 @@ const App = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/success" element={<Success />} />
                 <Route path="/cancel" element={<Cancel />} />
+                <Route path="/delivery" element={<DeliveryForm />} />
+
               </Routes>
             </main>
             <PopupImage />

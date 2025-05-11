@@ -1,0 +1,144 @@
+/* DeliveryForm.css */
+
+:root {
+  --orange: #ff6f00;
+  --orange-light: #ffe8d4;
+  --black: #1a1a1a;
+  --white: #ffffff;
+}
+
+body {
+  background-color: var(--white);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.delivery-form {
+  max-width: 720px;
+  margin: 3rem auto;
+  padding: 2rem 2.5rem;
+  background-color: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.07);
+  color: var(--black);
+  border: 1px solid var(--orange-light);
+}
+
+.form-title {
+  text-align: center;
+  font-size: 2.2rem;
+  color: var(--orange);
+  margin-bottom: 2rem;
+  font-weight: 800;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: var(--black);
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: var(--white);
+  transition: all 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 2px rgba(255, 111, 0, 0.2);
+  outline: none;
+}
+
+.country-select {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.delivery-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.delivery-option {
+  flex: 1 1 30%;
+  background-color: var(--orange-light);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delivery-option img {
+  max-width: 50px;
+  margin-bottom: 0.75rem;
+}
+
+.delivery-option span {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--black);
+}
+
+.delivery-option:hover {
+  transform: translateY(-2px);
+  border-color: var(--orange);
+}
+
+.delivery-option.selected {
+  border-color: var(--orange);
+  background-color: #fff3e6;
+  box-shadow: 0 0 0 2px rgba(255, 111, 0, 0.3);
+}
+
+.text-green-600 {
+  color: #2e7d32;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  background-color: #e8f5e9;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+.submit-button {
+  width: 100%;
+  background-color: var(--orange);
+  color: var(--white);
+  padding: 0.9rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.submit-button:hover {
+  background-color: #e65c00;
+}
+
+p {
+  font-size: 1rem;
+  margin: 0.25rem 0;
+  color: var(--black);
+}

@@ -210,35 +210,41 @@ const ProductCard = ({ product, clientType }) => {
 
         {/* Face arrière */}
         <div className={`flip-card-back product-card ${cardBackgroundClass}`}>
-          <Card.Body className="product-card-body">
-            <Card.Title className="product-card-title">{product.name}</Card.Title>
+  <Card.Body className="product-card-body">
+    <Card.Title className="product-card-title">{product.name}</Card.Title>
 
-            <Card.Text className="product-card-description">
-              Description : {product.description || 'Pas de description'}
-            </Card.Text>
-            <Card.Text className="product-card-description">
-              Référence : {product.ref || 'N/A'}
-            </Card.Text>
-            <Card.Text className="product-card-description">
-              Disponibilité : {product.stock ? `${product.stock} en stock` : 'Stock inconnu'}
-            </Card.Text>
-            <Card.Text className="product-card-description">
-              Unité : {unitLabel}
-            </Card.Text>
+    <Card.Text className="product-card-description">
+      Description : {product.description || 'Pas de description'}
+    </Card.Text>
+    <Card.Text className="product-card-description">
+      Référence : {product.ref || 'N/A'}
+    </Card.Text>
+    <Card.Text className="product-card-description">
+      Disponibilité : {product.stock ? `${product.stock} en stock` : 'Stock inconnu'}
+    </Card.Text>
+    <Card.Text className="product-card-description">
+      Unité : {unitLabel}
+    </Card.Text>
+    
+    {/* Ajout du poids ici */}
+    <Card.Text className="product-card-description">
+      Poids : {product.weight ? `${product.weight} kg` : 'Non spécifié'}
+    </Card.Text>
 
-            <button
-              className="product-card-button"
-              style={{
-                backgroundColor: '#343a40',
-                borderColor: '#343a40',
-                marginTop: 'auto'
-              }}
-              onClick={toggleFlip}
-            >
-              Retour
-            </button>
-          </Card.Body>
-        </div>
+    <button
+      className="product-card-button"
+      style={{
+        backgroundColor: '#343a40',
+        borderColor: '#343a40',
+        marginTop: 'auto'
+      }}
+      onClick={toggleFlip}
+    >
+      Retour
+    </button>
+  </Card.Body>
+</div>
+
       </div>
 
       {/* Badge de réduction par lot */}

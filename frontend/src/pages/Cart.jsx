@@ -8,7 +8,10 @@ import { API_URL } from '../config';
 import { loadStripe } from '@stripe/stripe-js';
 import { toast } from 'react-toastify';
 
+
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+
 
 const Cart = () => {
   const {
@@ -214,11 +217,16 @@ const Cart = () => {
       Vider le panier
     </Button>
     <Button
-      variant="outline-success"
-      onClick={handleOrder}
-    >
-      Passer la commande
-    </Button>
+  variant="outline-success"
+  onClick={() => {
+    // Optionnel : stocker le total ou le panier temporairement
+    localStorage.setItem("cartTotal", totalPrice); // à adapter selon ta logique
+    navigate("/delivery");
+  }}
+>
+  Passer la commande
+</Button>
+
   </div>
 </div>
 
@@ -229,3 +237,9 @@ const Cart = () => {
 };
 
 export default Cart;
+/*<Button
+variant="outline-success"
+onClick={handleOrder}
+>
+Passer la commande
+</Button>*/

@@ -105,20 +105,3 @@
     width: 25vw; /* 25% de la largeur de l'écran */
   }
 }
-
-@media (max-width: 480px) {
-  .popup-container {
-    top: auto;
-    bottom: 20px;
-    right: 10px;
-    left: 10px;
-    width: 25vw; /* 25% de la largeur de l'écran */
-    height: auto; /* Hauteur qui s'adapte automatiquement */
-    max-height: 80vh; /* Limite la hauteur à 80% de la hauteur de l'écran */
-  }
-
-  /* Ajuster la taille du texte si nécessaire */
-  .popup-content p {
-    font-size: 0.9rem;
-  }
-}

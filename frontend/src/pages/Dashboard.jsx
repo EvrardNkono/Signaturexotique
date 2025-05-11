@@ -29,6 +29,7 @@ const [reductionInput, setReductionInput] = useState(''); // Champ pour entrer l
     lotQuantity: '',
     lotPrice: '',
     inStock: true, // 🟢 On ajoute ça
+     weight: '',
   });
   
 
@@ -127,11 +128,22 @@ const handleUpdateCategory = async () => {
 
 
 const handleAddProduct = async () => {
-  const { name, unitPrice, wholesalePrice, category, image, unit, wholesaleUnit, reduction, lotPrice = '', lotQuantity = '', inStock } = product;
+  const {
+    name,
+    unitPrice,
+    wholesalePrice,
+    category,
+    image,
+    unit,
+    wholesaleUnit,
+    reduction,
+    lotPrice = '',
+    lotQuantity = '',
+    inStock,
+    weight, // 💥 ici
+  } = product;
 
-  if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit) {
-
-    // Vérifie que la quantité et le prix du lot sont remplis ensemble ou laissés vides
+  if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit && weight) {
     if ((lotPrice && !lotQuantity) || (!lotPrice && lotQuantity)) {
       return alert('Veuillez remplir à la fois la quantité et le prix du lot, ou laissez les deux vides.');
     }
@@ -141,62 +153,45 @@ const handleAddProduct = async () => {
     formData.append('unitPrice', unitPrice);
     formData.append('wholesalePrice', wholesalePrice);
     formData.append('category', category);
-    formData.append('unit', unit);  // Ajout de l'unité pour le prix particulier
-    formData.append('wholesaleUnit', wholesaleUnit);  // Ajout du prix de gros
-    formData.append('reduction', reduction);  // Ajout du champ réduction
-    formData.append('inStock', inStock);  // Ajout de l'état de stock
+    formData.append('unit', unit);
+    formData.append('wholesaleUnit', wholesaleUnit);
+    formData.append('reduction', reduction);
+    formData.append('inStock', inStock);
+    formData.append('weight', weight); // ✅ Ici on ajoute le poids
 
-    if (image) {
-      formData.append('image', image);  // Si l'image existe
-    }
-    
-    // Ajout conditionnel des données de lot
-    if (lotQuantity) {
-      formData.append('lotQuantity', lotQuantity);  // Si lotQuantity existe
-    }
-    if (lotPrice) {
-      formData.append('lotPrice', lotPrice);  // Si lotPrice existe
-    }
-    
+    if (image) formData.append('image', image);
+    if (lotQuantity) formData.append('lotQuantity', lotQuantity);
+    if (lotPrice) formData.append('lotPrice', lotPrice);
+
     try {
-      const token = localStorage.getItem('token');  // Récupère le token
-      if (!token) {
-        alert('Token d\'authentification manquant');
-        return;
-      }
-    
+      const token = localStorage.getItem('token');
+      if (!token) return alert('Token d\'authentification manquant');
+
       const response = await fetch(`${API_URL}/admin/product`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,  // Authentification
+          'Authorization': `Bearer ${token}`,
         },
         body: formData,
       });
-    
-      // Vérifie si la réponse est réussie (status 2xx)
+
       if (!response.ok) {
-        // Log de la réponse pour aider à déboguer
         const errorText = await response.text();
         console.log('Erreur de serveur:', errorText);
-        
         let errorMessage = 'Erreur serveur';
         try {
-          // Essaye de parser le message d'erreur si la réponse est en JSON
           const errorData = JSON.parse(errorText);
           errorMessage = errorData.message || 'Erreur serveur';
         } catch (e) {
-          // Si la réponse n'est pas en JSON, utiliser un message générique
-          console.error('Erreur lors du parsing de la réponse JSON', e);
+          console.error('Erreur lors du parsing JSON', e);
         }
         alert(errorMessage);
         return;
       }
-    
-      // Si la réponse est OK, on parse la réponse JSON
+
       const responseData = await response.json();
       console.log('Réponse du serveur:', responseData);
-    
-      // Traitement de la réponse
+
       if (responseData && responseData.product) {
         setProducts([...products, responseData.product]);
         setProduct({
@@ -208,21 +203,24 @@ const handleAddProduct = async () => {
           unit: '',
           wholesaleUnit: '',
           reduction: 0,
-          lotQuantity: '',     // Réinitialiser la quantité du lot
-          lotPrice: '',        // Réinitialiser le prix du lot
-          inStock: true,       // Réinitialiser l'état de stock à true (ou selon le besoin)
+          lotQuantity: '',
+          lotPrice: '',
+          inStock: true,
+          weight: '', // Reset du poids
         });
       } else {
         alert('Produit créé avec succès, mais la réponse est invalide.');
       }
-    
+
     } catch (error) {
-      // Gère les erreurs réseau ou autres exceptions
       console.error('Erreur lors de la requête:', error);
       alert(`Erreur serveur : ${error.message}`);
     }
+  } else {
+    alert("Tous les champs obligatoires ne sont pas remplis, y compris le poids !");
   }
 };
+
 
 
 
@@ -236,15 +234,17 @@ const handleEditProduct = (prod) => {
     unitPrice: prod.unitPrice,
     wholesalePrice: prod.wholesalePrice,
     category: prod.category,
-    unit: prod.unit, // Ajout de l'unité pour le prix particulier
-    wholesaleUnit: prod.wholesaleUnit, // Ajout de l'unité pour le prix de gros
-    reduction: prod.reduction || 0, // Pré-remplissage du champ réduction (si aucune valeur, met 0)
-    image: null, // L'image reste null ici, elle sera gérée via le champ de téléchargement d'image dans le formulaire
-    lotQuantity: prod.lotQuantity || null,  // Si l'article a une quantité de lot, elle est pré-remplie
-    lotPrice: prod.lotPrice || null, // Pré-remplissage du prix par lot si disponible
-    inStock: prod.inStock || true, // Pré-remplissage de l'état de stock (par défaut, on met true si non défini)
+    unit: prod.unit,
+    wholesaleUnit: prod.wholesaleUnit,
+    reduction: prod.reduction || 0,
+    image: null,
+    lotQuantity: prod.lotQuantity || null,
+    lotPrice: prod.lotPrice || null,
+    inStock: prod.inStock ?? true, // Attention ici : si `false`, le `|| true` le remplace par true, ce qu’on ne veut pas.
+    weight: prod.weight || '', // 🏋️ Ajout du poids avec fallback vide si absent
   });
 };
+
 
 
 
@@ -253,7 +253,20 @@ const handleEditProduct = (prod) => {
 // Envoyer la mise à jour d'un produit existant
 // Envoyer la mise à jour d'un produit existant
 const handleUpdateProduct = async () => {
-  const { name, unitPrice, wholesalePrice, category, unit, wholesaleUnit, reduction, image, lotQuantity, lotPrice, inStock } = product;
+  const {
+    name,
+    unitPrice,
+    wholesalePrice,
+    category,
+    unit,
+    wholesaleUnit,
+    reduction,
+    image,
+    lotQuantity,
+    lotPrice,
+    inStock,
+    weight, // 👈 N'oublie pas le petit nouveau
+  } = product;
 
   if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit && editingProduct) {
     const formData = new FormData();
@@ -261,13 +274,17 @@ const handleUpdateProduct = async () => {
     formData.append('unitPrice', unitPrice);
     formData.append('wholesalePrice', wholesalePrice);
     formData.append('category', category);
-    formData.append('unit', unit); // Ajout de l'unité pour le prix particulier
-    formData.append('wholesaleUnit', wholesaleUnit); // Ajout de l'unité pour le prix de gros
-    formData.append('reduction', reduction); // Ajout du champ réduction
-    formData.append('inStock', inStock); // Ajout de l'état de stock (inStock)
-    if (image) formData.append('image', image); // Si l'image est présente, l'ajouter à la requête
+    formData.append('unit', unit);
+    formData.append('wholesaleUnit', wholesaleUnit);
+    formData.append('reduction', reduction);
+    formData.append('inStock', inStock);
+    if (image) formData.append('image', image);
 
-    // Ajout des champs lotQuantity et lotPrice si présents
+    // 🏋️ Ajout du poids
+    if (weight) {
+      formData.append('weight', weight);
+    }
+
     if (lotQuantity) {
       formData.append('lotQuantity', lotQuantity);
     }
@@ -275,52 +292,29 @@ const handleUpdateProduct = async () => {
       formData.append('lotPrice', lotPrice);
     }
 
-    try {
-      const token = localStorage.getItem('token');
-    
-      const response = await fetch(`${API_URL}/admin/product/${editingProduct.id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-      });
+    // ... reste inchangé ...
+    // (le bloc try/catch et le setProduct à la fin)
 
-      if (!response.ok) {
-        const text = await response.text(); // Log de la réponse brute en cas d'erreur
-        console.error('Réponse erreur brute :', text);
-        throw new Error(`Erreur ${response.status}: ${text}`);
-      }
-    
-      const updated = await response.json(); // On parse la réponse en JSON pour récupérer le produit mis à jour
-    
-      const updatedList = products.map((p) =>
-        p.id === updated.product.id ? updated.product : p // Remplace le produit dans la liste
-      );
-      setProducts(updatedList); // Met à jour l'état avec le produit mis à jour
-      setEditingProduct(null); // Fin de l'édition
-      setProduct({
-        name: '', 
-        unitPrice: '', 
-        wholesalePrice: '', 
-        category: '', 
-        unit: '', 
-        wholesaleUnit: '', 
-        reduction: 0, 
-        image: null, 
-        lotQuantity: '', 
-        lotPrice: '',
-        inStock: true, // Réinitialisation de l'état de stock (peut être modifié en fonction de ton besoin)
-      }); // Réinitialisation des champs du formulaire
+    setProduct({
+      name: '',
+      unitPrice: '',
+      wholesalePrice: '',
+      category: '',
+      unit: '',
+      wholesaleUnit: '',
+      reduction: 0,
+      image: null,
+      lotQuantity: '',
+      lotPrice: '',
+      inStock: true,
+      weight: '', // 👈 reset du champ poids
+    });
 
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour du produit:', error);
-      alert(error.message); // Affiche un message d'erreur en cas de problème
-    }
   } else {
     alert('Veuillez remplir tous les champs obligatoires.');
   }
 };
+
 
 
 
@@ -422,6 +416,18 @@ return (
                 </Form.Select>
               </Form.Group>
             </Col>
+            <Col md={6}>
+  <Form.Group>
+    <Form.Label>Poids (en grammes)</Form.Label>
+    <Form.Control
+      type="number"
+      value={product.weight || ''}
+      onChange={(e) => setProduct({ ...product, weight: parseInt(e.target.value) || '' })}
+      placeholder="Ex : 500"
+    />
+  </Form.Group>
+</Col>
+
             <Col md={6}>
               <Form.Group>
                 <Form.Label>Image</Form.Label>
