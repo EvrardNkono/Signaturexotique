@@ -23,7 +23,7 @@ app.use('/uploads', express.static(uploadDir)); // Sert les images
 const categoryRoutes = require('./modules/admin/category');
 const productRoutes = require('./modules/admin/product');
 const filterRoutes = require('./modules/admin/filter'); // ✅ Corrigé ici
-const orderRoutes = require('./modules/checkout');
+//const orderRoutes = require('./modules/checkout');
 const searchRoutes = require('./modules/admin/search');
 const emailRoutes = require('./modules/contact/emailRoutes'); // Importer les routes d'email
 // J’importe les routes d’authentification
@@ -33,6 +33,7 @@ const recommendationRoutes = require('./routes/recommendations');
 const stripeRoutes = require('./modules/payement/stripe'); // adapte selon ton arborescence
 const popupRoutes = require('./modules/admin/popup');
 const recetteRoutes = require('./routes/recetteRoutes');
+const orderRoutes = require('./routes/order');  // Importer la route de commande
 // Utilisation des routes
 app.use('/admin/category', categoryRoutes);
 app.use('/admin/product', productRoutes);
@@ -55,7 +56,7 @@ app.get('/test', (req, res) => {
 // Route panier (cart)
 const cartRoutes = require('./modules/cart/cart');
 app.use('/modules/cart/cart', cartRoutes); // POST /api/cart, GET /api/cart, etc.
-app.use('/modules/checkout', orderRoutes);
+//app.use('/modules/checkout', orderRoutes);
 // Route de recherche spécifique
 app.use('/admin/search', searchRoutes);  // Utiliser la route de recherche ici
 app.use('/admin/categoryhome', categoryHomeRouter); // Utiliser les routes de catégorie
@@ -66,7 +67,7 @@ app.use('/', popupRoutes); // pour GET /popup
 app.use('/payement', stripeRoutes);
 
 app.use('/recetteRoutes', recetteRoutes); // les routes des recettes sont maintenant accessibles via /api/recettes
-
+app.use('/orderRoutes', orderRoutes);
 
 
 // Lancement du serveur

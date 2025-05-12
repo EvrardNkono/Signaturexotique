@@ -45,30 +45,31 @@ router.post(
       category,
       unitPrice,
       wholesalePrice,
-      unit,
-      wholesaleUnit,
       reduction,
       lotQuantity,
       lotPrice,
       inStock,
-      weight // Nouveaux champs pour le poids
+      retailWeight,     // ✅ Poids pour particulier (nouveau nom)
+      wholesaleWeight,  // ✅ Poids pour grossiste
+      details           // ✅ Détails supplémentaires du produit (nouveau champ)
     } = req.body;
+
     const image = req.file ? req.file.filename : null;
 
     // Validation des champs obligatoires
-    if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
-      return res.status(400).json({ message: 'Tous les champs sont requis.' });
+    if (!name || !category || !unitPrice || !wholesalePrice || !retailWeight || !wholesaleWeight || !details) {
+      return res.status(400).json({ message: 'Tous les champs sont requis, y compris les détails.' });
     }
 
     // Validation de inStock (par défaut à true si non fourni)
     const stockStatus = inStock === undefined ? 1 : inStock === 'true' ? 1 : 0;
 
     try {
-      // Création de l'insertion SQL en ajoutant inStock et les champs de lot seulement s'ils existent
+      // Création de l'insertion SQL avec le champ details
       const insertSql = `
         INSERT INTO products (
-          name, category, unitPrice, wholesalePrice, image, unit, wholesaleUnit, reduction,
-          lotQuantity, lotPrice, inStock, weight
+          name, category, unitPrice, wholesalePrice, image, reduction,
+          lotQuantity, lotPrice, inStock, retailWeight, wholesaleWeight, details
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
@@ -79,16 +80,15 @@ router.post(
         unitPrice,
         wholesalePrice,
         image,
-        unit,
-        wholesaleUnit,
-        reduction || 0,  // Si aucune réduction n'est fournie, on garde 0 comme valeur par défaut
-        lotQuantity || null,  // Si la quantité de lot est vide, on la garde à null
-        lotPrice || null,     // Si le prix de lot est vide, on le garde à null
-        stockStatus,          // Ajout de la valeur inStock
-        weight || null        // Ajout du poids, si non fourni, on garde `null`
+        reduction || 0,
+        lotQuantity || null,
+        lotPrice || null,
+        stockStatus,
+        retailWeight,       // ✅ Poids pour particulier
+        wholesaleWeight,    // ✅ Poids pour grossiste
+        details             // ✅ Nouveau champ "details" pour description
       ]);
 
-      // Réponse après création
       res.status(201).json({
         message: 'Produit créé avec succès',
         product: {
@@ -97,13 +97,13 @@ router.post(
           category,
           unitPrice,
           wholesalePrice,
-          unit,
-          wholesaleUnit,
           reduction: reduction || 0,
-          lotQuantity: lotQuantity || null,  // Si le champ est non défini, il sera `null`
-          lotPrice: lotPrice || null,        // Idem pour le prix de lot
-          inStock: stockStatus === 1,        // Affichage de inStock comme un booléen
-          weight: weight || null,            // Envoie également le poids
+          lotQuantity: lotQuantity || null,
+          lotPrice: lotPrice || null,
+          inStock: stockStatus === 1,
+          retailWeight,      // ✅ Poids pour particulier
+          wholesaleWeight,   // ✅ Poids pour grossiste
+          details,           // ✅ Détails du produit
           imageURL: image ? `/uploads/${image}` : null
         }
       });
@@ -117,8 +117,9 @@ router.post(
 
 
 
-  
 
+
+  
 /**
  * ============================================
  *          RÉCUPÉRATION DES PRODUITS
@@ -128,36 +129,50 @@ router.post(
  */
 router.get('/', async (req, res) => {
   try {
-    const { nom, categorie, prixMax, poidsMin, poidsMax } = req.query;
+    const {
+      nom,
+      categorie,
+      prixMax,
+      poidsMinRetail,     // ✅ Nouveau nom
+      poidsMaxRetail,     // ✅ Nouveau nom
+      poidsMinWholesale,
+      poidsMaxWholesale
+    } = req.query;
 
     let query = 'SELECT * FROM products WHERE 1=1';
 
-    // Filtrage par nom (colonne "name")
     if (nom) {
       query += ` AND name LIKE '%${nom}%'`;
     }
 
-    // Filtrage par catégorie (colonne "category")
     if (categorie) {
       query += ` AND category = '${categorie}'`;
     }
 
-    // Filtrage par prix max (colonne "unitPrice")
     if (prixMax) {
       query += ` AND unitPrice <= ${prixMax}`;
     }
 
-    // Filtrage par poids min (colonne "weight")
-    if (poidsMin) {
-      query += ` AND weight >= ${poidsMin}`;
+    if (poidsMinRetail) {
+      query += ` AND retailWeight >= ${poidsMinRetail}`;  // ✅ nouvelle colonne
     }
 
-    // Filtrage par poids max (colonne "weight")
-    if (poidsMax) {
-      query += ` AND weight <= ${poidsMax}`;
+    if (poidsMaxRetail) {
+      query += ` AND retailWeight <= ${poidsMaxRetail}`;  // ✅ nouvelle colonne
     }
 
+    if (poidsMinWholesale) {
+      query += ` AND wholesaleWeight >= ${poidsMinWholesale}`;
+    }
+
+    if (poidsMaxWholesale) {
+      query += ` AND wholesaleWeight <= ${poidsMaxWholesale}`;
+    }
+
+    // Récupération des produits avec tous les critères
     const products = await dbAll(query);
+
+    // Envoi des produits récupérés avec les détails
     res.json(products);
 
   } catch (err) {
@@ -165,6 +180,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
   }
 });
+
 
 
 
@@ -183,56 +199,62 @@ router.put(
   upload.single('image'),
   async (req, res) => {
     const { id } = req.params;
-    const { name, category, unitPrice, wholesalePrice, unit, wholesaleUnit, reduction, lotQuantity, lotPrice, inStock, weight } = req.body;
+    const {
+      name,
+      category,
+      unitPrice,
+      wholesalePrice,
+      retailWeight, // ✅ Nouveau nom
+      wholesaleWeight,
+      reduction,
+      lotQuantity,
+      lotPrice,
+      inStock
+    } = req.body;
+
     const image = req.file ? req.file.filename : null;
 
-    // Validation des champs obligatoires
-    if (!name || !category || !unitPrice || !wholesalePrice || !unit || !wholesaleUnit) {
+    if (!name || !category || !unitPrice || !wholesalePrice) {
       return res.status(400).json({ message: 'Tous les champs sont requis.' });
     }
 
     try {
-      // Récupère le produit existant
       const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
 
       if (!product) {
         return res.status(404).json({ message: 'Produit non trouvé' });
       }
 
-      // Traitement de l'état du stock (inStock)
       const stockStatus = inStock === undefined ? product.inStock : (inStock === 'true' ? 1 : 0);
 
-      // Préparation de l'update
       const updateSql = `
         UPDATE products
         SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, reduction = ?, 
-            lotQuantity = ?, lotPrice = ?, inStock = ?, weight = ?
+            lotQuantity = ?, lotPrice = ?, inStock = ?, retailWeight = ?, wholesaleWeight = ?
         WHERE id = ?
       `;
 
-      // Si image existe, on utilise la nouvelle image, sinon on garde l'existante
       const imageToUpdate = image || product.image;
-      // Si poids existe, on met à jour, sinon on garde l'existant
-      const weightToUpdate = weight || product.weight;
+      const retailWeightToUpdate = retailWeight || product.retailWeight;
+      const wholesaleWeightToUpdate = wholesaleWeight || product.wholesaleWeight;
 
-      // Mise à jour dans la base de données
       await db.run(updateSql, [
         name,
         category,
         unitPrice,
         wholesalePrice,
         imageToUpdate,
-        unit,
-        wholesaleUnit,
-        reduction || 0,  // Si la réduction est vide, on la garde à 0
-        lotQuantity || null,  // Si lotQuantity est vide, on le garde à null
-        lotPrice || null,     // Idem pour lotPrice
-        stockStatus,          // Mise à jour du statut du stock
-        weightToUpdate,       // Mise à jour du poids
+        product.unit,
+        product.wholesaleUnit,
+        reduction || 0,
+        lotQuantity || null,
+        lotPrice || null,
+        stockStatus,
+        retailWeightToUpdate,
+        wholesaleWeightToUpdate,
         id
       ]);
 
-      // Réponse après mise à jour
       res.status(200).json({
         message: 'Produit mis à jour avec succès',
         product: {
@@ -241,14 +263,15 @@ router.put(
           category,
           unitPrice,
           wholesalePrice,
-          unit,
-          wholesaleUnit,
+          unit: product.unit,
+          wholesaleUnit: product.wholesaleUnit,
           reduction: reduction || 0,
-          lotQuantity: lotQuantity || null,  // Si le champ lotQuantity n'est pas fourni, il est null
-          lotPrice: lotPrice || null,        // Idem pour lotPrice
+          lotQuantity: lotQuantity || null,
+          lotPrice: lotPrice || null,
           imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null,
-          inStock: stockStatus,             // Nouveau statut du stock
-          weight: weightToUpdate           // Poids mis à jour
+          inStock: stockStatus,
+          retailWeight: retailWeightToUpdate,
+          wholesaleWeight: wholesaleWeightToUpdate
         }
       });
 
@@ -258,6 +281,7 @@ router.put(
     }
   }
 );
+
 
 
 

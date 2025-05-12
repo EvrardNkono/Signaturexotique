@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { Card, Button, Badge } from 'react-bootstrap';
 import './ProductCard.css';
-import StarRating from './StarRating'; // Import du composant
 import { API_URL } from '../config';
 
 const ProductCard = ({ product, clientType }) => {
@@ -10,43 +9,38 @@ const ProductCard = ({ product, clientType }) => {
   const [flipped, setFlipped] = useState(false);
   const [quantityInCart, setQuantityInCart] = useState(0);
   const [reductionLevel, setReductionLevel] = useState(0); // Niveau de réduction par lot
-  const [fireworkTimeout, setFireworkTimeout] = useState(null); // Pour gérer la durée de l'animation
 
-  const originalPrice = clientType === 'wholesale' && product.wholesalePrice
-    ? product.wholesalePrice
-    : product.unitPrice;
-
-  const discountedPrice = product.reduction > 0
-    ? originalPrice * (1 - product.reduction / 100)
-    : originalPrice;
-
-  const fullImagePath = product.image
-    ? `${API_URL}/uploads/${product.image}`
-    : '';
-
-    useEffect(() => {
-      const cartItem = cart.find(item => item.productId === product.id);
-      const qty = cartItem ? cartItem.quantity : 0;
-      setQuantityInCart(qty);
-    
-      if (product.lotQuantity && qty >= product.lotQuantity) {
-        // Peu importe si c’est un multiple ou pas, tant que c’est supérieur ou égal
-        setReductionLevel(Math.floor(qty / product.lotQuantity)); // Optionnel si tu veux un "niveau"
-      } else {
-        setReductionLevel(0);
-      }
-    }, [cart, product.id, product.lotQuantity]);
-    
-    
+  // Calcul du prix en fonction du poids
+  const pricePerWeight =
+    clientType === 'wholesale' && product.wholesaleWeight
+      ? product.wholesalePrice / product.wholesaleWeight // Prix par poids pour le grossiste
+      : product.unitPrice / product.retailWeight; // Prix par poids pour le particulier
 
   const priceToDisplay =
     clientType === 'wholesale' && product.wholesalePrice
       ? product.wholesalePrice
       : product.unitPrice;
 
-  const unitLabel = product.unit || 'unité';
+  const discountedPrice = product.reduction > 0
+    ? priceToDisplay * (1 - product.reduction / 100)
+    : priceToDisplay;
 
-  // Gère l'ajout au panier et le message de réduction
+  const fullImagePath = product.image
+    ? `${API_URL}/uploads/${product.image}`
+    : '';
+
+  useEffect(() => {
+    const cartItem = cart.find(item => item.productId === product.id);
+    const qty = cartItem ? cartItem.quantity : 0;
+    setQuantityInCart(qty);
+
+    if (product.lotQuantity && qty >= product.lotQuantity) {
+      setReductionLevel(Math.floor(qty / product.lotQuantity));
+    } else {
+      setReductionLevel(0);
+    }
+  }, [cart, product.id, product.lotQuantity]);
+
   const handleAddToCart = () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
@@ -57,22 +51,20 @@ const ProductCard = ({ product, clientType }) => {
       localStorage.setItem('cart', JSON.stringify(cart));
     }
 
-    // Vérifie si la quantité ajoutée est un multiple du lot
+    // Si la quantité est un multiple du lot, mettre à jour la réduction
     if (product.lotQuantity && quantityInCart > 0 && (quantityInCart + 1) % product.lotQuantity === 0) {
-      setReductionLevel(prev => prev + 1); // Augmente le niveau de réduction
+      setReductionLevel(prev => prev + 1);
     }
     window.dispatchEvent(
       new CustomEvent('itemAdded', {
         detail: {
           ...product,
           price: priceToDisplay,
-          image: fullImagePath, // 🔥 Ajoute le bon chemin complet !
+          image: fullImagePath,
           quantity: 3
         }
       })
     );
-    
-    
   };
 
   const handleRemoveOne = () => {
@@ -114,7 +106,13 @@ const ProductCard = ({ product, clientType }) => {
   const cardBackgroundClass =
     clientType === 'wholesale' ? 'wholesale-background' : 'retail-background';
 
-  const mainColor = clientType === 'wholesale' ? '#28a745' : '#ff6f00';
+    const formatWeight = (weight) => {
+  const numericWeight = parseFloat(weight);
+  if (isNaN(numericWeight)) return weight; // Si c'est pas un nombre, on l'affiche tel quel
+  return numericWeight >= 1000
+    ? `${(numericWeight / 1000).toFixed(2)} kg`
+    : `${numericWeight} g`;
+};
 
   return (
     <div className={`flip-card ${flipped ? 'flipped' : ''}`}>
@@ -136,31 +134,31 @@ const ProductCard = ({ product, clientType }) => {
 
             {/* Affichage du prix */}
             <div className="product-card-price">
-              {product.reduction > 0 ? (
-                <div className="price-discounted">
-                  <div className="old-price">
-                    {originalPrice.toFixed(2)} € / {unitLabel}
-                  </div>
-                  <div className="new-price">
-                    {discountedPrice.toFixed(2)} € / {unitLabel}
-                  </div>
-                  <div className="reduction-badge">
-                    -{product.reduction}% 🔥
-                  </div>
-                </div>
-              ) : (
-                <div className="product-price-display">
-                  {originalPrice.toFixed(2)} € / {unitLabel}
-                </div>
-              )}
-            </div>
+  {product.reduction > 0 ? (
+    <div className="price-discounted">
+      <div className="old-price">
+        {priceToDisplay.toFixed(2)} € / {formatWeight(clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight)}
+      </div>
+      <div className="new-price">
+        {discountedPrice.toFixed(2)} € / {formatWeight(clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight)}
+      </div>
+      <div className="reduction-badge">
+        -{product.reduction}% 🔥
+      </div>
+    </div>
+  ) : (
+    <div className="product-price-display">
+      {priceToDisplay.toFixed(2)} € / {formatWeight(clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight)}
+    </div>
+  )}
+</div>
 
             {/* Badge de rupture de stock */}
             {!product.inStock && (
-  <div className="out-of-stock-banner">
-    🚫 Rupture de stock<br />
-  </div>
-)}
+              <div className="out-of-stock-banner">
+                🚫 Rupture de stock<br />
+              </div>
+            )}
 
             {/* Quantité et boutons */}
             <div className="product-quantity">
@@ -183,16 +181,15 @@ const ProductCard = ({ product, clientType }) => {
 
             {/* Bouton ajouter au panier */}
             <Button
-  style={{
-    backgroundColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00', // Vert pour le grossiste, orange pour le détail
-    borderColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00'
-  }}
-  disabled={!product.inStock}
-  onClick={handleAddToCart}
->
-  {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
-</Button>
-
+              style={{
+                backgroundColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00', // Vert pour le grossiste, orange pour le détail
+                borderColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00'
+              }}
+              disabled={!product.inStock}
+              onClick={handleAddToCart}
+            >
+              {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
+            </Button>
 
             <button
               className="product-card-button"
@@ -222,13 +219,18 @@ const ProductCard = ({ product, clientType }) => {
     <Card.Text className="product-card-description">
       Disponibilité : {product.stock ? `${product.stock} en stock` : 'Stock inconnu'}
     </Card.Text>
+
+    {/* Affichage du poids */}
+   <Card.Text className="product-card-description">
+  Poids ({clientType === 'wholesale' ? 'grossiste' : 'particulier'}) :{' '}
+  {clientType === 'wholesale'
+    ? formatWeight(product.wholesaleWeight)
+    : formatWeight(product.retailWeight)}
+</Card.Text>
+
+    {/* Affichage des détails supplémentaires du produit */}
     <Card.Text className="product-card-description">
-      Unité : {unitLabel}
-    </Card.Text>
-    
-    {/* Ajout du poids ici */}
-    <Card.Text className="product-card-description">
-      Poids : {product.weight ? `${product.weight} kg` : 'Non spécifié'}
+      Détails : {product.details || 'Aucun détail supplémentaire'}
     </Card.Text>
 
     <button

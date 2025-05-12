@@ -142,3 +142,10 @@ p {
   margin: 0.25rem 0;
   color: var(--black);
 }
+
+.delivery-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 800px;
+  margin: auto;
+}

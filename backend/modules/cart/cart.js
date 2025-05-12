@@ -34,6 +34,15 @@ router.post('/', authmiddleware, (req, res) => {
     console.log('📊 Données du produit -> lotQuantity:', product.lotQuantity, '| lotPrice:', product.lotPrice);
     console.log('👤 Client Type:', clientType);
 
+    // Calcul du poids total en fonction de la quantité
+    const productWeight = clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight;
+    if (!productWeight) {
+      return res.status(400).json({ error: 'Poids du produit non spécifié.' });
+    }
+    const totalWeight = productWeight * quantity; // Poids total du produit en fonction de la quantité
+
+    console.log('📊 Poids total du produit dans le panier :', totalWeight);
+
     db.get('SELECT * FROM cart WHERE productId = ? AND user_id = ?', [productId, user_id], (err, row) => {
       if (err) {
         console.error('❌ Erreur lors de la recherche dans le panier :', err);
@@ -41,15 +50,17 @@ router.post('/', authmiddleware, (req, res) => {
       }
 
       if (row) {
+        // Si le produit est déjà dans le panier, mettre à jour la quantité, le prix et le poids total
         const newQuantity = row.quantity + quantity;
         const newPrice = row.price + price;
+        const newTotalWeight = row.totalWeight + totalWeight;
 
         console.log('🔁 Produit déjà dans le panier. Mise à jour :');
-        console.log('🆕 Nouvelle quantité:', newQuantity, '| 🆕 Nouveau prix cumulé:', newPrice);
+        console.log('🆕 Nouvelle quantité:', newQuantity, '| 🆕 Nouveau prix cumulé:', newPrice, '| 🆕 Poids total:', newTotalWeight);
 
         db.run(
-          'UPDATE cart SET quantity = ?, price = ? WHERE productId = ? AND user_id = ?',
-          [newQuantity, newPrice, productId, user_id],
+          'UPDATE cart SET quantity = ?, price = ?, totalWeight = ? WHERE productId = ? AND user_id = ?',
+          [newQuantity, newPrice, newTotalWeight, productId, user_id],
           function (err) {
             if (err) {
               console.error('❌ Erreur mise à jour du panier :', err);
@@ -57,18 +68,20 @@ router.post('/', authmiddleware, (req, res) => {
             }
             console.log('✅ Panier mis à jour avec succès.');
             res.json({
-              message: 'Quantité et prix mis à jour.',
+              message: 'Quantité, prix et poids mis à jour.',
               productId,
               quantity: newQuantity,
-              price: newPrice
+              price: newPrice,
+              totalWeight: newTotalWeight
             });
           }
         );
       } else {
+        // Si le produit n'est pas encore dans le panier, ajouter une nouvelle entrée
         console.log('➕ Produit pas encore dans le panier. Insertion...');
         db.run(
-          'INSERT INTO cart (productId, quantity, price, clientType, user_id) VALUES (?, ?, ?, ?, ?)',
-          [productId, quantity, price, clientType, user_id],
+          'INSERT INTO cart (productId, quantity, price, clientType, user_id, totalWeight) VALUES (?, ?, ?, ?, ?, ?)',
+          [productId, quantity, price, clientType, user_id, totalWeight],
           function (err) {
             if (err) {
               console.error('❌ Erreur lors de l\'insertion :', err);
@@ -79,7 +92,8 @@ router.post('/', authmiddleware, (req, res) => {
               message: 'Produit ajouté au panier.',
               productId,
               quantity,
-              price
+              price,
+              totalWeight
             });
           }
         );
@@ -87,6 +101,7 @@ router.post('/', authmiddleware, (req, res) => {
     });
   });
 });
+
 
 
 
@@ -130,7 +145,8 @@ router.get('/', authmiddleware, (req, res) => {
   const user_id = req.user.id;
 
   db.all(`
-    SELECT cart.id, cart.productId, cart.quantity, cart.price, products.name, products.unitPrice, products.image, products.lotQuantity, products.lotPrice
+    SELECT cart.id, cart.productId, cart.quantity, cart.price, products.name, products.unitPrice, products.image, 
+           products.lotQuantity, products.lotPrice, products.retailWeight, products.wholesaleWeight
     FROM cart
     JOIN products ON cart.productId = products.id
     WHERE cart.user_id = ?
@@ -139,11 +155,26 @@ router.get('/', authmiddleware, (req, res) => {
 
     const response = Array.isArray(rows) ? rows : [];
 
-    // NE PAS TOUCHER À item.price ici, il est déjà bon !
-    console.log('[GET] Panier récupéré :', response.length, 'produits');
-    res.json(response);
+    // Ajouter le poids total basé sur le type de client
+    const responseWithWeight = response.map(item => {
+      // Déterminer le poids en fonction du type de client
+      const productWeight = req.user.clientType === 'wholesale' ? item.wholesaleWeight : item.retailWeight;
+
+      // Si le poids n'est pas défini, définir une valeur par défaut
+      const totalWeight = productWeight ? productWeight * item.quantity : 0;
+
+      // Ajouter le poids total à l'élément de réponse
+      return {
+        ...item,
+        totalWeight
+      };
+    });
+
+    console.log('[GET] Panier récupéré :', responseWithWeight.length, 'produits');
+    res.json(responseWithWeight);
   });
 });
+
 
 
 
@@ -160,28 +191,65 @@ router.put('/:cartId', authmiddleware, (req, res) => {
     return res.status(400).json({ error: 'La quantité doit être au moins 1' });
   }
 
-  db.run('UPDATE cart SET quantity = ? WHERE id = ? AND user_id = ?', [quantity, cartId, user_id], function (err) {
+  // 1. Récupérer les informations du produit associé à ce panier
+  db.get('SELECT * FROM cart WHERE id = ? AND user_id = ?', [cartId, user_id], (err, cartItem) => {
     if (err) {
-      console.error('[PUT] Erreur lors de la mise à jour de la quantité :', err);
+      console.error('[PUT] Erreur lors de la récupération du produit dans le panier :', err);
       return res.status(500).json({ error: 'Erreur serveur' });
     }
 
-    console.log('[PUT] Nombre de lignes modifiées:', this.changes);
-
-    if (this.changes === 0) {
-      console.log('[PUT] Aucune ligne mise à jour, vérifier les identifiants');
+    if (!cartItem) {
+      console.warn('[PUT] Produit non trouvé dans le panier pour cartId:', cartId);
       return res.status(404).json({ error: 'Produit non trouvé dans votre panier' });
     }
 
-    console.log('[PUT] Quantité mise à jour avec succès pour cartId:', cartId);
+    // 2. Récupérer les informations du produit
+    db.get('SELECT * FROM products WHERE id = ?', [cartItem.productId], (err, product) => {
+      if (err) {
+        console.error('[PUT] Erreur lors de la récupération du produit :', err);
+        return res.status(500).json({ error: 'Erreur serveur lors de la récupération du produit' });
+      }
 
-    // 🎁 Voici la petite magie que ton Front adore
-    return res.status(200).json({
-      id: Number(cartId),      // Bien sûr, on retourne l'ID mis à jour
-      quantity: quantity       // Et la nouvelle quantité
+      if (!product) {
+        console.warn('[PUT] Produit introuvable pour l\'ID:', cartItem.productId);
+        return res.status(404).json({ error: 'Produit introuvable' });
+      }
+
+      // 3. Calculer le poids total du produit en fonction de la nouvelle quantité
+      const productWeight = cartItem.clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight;
+      if (!productWeight) {
+        return res.status(400).json({ error: 'Poids du produit non spécifié' });
+      }
+
+      const totalWeight = productWeight * quantity; // Poids total du produit avec la nouvelle quantité
+
+      console.log('[PUT] Poids total mis à jour :', totalWeight);
+
+      // 4. Mettre à jour la quantité et le poids total dans le panier
+      db.run(
+        'UPDATE cart SET quantity = ?, totalWeight = ? WHERE id = ? AND user_id = ?',
+        [quantity, totalWeight, cartId, user_id],
+        function (err) {
+          if (err) {
+            console.error('[PUT] Erreur lors de la mise à jour du panier :', err);
+            return res.status(500).json({ error: 'Erreur serveur lors de la mise à jour du panier' });
+          }
+
+          console.log('[PUT] Quantité et poids mis à jour avec succès pour cartId:', cartId);
+
+          // 5. Retourner la réponse avec la nouvelle quantité et poids
+          return res.status(200).json({
+            id: Number(cartId),
+            quantity: quantity,
+            totalWeight: totalWeight // Inclure le poids mis à jour dans la réponse
+          });
+        }
+      );
     });
   });
 });
+
+
 
 
 

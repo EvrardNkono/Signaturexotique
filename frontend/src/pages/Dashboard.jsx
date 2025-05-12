@@ -16,21 +16,24 @@ const [reductionInput, setReductionInput] = useState(''); // Champ pour entrer l
   const [editingProduct, setEditingProduct] = useState(null); // Produit en cours d'édition
  
 
-  const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState({
-    name: '',
-    unitPrice: '',
-    wholesalePrice: '',
-    category: '',
-    image: null,
-    unit: '',
-    wholesaleUnit: '',
-    reduction: 0,
-    lotQuantity: '',
-    lotPrice: '',
-    inStock: true, // 🟢 On ajoute ça
-     weight: '',
-  });
+ const [products, setProducts] = useState([]);
+
+const [product, setProduct] = useState({
+  name: '',
+  unitPrice: '',
+  wholesalePrice: '',
+  category: '',
+  image: null,
+  wholesaleUnit: '',
+  reduction: 0,
+  lotQuantity: '',
+  lotPrice: '',
+  inStock: true,
+  retailWeight: '',
+  wholesaleWeight: '',
+  details: '', // 🆕 Nouveau champ ajouté ici
+});
+
   
 
 
@@ -134,16 +137,17 @@ const handleAddProduct = async () => {
     wholesalePrice,
     category,
     image,
-    unit,
-    wholesaleUnit,
     reduction,
     lotPrice = '',
     lotQuantity = '',
     inStock,
-    weight, // 💥 ici
+    retailWeight,
+    wholesaleWeight,
+    details, // ✅ Ajout du champ details
   } = product;
 
-  if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit && weight) {
+  // ✅ Validation : tous les champs obligatoires sont remplis
+  if (name && unitPrice && wholesalePrice && category && retailWeight && wholesaleWeight) {
     if ((lotPrice && !lotQuantity) || (!lotPrice && lotQuantity)) {
       return alert('Veuillez remplir à la fois la quantité et le prix du lot, ou laissez les deux vides.');
     }
@@ -153,11 +157,11 @@ const handleAddProduct = async () => {
     formData.append('unitPrice', unitPrice);
     formData.append('wholesalePrice', wholesalePrice);
     formData.append('category', category);
-    formData.append('unit', unit);
-    formData.append('wholesaleUnit', wholesaleUnit);
     formData.append('reduction', reduction);
     formData.append('inStock', inStock);
-    formData.append('weight', weight); // ✅ Ici on ajoute le poids
+    formData.append('retailWeight', retailWeight);
+    formData.append('wholesaleWeight', wholesaleWeight);
+    formData.append('details', details); // ✅ Ajout dans le FormData
 
     if (image) formData.append('image', image);
     if (lotQuantity) formData.append('lotQuantity', lotQuantity);
@@ -200,13 +204,13 @@ const handleAddProduct = async () => {
           wholesalePrice: '',
           category: '',
           image: null,
-          unit: '',
-          wholesaleUnit: '',
           reduction: 0,
           lotQuantity: '',
           lotPrice: '',
           inStock: true,
-          weight: '', // Reset du poids
+          retailWeight: '',
+          wholesaleWeight: '',
+          details: '', // ✅ Reset du champ
         });
       } else {
         alert('Produit créé avec succès, mais la réponse est invalide.');
@@ -217,9 +221,11 @@ const handleAddProduct = async () => {
       alert(`Erreur serveur : ${error.message}`);
     }
   } else {
-    alert("Tous les champs obligatoires ne sont pas remplis, y compris le poids !");
+    alert("Tous les champs obligatoires ne sont pas remplis, y compris les deux poids !");
   }
 };
+
+
 
 
 
@@ -234,16 +240,18 @@ const handleEditProduct = (prod) => {
     unitPrice: prod.unitPrice,
     wholesalePrice: prod.wholesalePrice,
     category: prod.category,
-    unit: prod.unit,
-    wholesaleUnit: prod.wholesaleUnit,
     reduction: prod.reduction || 0,
     image: null,
-    lotQuantity: prod.lotQuantity || null,
-    lotPrice: prod.lotPrice || null,
-    inStock: prod.inStock ?? true, // Attention ici : si `false`, le `|| true` le remplace par true, ce qu’on ne veut pas.
-    weight: prod.weight || '', // 🏋️ Ajout du poids avec fallback vide si absent
+    lotQuantity: prod.lotQuantity || '',
+    lotPrice: prod.lotPrice || '',
+    inStock: prod.inStock ?? true, // ✅ Garde le booléen même s’il est false
+    retailWeight: prod.retailWeight || '',       // ✅ Nouveau champ
+    wholesaleWeight: prod.wholesaleWeight || '', // ✅ Nouveau champ
+    details: prod.details || '',  // ✅ Nouveau champ details
   });
 };
+
+
 
 
 
@@ -258,62 +266,92 @@ const handleUpdateProduct = async () => {
     unitPrice,
     wholesalePrice,
     category,
-    unit,
-    wholesaleUnit,
     reduction,
     image,
     lotQuantity,
     lotPrice,
     inStock,
-    weight, // 👈 N'oublie pas le petit nouveau
+    retailWeight,
+    wholesaleWeight,
+    details, // ✅ Ajout du champ details
   } = product;
 
-  if (name && unitPrice && wholesalePrice && category && unit && wholesaleUnit && editingProduct) {
+  if (name && unitPrice && wholesalePrice && category && retailWeight && wholesaleWeight && details && editingProduct) {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('unitPrice', unitPrice);
     formData.append('wholesalePrice', wholesalePrice);
     formData.append('category', category);
-    formData.append('unit', unit);
-    formData.append('wholesaleUnit', wholesaleUnit);
     formData.append('reduction', reduction);
     formData.append('inStock', inStock);
+
+    formData.append('retailWeight', retailWeight);
+    formData.append('wholesaleWeight', wholesaleWeight);
+    formData.append('details', details); // ✅ Ajout des détails du produit
+
     if (image) formData.append('image', image);
+    if (lotQuantity) formData.append('lotQuantity', lotQuantity);
+    if (lotPrice) formData.append('lotPrice', lotPrice);
 
-    // 🏋️ Ajout du poids
-    if (weight) {
-      formData.append('weight', weight);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return alert("Token d'authentification manquant");
+
+      const response = await fetch(`${API_URL}/admin/product/${editingProduct._id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = 'Erreur serveur';
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          console.error('Erreur JSON', e);
+        }
+        alert(errorMessage);
+        return;
+      }
+
+      const responseData = await response.json();
+      console.log('Produit mis à jour:', responseData);
+
+      if (responseData && responseData.product) {
+        const updatedProducts = products.map(p => p._id === responseData.product._id ? responseData.product : p);
+        setProducts(updatedProducts);
+        setProduct({
+          name: '',
+          unitPrice: '',
+          wholesalePrice: '',
+          category: '',
+          reduction: 0,
+          image: null,
+          lotQuantity: '',
+          lotPrice: '',
+          inStock: true,
+          retailWeight: '',
+          wholesaleWeight: '',
+          details: '', // ✅ Réinitialisation du champ details
+        });
+        setEditingProduct(null);
+      }
+
+    } catch (error) {
+      console.error('Erreur réseau ou serveur :', error);
+      alert(`Erreur serveur : ${error.message}`);
     }
-
-    if (lotQuantity) {
-      formData.append('lotQuantity', lotQuantity);
-    }
-    if (lotPrice) {
-      formData.append('lotPrice', lotPrice);
-    }
-
-    // ... reste inchangé ...
-    // (le bloc try/catch et le setProduct à la fin)
-
-    setProduct({
-      name: '',
-      unitPrice: '',
-      wholesalePrice: '',
-      category: '',
-      unit: '',
-      wholesaleUnit: '',
-      reduction: 0,
-      image: null,
-      lotQuantity: '',
-      lotPrice: '',
-      inStock: true,
-      weight: '', // 👈 reset du champ poids
-    });
 
   } else {
-    alert('Veuillez remplir tous les champs obligatoires.');
+    alert('Veuillez remplir tous les champs obligatoires (poids et détails inclus).');
   }
 };
+
+
 
 
 
@@ -322,174 +360,166 @@ return (
   <Container className="admin-container py-5">
     <h2 className="admin-title text-center mb-5">🛠️ Panneau d’administration Signature Exotique</h2>
 
-    {/* Section : Créer une Catégorie */}
-    <Card className="admin-section mb-4">
-      <Card.Body>
-        <Card.Title className="admin-section-title">📁 Créer une Catégorie</Card.Title>
-        <Form>
-          <Row className="align-items-end">
-            <Col md={10}>
-              <Form.Group>
-                <Form.Label>Nom de la catégorie</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={categoryInput}
-                  onChange={(e) => setCategoryInput(e.target.value)}
-                  placeholder="Ex : Fruits Tropicaux"
-                />
-              </Form.Group>
-            </Col>
-            <Col md={2}>
-              <Button onClick={handleAddCategory} variant="success" className="w-100 rounded-pill">Ajouter</Button>
-            </Col>
-          </Row>
-        </Form>
-      </Card.Body>
-    </Card>
-    <PopupUploader/>
     {/* Section : Créer un Produit */}
-    <Card className="admin-section mb-4">
-      <Card.Body>
-        <Card.Title className="admin-section-title">🧺 Créer un Produit</Card.Title>
-        <Form>
-          <Row>
-            <Col md={6}>
-              <Form.Group>
-                <Form.Label>Nom du produit</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={product.name}
-                  onChange={(e) => setProduct({ ...product, name: e.target.value })}
-                  placeholder="Mangue, Ananas..."
-                />
-              </Form.Group>
-            </Col>
-            <Col md={3}>
-              <Form.Group>
-                <Form.Label>Prix Unité (€)</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={product.unitPrice}
-                  onChange={(e) => setProduct({ ...product, unitPrice: e.target.value })}
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Unité de mesure (prix unitaire)</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={product.unit}
-                  onChange={(e) => setProduct({ ...product, unit: e.target.value })}
-                />
-              </Form.Group>
-            </Col>
-            <Col md={3}>
-              <Form.Group>
-                <Form.Label>Prix de Gros (€)</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={product.wholesalePrice}
-                  onChange={(e) => setProduct({ ...product, wholesalePrice: e.target.value })}
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Unité de mesure (prix de gros)</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={product.wholesaleUnit}
-                  onChange={(e) => setProduct({ ...product, wholesaleUnit: e.target.value })}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row className="mt-3">
-            <Col md={6}>
-              <Form.Group>
-                <Form.Label>Catégorie</Form.Label>
-                <Form.Select
-                  value={product.category}
-                  onChange={(e) => setProduct({ ...product, category: e.target.value })}
-                >
-                  <option value="">Choisir une catégorie</option>
-                  {categories.map((cat, i) => (
-                    <option key={i} value={cat.name}>{cat.name}</option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-  <Form.Group>
-    <Form.Label>Poids (en grammes)</Form.Label>
+<Card className="admin-section mb-4">
+  <Card.Body>
+    <Card.Title className="admin-section-title">🧺 Créer un Produit</Card.Title>
+    <Form>
+      <Row>
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label>Nom du produit</Form.Label>
+            <Form.Control
+              type="text"
+              value={product.name}
+              onChange={(e) => setProduct({ ...product, name: e.target.value })}
+              placeholder="Mangue, Ananas..."
+            />
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Row className="mt-3">
+        <Col md={3}>
+          <Form.Group>
+            <Form.Label>Prix Unité (€)</Form.Label>
+            <Form.Control
+              type="number"
+              value={product.unitPrice}
+              onChange={(e) => setProduct({ ...product, unitPrice: e.target.value })}
+            />
+          </Form.Group>
+
+          <Form.Group className="mt-2">
+            <Form.Label>Poids pour particuliers (en g)</Form.Label>
+            <Form.Control
+              type="number"
+              value={product.retailWeight || ''}
+              onChange={(e) =>
+                setProduct({ ...product, retailWeight: parseInt(e.target.value) || '' })
+              }
+              placeholder="Ex : 500"
+            />
+          </Form.Group>
+        </Col>
+
+        <Col md={3}>
+          <Form.Group>
+            <Form.Label>Prix de Gros (€)</Form.Label>
+            <Form.Control
+              type="number"
+              value={product.wholesalePrice}
+              onChange={(e) => setProduct({ ...product, wholesalePrice: e.target.value })}
+            />
+          </Form.Group>
+
+          <Form.Group className="mt-2">
+            <Form.Label>Poids pour grossistes (en g)</Form.Label>
+            <Form.Control
+              type="number"
+              value={product.wholesaleWeight || ''}
+              onChange={(e) =>
+                setProduct({ ...product, wholesaleWeight: parseInt(e.target.value) || '' })
+              }
+              placeholder="Ex : 1000"
+            />
+          </Form.Group>
+        </Col>
+
+        
+        
+<Col md={6}>
+  <Form.Group className="mb-3">
+    <Form.Label>Détails du produit</Form.Label>
     <Form.Control
-      type="number"
-      value={product.weight || ''}
-      onChange={(e) => setProduct({ ...product, weight: parseInt(e.target.value) || '' })}
-      placeholder="Ex : 500"
+      as="textarea"
+      rows={4}
+      placeholder="Ex: Goût intense, fabrication artisanale, sans conservateurs..."
+      value={product.details}
+      onChange={(e) => setProduct({ ...product, details: e.target.value })}
     />
   </Form.Group>
 </Col>
 
-            <Col md={6}>
-              <Form.Group>
-                <Form.Label>Image</Form.Label>
-                <Form.Control
-                  type="file"
-                  onChange={(e) => setProduct({ ...product, image: e.target.files[0] })}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Form.Group controlId="formInStock">
-  <Form.Check
-    type="checkbox"
-    label="Produit en stock"
-    checked={product.inStock}
-    onChange={(e) =>
-      setProduct({ ...product, inStock: e.target.checked })
-    }
-  />
-</Form.Group>
 
-          {/* Champ pour la réduction */}
+        <Col md={6}>
           <Form.Group>
-            <Form.Label>Réduction (%)</Form.Label>
-            <Form.Control
-              type="number"
-              value={product.reduction}
-              onChange={(e) => setProduct({ ...product, reduction: e.target.value })}
-              placeholder="Ex : 10"
-            />
+            <Form.Label>Catégorie</Form.Label>
+            <Form.Select
+              value={product.category}
+              onChange={(e) => setProduct({ ...product, category: e.target.value })}
+            >
+              <option value="">Choisir une catégorie</option>
+              {categories.map((cat, i) => (
+                <option key={i} value={cat.name}>{cat.name}</option>
+              ))}
+            </Form.Select>
           </Form.Group>
 
-          <Button
-            className="mt-4 rounded-pill px-4"
-            variant={editingProduct ? 'warning' : 'primary'}
-            onClick={editingProduct ? handleUpdateProduct : handleAddProduct}
-          >
-            {editingProduct ? 'Mettre à jour le produit' : 'Ajouter le produit'}
-          </Button>
-        </Form>
-        {/* Champs optionnels pour le prix par lot */}
-<Form.Group className="mt-3">
-  <Form.Label>🎯 Quantité du lot (optionnel)</Form.Label>
-  <Form.Control
-    type="number"
-    value={product.lotQuantity || ''}
-    onChange={(e) => setProduct({ ...product, lotQuantity: e.target.value })}
-    placeholder="Ex : 3"
-  />
-</Form.Group>
-<Form.Group className="mt-2">
-  <Form.Label>💰 Prix du lot (optionnel)</Form.Label>
-  <Form.Control
-    type="number"
-    value={product.lotPrice || ''}
-    onChange={(e) => setProduct({ ...product, lotPrice: e.target.value })}
-    placeholder="Ex : 5"
-  />
-</Form.Group>
+          <Form.Group className="mt-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => setProduct({ ...product, image: e.target.files[0] })}
+            />
+          </Form.Group>
+        </Col>
+      </Row>
 
-      </Card.Body>
-    </Card>
+      <Form.Group controlId="formInStock" className="mt-3">
+        <Form.Check
+          type="checkbox"
+          label="Produit en stock"
+          checked={product.inStock}
+          onChange={(e) =>
+            setProduct({ ...product, inStock: e.target.checked })
+          }
+        />
+      </Form.Group>
+
+      {/* Champ pour la réduction */}
+      <Form.Group>
+        <Form.Label>Réduction (%)</Form.Label>
+        <Form.Control
+          type="number"
+          value={product.reduction}
+          onChange={(e) => setProduct({ ...product, reduction: e.target.value })}
+          placeholder="Ex : 10"
+        />
+      </Form.Group>
+
+      <Button
+        className="mt-4 rounded-pill px-4"
+        variant={editingProduct ? 'warning' : 'primary'}
+        onClick={editingProduct ? handleUpdateProduct : handleAddProduct}
+      >
+        {editingProduct ? 'Mettre à jour le produit' : 'Ajouter le produit'}
+      </Button>
+
+      {/* Champs optionnels pour le prix par lot */}
+      <Form.Group className="mt-3">
+        <Form.Label>🎯 Quantité du lot (optionnel)</Form.Label>
+        <Form.Control
+          type="number"
+          value={product.lotQuantity || ''}
+          onChange={(e) => setProduct({ ...product, lotQuantity: e.target.value })}
+          placeholder="Ex : 3"
+        />
+      </Form.Group>
+
+      <Form.Group className="mt-2">
+        <Form.Label>💰 Prix du lot (optionnel)</Form.Label>
+        <Form.Control
+          type="number"
+          value={product.lotPrice || ''}
+          onChange={(e) => setProduct({ ...product, lotPrice: e.target.value })}
+          placeholder="Ex : 5"
+        />
+      </Form.Group>
+    </Form>
+  </Card.Body>
+</Card>
+
 
     {/* Section : Produits créés */}
     <Card className="admin-section mb-4">

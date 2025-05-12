@@ -11,6 +11,13 @@ import { toast } from 'react-toastify';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
+const formatWeight = (weight) => {
+  if (!weight && weight !== 0) return 'Poids non spécifié';
+  return weight >= 1000
+    ? `${(weight / 1000).toFixed(2)} kg`
+    : `${weight} g`;
+};
+
 
 
 const Cart = () => {
@@ -108,27 +115,39 @@ const Cart = () => {
   };
 
   const handleOrder = async () => {
-    try {
-      const response = await fetch(`${API_URL}/payement/create-checkout-session`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: cart }),
-      });
+  try {
+    // Calculer le poids total du panier
+    const totalWeight = cart.reduce((total, product) => {
+      const productWeight = clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight;
+      return total + (productWeight * product.quantity);
+    }, 0);
 
-      const data = await response.json();
-      if (!data.sessionId) {
-        alert("Erreur de création de session Stripe.");
-        return;
-      }
+    // Sauvegarder le poids total dans le localStorage
+    localStorage.setItem('totalWeight', totalWeight);
 
-      const stripe = await stripePromise;
-      const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+    // Créer une session Stripe
+    const response = await fetch(`${API_URL}/payement/create-checkout-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: cart }),
+    });
 
-      if (result.error) alert(result.error.message);
-    } catch (error) {
-      alert(`Erreur paiement : ${error.message}`);
+    const data = await response.json();
+    if (!data.sessionId) {
+      alert("Erreur de création de session Stripe.");
+      return;
     }
-  };
+
+    // Rediriger vers Stripe Checkout
+    const stripe = await stripePromise;
+    const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+
+    if (result.error) alert(result.error.message);
+  } catch (error) {
+    alert(`Erreur paiement : ${error.message}`);
+  }
+};
+
 
   useEffect(() => {
     cart.forEach(product => {
@@ -191,6 +210,9 @@ const Cart = () => {
                         <Button variant="outline-secondary" onClick={() => changeQuantity(product.productId, 'increase')} style={{ marginLeft: '10px' }}>+</Button>
                       </div>
                       <p><strong>Total :</strong> {totalProductPrice.toFixed(2)} €</p>
+                     <p><strong>Poids total :</strong> {formatWeight((clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight) * product.quantity)}</p>
+
+
                     </Card.Body>
                   </Col>
                   <Col md={2} className="d-flex align-items-center justify-content-center">
@@ -219,13 +241,21 @@ const Cart = () => {
     <Button
   variant="outline-success"
   onClick={() => {
-    // Optionnel : stocker le total ou le panier temporairement
-    localStorage.setItem("cartTotal", totalPrice); // à adapter selon ta logique
+    const totalWeight = cart.reduce((total, product) => {
+      const productWeight = clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight;
+      return total + (productWeight * product.quantity);
+    }, 0);
+
+    // Stockage temporaire dans le localStorage
+    localStorage.setItem("cartTotal", totalPrice);
+    localStorage.setItem("totalWeight", totalWeight);
+
     navigate("/delivery");
   }}
 >
   Passer la commande
 </Button>
+
 
   </div>
 </div>
