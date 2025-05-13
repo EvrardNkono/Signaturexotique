@@ -279,15 +279,6 @@ const handleDeleteProduct = async (id) => {
 };
 
 
-
-
-
-
-
-
-
-  
-
 // Envoyer la mise à jour d'un produit existant
 // Envoyer la mise à jour d'un produit existant
 const handleUpdateProduct = async () => {
@@ -381,283 +372,312 @@ const handleUpdateProduct = async () => {
   }
 };
 
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [showRecipeForm, setShowRecipeForm] = useState(false);
+
+  return (
+    <Container className="admin-container py-5">
+      <h2 className="admin-title text-center mb-5">🛠️ Panneau d’administration Signature Exotique</h2>
+
+      {/* Boutons pour afficher/masquer les sections */}
+      <div className="d-flex gap-3 mb-4 justify-content-center">
+        <Button variant="outline-primary" onClick={() => setShowProductForm(!showProductForm)}>
+          {showProductForm ? '🔽 Cacher Produits' : '➕ Créer un Produit'}
+        </Button>
+        <Button variant="outline-success" onClick={() => setShowCategoryForm(!showCategoryForm)}>
+          {showCategoryForm ? '🔽 Cacher Catégories' : '📂 Créer une Catégorie'}
+        </Button>
+        <Button variant="outline-warning" onClick={() => setShowRecipeForm(!showRecipeForm)}>
+          {showRecipeForm ? '🔽 Cacher Recettes' : '🍲 Créer une Recette'}
+        </Button>
+      </div>
+
+     {/* SECTION PRODUITS */}
+{showProductForm && (
+  <Card className="admin-section mb-4">
+    <Card.Body>
+      <Card.Title className="admin-section-title">
+        {editingProduct ? '✏️ Modifier un Produit' : '🧺 Créer un Produit'}
+      </Card.Title>
+
+      {/* Formulaire création/modification */}
+      <Form>
+        <Row>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Nom du produit</Form.Label>
+              <Form.Control
+                type="text"
+                value={product.name}
+                onChange={(e) => setProduct({ ...product, name: e.target.value })}
+                placeholder="Mangue, Ananas..."
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mt-3">
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Prix Unité (€)</Form.Label>
+              <Form.Control
+                type="number"
+                value={product.unitPrice}
+                onChange={(e) => setProduct({ ...product, unitPrice: e.target.value })}
+              />
+            </Form.Group>
+
+            <Form.Group className="mt-2">
+              <Form.Label>Poids pour particuliers (g)</Form.Label>
+              <Form.Control
+                type="number"
+                value={product.retailWeight || ''}
+                onChange={(e) =>
+                  setProduct({ ...product, retailWeight: parseInt(e.target.value) || '' })
+                }
+                placeholder="Ex : 500"
+              />
+            </Form.Group>
+          </Col>
+
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Prix de Gros (€)</Form.Label>
+              <Form.Control
+                type="number"
+                value={product.wholesalePrice}
+                onChange={(e) => setProduct({ ...product, wholesalePrice: e.target.value })}
+              />
+            </Form.Group>
+
+            <Form.Group className="mt-2">
+              <Form.Label>Poids pour grossistes (g)</Form.Label>
+              <Form.Control
+                type="number"
+                value={product.wholesaleWeight || ''}
+                onChange={(e) =>
+                  setProduct({ ...product, wholesaleWeight: parseInt(e.target.value) || '' })
+                }
+                placeholder="Ex : 1000"
+              />
+            </Form.Group>
+          </Col>
+
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>Détails du produit</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                placeholder="Goût intense, sans conservateurs..."
+                value={product.details}
+                onChange={(e) => setProduct({ ...product, details: e.target.value })}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Catégorie</Form.Label>
+              <Form.Select
+                value={product.category}
+                onChange={(e) => setProduct({ ...product, category: e.target.value })}
+              >
+                <option value="">Choisir une catégorie</option>
+                {categories.map((cat, i) => (
+                  <option key={i} value={cat.name}>{cat.name}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mt-3">
+              <Form.Label>Image</Form.Label>
+              <Form.Control
+                type="file"
+                onChange={(e) => setProduct({ ...product, image: e.target.files[0] })}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Form.Group controlId="formInStock" className="mt-3">
+          <Form.Check
+            type="checkbox"
+            label="Produit en stock"
+            checked={product.inStock}
+            onChange={(e) => setProduct({ ...product, inStock: e.target.checked })}
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Réduction (%)</Form.Label>
+          <Form.Control
+            type="number"
+            value={product.reduction}
+            onChange={(e) => setProduct({ ...product, reduction: e.target.value })}
+            placeholder="Ex : 10"
+          />
+        </Form.Group>
+
+        <Form.Group className="mt-3">
+          <Form.Label>Quantité du lot (optionnel)</Form.Label>
+          <Form.Control
+            type="number"
+            value={product.lotQuantity || ''}
+            onChange={(e) => setProduct({ ...product, lotQuantity: e.target.value })}
+            placeholder="Ex : 3"
+          />
+        </Form.Group>
+
+        <Form.Group className="mt-2">
+          <Form.Label>Prix du lot (optionnel)</Form.Label>
+          <Form.Control
+            type="number"
+            value={product.lotPrice || ''}
+            onChange={(e) => setProduct({ ...product, lotPrice: e.target.value })}
+            placeholder="Ex : 5"
+          />
+        </Form.Group>
+
+        <Button
+          className="mt-4 rounded-pill px-4"
+          variant={editingProduct ? 'warning' : 'primary'}
+          onClick={editingProduct ? handleUpdateProduct : handleAddProduct}
+        >
+          {editingProduct ? 'Mettre à jour le produit' : 'Ajouter le produit'}
+        </Button>
+      </Form>
+
+      <hr className="my-4" />
+
+      {/* Liste des produits */}
+      <Card.Title className="mt-4">📦 Produits existants</Card.Title>
+      <Table responsive hover>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Nom</th>
+            <th>Prix</th>
+            <th>Gros</th>
+            <th>Réduc</th>
+            <th>Catégorie</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((prod) => (
+            <tr key={prod.id || `${prod.name}-${Math.random()}`}>
+              <td>{prod.image && <img src={prod.image} alt={prod.name} width="60" />}</td>
+              <td>{prod.name}</td>
+              <td><Badge bg="info">{prod.unitPrice} €</Badge></td>
+              <td><Badge bg="warning">{prod.wholesalePrice} €</Badge></td>
+              <td>{prod.reduction} %</td>
+              <td>{prod.category}</td>
+              <td>
+                <Button size="sm" variant="outline-warning" onClick={() => handleEditProduct(prod)}>✏️</Button>{' '}
+                <Button size="sm" variant="outline-danger" onClick={() => handleDeleteProduct(prod.id)}>🗑️</Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Card.Body>
+  </Card>
+)}
 
 
+     
 
+      {/* SECTION CATÉGORIES */}
+      {showCategoryForm && (
+  <Card className="admin-section mb-4">
+    <Card.Body>
+      <Card.Title className="admin-section-title">📂 Gérer les Catégories</Card.Title>
 
+      {/* Formulaire de création */}
+      {!editingCategory && (
+        <Form className="mb-3" onSubmit={(e) => { e.preventDefault(); handleAddCategory(); }}>
+          <Row className="align-items-end">
+            <Col md={10}>
+              <Form.Group>
+                <Form.Label>Nouvelle catégorie</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={editCategoryInput}
+                  onChange={(e) => setEditCategoryInput(e.target.value)}
+                  placeholder="Ex : Fruits, Légumes, Boissons..."
+                />
+              </Form.Group>
+            </Col>
+            <Col md={2}>
+              <Button variant="success" type="submit">Ajouter</Button>
+            </Col>
+          </Row>
+        </Form>
+      )}
 
-return (
-  <Container className="admin-container py-5">
-    <h2 className="admin-title text-center mb-5">🛠️ Panneau d’administration Signature Exotique</h2>
-
-    {/* Section : Créer un Produit */}
-<Card className="admin-section mb-4">
-  <Card.Body>
-    <Card.Title className="admin-section-title">🧺 Créer un Produit</Card.Title>
-    <Form>
-      <Row>
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label>Nom du produit</Form.Label>
-            <Form.Control
-              type="text"
-              value={product.name}
-              onChange={(e) => setProduct({ ...product, name: e.target.value })}
-              placeholder="Mangue, Ananas..."
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row className="mt-3">
-        <Col md={3}>
-          <Form.Group>
-            <Form.Label>Prix Unité (€)</Form.Label>
-            <Form.Control
-              type="number"
-              value={product.unitPrice}
-              onChange={(e) => setProduct({ ...product, unitPrice: e.target.value })}
-            />
-          </Form.Group>
-
-          <Form.Group className="mt-2">
-            <Form.Label>Poids pour particuliers (en g)</Form.Label>
-            <Form.Control
-              type="number"
-              value={product.retailWeight || ''}
-              onChange={(e) =>
-                setProduct({ ...product, retailWeight: parseInt(e.target.value) || '' })
-              }
-              placeholder="Ex : 500"
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={3}>
-          <Form.Group>
-            <Form.Label>Prix de Gros (€)</Form.Label>
-            <Form.Control
-              type="number"
-              value={product.wholesalePrice}
-              onChange={(e) => setProduct({ ...product, wholesalePrice: e.target.value })}
-            />
-          </Form.Group>
-
-          <Form.Group className="mt-2">
-            <Form.Label>Poids pour grossistes (en g)</Form.Label>
-            <Form.Control
-              type="number"
-              value={product.wholesaleWeight || ''}
-              onChange={(e) =>
-                setProduct({ ...product, wholesaleWeight: parseInt(e.target.value) || '' })
-              }
-              placeholder="Ex : 1000"
-            />
-          </Form.Group>
-        </Col>
-
-        
-        
-<Col md={6}>
-  <Form.Group className="mb-3">
-    <Form.Label>Détails du produit</Form.Label>
-    <Form.Control
-      as="textarea"
-      rows={4}
-      placeholder="Ex: Goût intense, fabrication artisanale, sans conservateurs..."
-      value={product.details}
-      onChange={(e) => setProduct({ ...product, details: e.target.value })}
-    />
-  </Form.Group>
-</Col>
-
-
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label>Catégorie</Form.Label>
-            <Form.Select
-              value={product.category}
-              onChange={(e) => setProduct({ ...product, category: e.target.value })}
-            >
-              <option value="">Choisir une catégorie</option>
-              {categories.map((cat, i) => (
-                <option key={i} value={cat.name}>{cat.name}</option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
-          <Form.Group className="mt-3">
-            <Form.Label>Image</Form.Label>
-            <Form.Control
-              type="file"
-              onChange={(e) => setProduct({ ...product, image: e.target.files[0] })}
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Form.Group controlId="formInStock" className="mt-3">
-        <Form.Check
-          type="checkbox"
-          label="Produit en stock"
-          checked={product.inStock}
-          onChange={(e) =>
-            setProduct({ ...product, inStock: e.target.checked })
-          }
-        />
-      </Form.Group>
-
-      {/* Champ pour la réduction */}
-      <Form.Group>
-        <Form.Label>Réduction (%)</Form.Label>
-        <Form.Control
-          type="number"
-          value={product.reduction}
-          onChange={(e) => setProduct({ ...product, reduction: e.target.value })}
-          placeholder="Ex : 10"
-        />
-      </Form.Group>
-
-      <Button
-        className="mt-4 rounded-pill px-4"
-        variant={editingProduct ? 'warning' : 'primary'}
-        onClick={editingProduct ? handleUpdateProduct : handleAddProduct}
-      >
-        {editingProduct ? 'Mettre à jour le produit' : 'Ajouter le produit'}
-      </Button>
-
-      {/* Champs optionnels pour le prix par lot */}
-      <Form.Group className="mt-3">
-        <Form.Label>🎯 Quantité du lot (optionnel)</Form.Label>
-        <Form.Control
-          type="number"
-          value={product.lotQuantity || ''}
-          onChange={(e) => setProduct({ ...product, lotQuantity: e.target.value })}
-          placeholder="Ex : 3"
-        />
-      </Form.Group>
-
-      <Form.Group className="mt-2">
-        <Form.Label>💰 Prix du lot (optionnel)</Form.Label>
-        <Form.Control
-          type="number"
-          value={product.lotPrice || ''}
-          onChange={(e) => setProduct({ ...product, lotPrice: e.target.value })}
-          placeholder="Ex : 5"
-        />
-      </Form.Group>
-    </Form>
-  </Card.Body>
-</Card>
-
-
-  <tbody>
-  {products.map((prod) => (
-    <tr key={prod.id || `${prod.name}-${Math.random()}`}>
-      <td>
-        {prod.image && (
-          <img src={prod.image} alt={prod.name} width="70" className="rounded shadow-sm" />
-        )}
-      </td>
-      <td>{prod.name}</td>
-      <td><Badge bg="info">{prod.unitPrice} €</Badge></td>
-      <td><Badge bg="warning">{prod.wholesalePrice} €</Badge></td>
-      <td>{prod.reduction} %</td>
-      <td>{prod.category}</td>
-      <td>
-        <div className="d-flex gap-2">
-          <Button
-            size="sm"
-            variant="outline-warning"
-            className="rounded-pill"
-            onClick={() => handleEditProduct(prod)}
-          >
-            Modifier
-          </Button>
-          <Button
-            size="sm"
-            variant="outline-danger"
-            className="rounded-pill"
-            onClick={() => handleDeleteProduct(prod.id)}
-          >
-            Supprimer
-          </Button>
-        </div>
-      </td>
-    </tr>
-  ))}
-</tbody>
-
-
-<AdminRecipeForm />
-      
-    {/* Section : Commandes reçues */}
-    <Card className="admin-section mb-4">
-      <Card.Body>
-        <Card.Title className="admin-section-title">🧾 Commandes reçues</Card.Title>
-        <OrderList />
-      </Card.Body>
-    </Card>
-
-    {/* Section : Catégories créées */}
-    <Card className="admin-section mb-4">
-      <Card.Body>
-        <Card.Title className="admin-section-title">📂 Catégories Créées</Card.Title>
-        {editingCategory && (
-          <Form className="mb-3">
-            <Row className="align-items-end">
-              <Col md={10}>
-                <Form.Group>
-                  <Form.Label>Modifier la catégorie</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={editCategoryInput}
-                    onChange={(e) => setEditCategoryInput(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2} className="d-flex gap-2">
-                <Button
-                  variant="warning"
-                  className="w-100 rounded-pill"
-                  onClick={handleUpdateCategory}
-                >
-                  Mettre à jour
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="w-100 rounded-pill"
-                  onClick={() => {
-                    setEditingCategory(null);
-                    setEditCategoryInput('');
-                  }}
-                >
+      {/* Formulaire de modification */}
+      {editingCategory && (
+        <Form className="mb-3">
+          <Row className="align-items-end">
+            <Col md={10}>
+              <Form.Group>
+                <Form.Label>Modifier la catégorie</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={editCategoryInput}
+                  onChange={(e) => setEditCategoryInput(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={2}>
+              <div className="d-flex gap-2">
+                <Button variant="warning" onClick={handleUpdateCategory}>Mettre à jour</Button>
+                <Button variant="secondary" onClick={() => {
+                  setEditingCategory(null);
+                  setEditCategoryInput('');
+                }}>
                   Annuler
                 </Button>
-              </Col>
-            </Row>
-          </Form>
-        )}
-        <ul className="list-group list-group-flush">
-          {categories.map((cat, i) => (
-            <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-              {cat.name}
-              <Button
-                variant="outline-info"
-                onClick={() => handleEditCategory(cat)}
-                size="sm"
-              >
-                Modifier
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </Card.Body>
-    </Card>
-  </Container>
-);
+              </div>
+            </Col>
+          </Row>
+        </Form>
+      )}
 
+      {/* Liste des catégories */}
+      <ul className="list-group list-group-flush">
+        {categories.map((cat, i) => (
+          <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
+            {cat.name}
+            <Button variant="outline-info" onClick={() => handleEditCategory(cat)} size="sm">✏️ Modifier</Button>
+          </li>
+        ))}
+      </ul>
+    </Card.Body>
+  </Card>
+)}
 
+      {/* SECTION RECETTES */}
+      {showRecipeForm && (
+        <Card className="admin-section mb-4">
+          <Card.Body>
+            <Card.Title className="admin-section-title">🍲 Créer une Recette</Card.Title>
+            <AdminRecipeForm />
+          </Card.Body>
+        </Card>
+      )}
+
+      {/* COMMANDES */}
+      <Card className="admin-section mb-4">
+        <Card.Body>
+          <Card.Title className="admin-section-title">🧾 Commandes Reçues</Card.Title>
+          <OrderList />
+        </Card.Body>
+      </Card>
+    </Container>
+  );
 };
 
 export default AdminPage;
