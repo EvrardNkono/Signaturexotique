@@ -1,41 +1,40 @@
 /* SocialFollow.css */
 .social-follow {
-    position: fixed;
-    bottom: 20px; /* Position fixe en bas de la page */
-    right: 20px;  /* Position fixe à droite de la page */
-    display: flex;
-    flex-direction: column;
-    align-items: center;  /* Centrer les icônes horizontalement */
-    z-index: 9999; /* S'assurer que les icônes sont toujours au-dessus de tout autre élément */
-  }
-  
-  .social-icon {
-    font-size: 2rem; /* Taille des icônes */
-    color: #fff;  /* Couleur par défaut des icônes */
-    margin: 10px 0;  /* Espacement entre les icônes */
-    transition: color 0.3s ease;  /* Effet de transition sur la couleur au survol */
-    border-style: initial;
-    border-color: #00aced;
-  }
-  
-  .social-icon:hover {
-    color: #00aced; /* Effet hover (bleu clair, peut être ajusté pour chaque icône) */
-  }
-  
-  /* Couleurs spécifiques pour chaque icône */
-  .social-follow a:nth-child(1) .social-icon {
-    color: #3b5998; /* Facebook */
-  }
-  
-  .social-follow a:nth-child(2) .social-icon {
-    color: #ffa600; /* Snapchat */
-  }
-  
-  .social-follow a:nth-child(3) .social-icon {
-    color: #e4405f; /* Instagram */
-  }
-  
-  .social-follow a:nth-child(4) .social-icon {
-    color: #008d47; /* TikTok */
-  }
-  
+  position: fixed;
+  bottom: 20px; /* En bas de la page */
+  left: 20px;   /* Et maintenant à gauche */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 9999;
+}
+
+.social-icon {
+  font-size: 2rem;
+  color: #fff;
+  margin: 10px 0;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover stylé */
+.social-icon:hover {
+  color: #00aced;
+  transform: scale(1.2);
+}
+
+/* Couleurs spécifiques pour chaque icône */
+.social-follow a:nth-child(1) .social-icon {
+  color: #3b5998; /* Facebook */
+}
+
+.social-follow a:nth-child(2) .social-icon {
+  color: #ffa600; /* Snapchat */
+}
+
+.social-follow a:nth-child(3) .social-icon {
+  color: #e4405f; /* Instagram */
+}
+
+.social-follow a:nth-child(4) .social-icon {
+  color: #008d47; /* TikTok */
+}

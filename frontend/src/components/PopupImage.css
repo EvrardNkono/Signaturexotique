@@ -98,10 +98,12 @@
 
 @media (max-width: 768px) {
   .popup-container {
-    top: auto;
-    bottom: 30px;
-    right: 20px;
-    left: 20px;
-    width: 25vw; /* 25% de la largeur de l'écran */
+    top: 150px;         /* En haut */
+    bottom: auto;      /* On désactive la position basse */
+    right: 20px;       /* À droite */
+    left: auto;        /* Pas de centrage */
+    width: 90vw;       /* S’adapte à la largeur de l’écran mobile */
+    max-width: 100px;  /* Limite de taille si besoin */
   }
 }
+
