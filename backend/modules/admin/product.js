@@ -8,6 +8,8 @@ const db = require('../../config/db'); // Connexion à la base SQLite
 const dbAll = util.promisify(db.all).bind(db); // Promisify pour db.all
 
 const router = express.Router();
+const fs = require('fs');
+const fsPromises = require('fs').promises;
 
 // Middleware d'authentification
 const verifyJWT = require('../../middleware/verifyJWT');
@@ -281,6 +283,50 @@ router.put(
     }
   }
 );
+
+
+
+
+/**
+ * ============================================
+ *        SUPPRESSION D'UN PRODUIT
+ * ============================================
+ * Route : DELETE /admin/products/:id
+ * Accès : Admin ou Superadmin uniquement
+ */
+router.delete('/:id', verifyJWT, checkRole(['admin', 'superadmin']), async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Récupération du produit pour obtenir l'image
+    const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
+
+    // Suppression de l'image si elle existe
+    if (product.image) {
+      const fs = require('fs');
+      const imagePath = path.join(__dirname, '../../public/uploads/', product.image);
+
+      // Supprime le fichier (sans casser si il n'existe pas)
+      fs.unlink(imagePath, (err) => {
+        if (err) console.warn("Image non supprimée ou déjà absente :", err.message);
+      });
+    }
+
+    // Suppression du produit
+    await db.run('DELETE FROM products WHERE id = ?', [id]);
+
+    res.json({ message: 'Produit supprimé avec succès' });
+
+  } catch (err) {
+    console.error('Erreur suppression produit :', err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
 
 
 

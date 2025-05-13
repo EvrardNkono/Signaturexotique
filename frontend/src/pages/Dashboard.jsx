@@ -251,6 +251,36 @@ const handleEditProduct = (prod) => {
   });
 };
 
+const handleDeleteProduct = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/admin/product/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    // ✅ Securité : vérifier si le corps est vide avant de parser
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : {};
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Échec de la suppression');
+    }
+
+    // 🔄 Mettre à jour l’état local des produits
+    setProducts((prev) => prev.filter((prod) => prod.id !== id));
+
+    toast.success(data.message || 'Produit supprimé avec succès ✅');
+  } catch (err) {
+    console.error('Erreur suppression :', err.message || err);
+    toast.error('Erreur lors de la suppression du produit 😢');
+  }
+};
+
+
+
+
 
 
 
@@ -521,50 +551,43 @@ return (
 </Card>
 
 
-    {/* Section : Produits créés */}
-    <Card className="admin-section mb-4">
-      <Card.Body>
-        <Card.Title className="admin-section-title">📦 Produits Créés</Card.Title>
-        <Table responsive className="table-hover align-middle">
-          <thead className="table-light">
-            <tr>
-              <th>Image</th>
-              <th>Nom</th>
-              <th>Prix Unité</th>
-              <th>Prix de Gros</th>
-              <th>Réduction</th> {/* Nouvelle colonne */}
-              <th>Catégorie</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((prod) => (
-              <tr key={prod.id || `${prod.name}-${Math.random()}`}>
-                <td>
-                  {prod.image && (
-                    <img src={prod.image} alt={prod.name} width="70" className="rounded shadow-sm" />
-                  )}
-                </td>
-                <td>{prod.name}</td>
-                <td><Badge bg="info">{prod.unitPrice} €</Badge></td>
-                <td><Badge bg="warning">{prod.wholesalePrice} €</Badge></td>
-                <td>{prod.reduction} %</td> {/* Affichage de la réduction */}
-                <td>
-                  <Button
-                    size="sm"
-                    variant="outline-warning"
-                    className="rounded-pill"
-                    onClick={() => handleEditProduct(prod)}
-                  >
-                    Modifier
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Card.Body>
-    </Card>
+  <tbody>
+  {products.map((prod) => (
+    <tr key={prod.id || `${prod.name}-${Math.random()}`}>
+      <td>
+        {prod.image && (
+          <img src={prod.image} alt={prod.name} width="70" className="rounded shadow-sm" />
+        )}
+      </td>
+      <td>{prod.name}</td>
+      <td><Badge bg="info">{prod.unitPrice} €</Badge></td>
+      <td><Badge bg="warning">{prod.wholesalePrice} €</Badge></td>
+      <td>{prod.reduction} %</td>
+      <td>{prod.category}</td>
+      <td>
+        <div className="d-flex gap-2">
+          <Button
+            size="sm"
+            variant="outline-warning"
+            className="rounded-pill"
+            onClick={() => handleEditProduct(prod)}
+          >
+            Modifier
+          </Button>
+          <Button
+            size="sm"
+            variant="outline-danger"
+            className="rounded-pill"
+            onClick={() => handleDeleteProduct(prod.id)}
+          >
+            Supprimer
+          </Button>
+        </div>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
 
 <AdminRecipeForm />
       
