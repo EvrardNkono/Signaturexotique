@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./ChatPopup.css"; // Tu peux personnaliser les styles ici
 import Form from "react-bootstrap/Form"; // en haut de ton fichier
+import { API_URL } from '../config'; // Importer l'URL de l'API
 
 const ChatPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,26 +10,61 @@ const ChatPopup = () => {
     { sender: "bot", text: "Bonjour ! Comment puis-je vous aider ?" },
   ]);
 
+  // Ouvrir et fermer la fenêtre de chat
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
 
+  // Gérer le changement du message utilisateur
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
   };
 
-  const handleSendMessage = () => {
-    if (message.trim() === "") return;
+  // Gérer l'envoi du message
+  const handleSendMessage = async (e) => {
+    e.preventDefault(); // Pour éviter le rechargement de la page
+    if (message.trim() === "") return; // Ne rien envoyer si le message est vide
+
+    // Ajouter le message utilisateur dans le chat
     setMessages([...messages, { sender: "user", text: message }]);
-    setMessage("");
-    
-    // Simuler une réponse automatique du bot
-    setTimeout(() => {
+    setMessage(""); // Réinitialiser le champ de message
+
+    try {
+      // Envoi du message à l'API pour obtenir la réponse du bot
+      const response = await fetch(`${API_URL}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [
+            ...messages,
+            { role: "user", content: message },
+          ], // Ajouter les messages précédents et le message utilisateur
+        }),
+      });
+
+      const data = await response.json();
+      
+      // Ajouter la réponse du bot aux messages
+      if (data && data.choices && data.choices.length > 0) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: "bot", text: data.choices[0].message.content },
+        ]);
+      } else {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: "bot", text: "Désolé, je n'ai pas compris. Peux-tu reformuler ?" },
+        ]);
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du message:", error);
       setMessages((prevMessages) => [
         ...prevMessages,
-        { sender: "bot", text: "Je suis là pour vous aider ! Que puis-je faire pour vous ?" },
+        { sender: "bot", text: "Oups, quelque chose a mal tourné. Essaie de nouveau plus tard." },
       ]);
-    }, 1000);
+    }
   };
 
   return (
@@ -53,22 +89,21 @@ const ChatPopup = () => {
               </div>
             ))}
           </div>
-          <Form className="chat-input" onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
-  <Form.Group className="flex-grow-1 me-2 mb-0">
-    <Form.Control
-      as="textarea"
-      rows={2}
-      placeholder="Écrivez un message..."
-      value={message}
-      onChange={handleMessageChange}
-      className="chat-textarea"
-    />
-  </Form.Group>
-  <button type="submit" className="btn btn-warning">
-    Envoyer
-  </button>
-</Form>
-
+          <Form className="chat-input" onSubmit={handleSendMessage}>
+            <Form.Group className="flex-grow-1 me-2 mb-0">
+              <Form.Control
+                as="textarea"
+                rows={2}
+                placeholder="Écrivez un message..."
+                value={message}
+                onChange={handleMessageChange}
+                className="chat-textarea"
+              />
+            </Form.Group>
+            <button type="submit" className="btn btn-warning">
+              Envoyer
+            </button>
+          </Form>
         </div>
       )}
     </div>

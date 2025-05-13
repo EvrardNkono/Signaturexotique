@@ -34,6 +34,8 @@ const stripeRoutes = require('./modules/payement/stripe'); // adapte selon ton a
 const popupRoutes = require('./modules/admin/popup');
 const recetteRoutes = require('./routes/recetteRoutes');
 const orderRoutes = require('./routes/order');  // Importer la route de commande
+const chatRoute = require('./routes/chat');  // Utilisation de require
+
 // Utilisation des routes
 app.use('/admin/category', categoryRoutes);
 app.use('/admin/product', productRoutes);
@@ -68,6 +70,7 @@ app.use('/payement', stripeRoutes);
 
 app.use('/recetteRoutes', recetteRoutes); // les routes des recettes sont maintenant accessibles via /api/recettes
 app.use('/orderRoutes', orderRoutes);
+app.use('/chat', chatRoute);
 
 
 // Lancement du serveur
