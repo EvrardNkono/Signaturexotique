@@ -7,7 +7,7 @@ const ChatPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Bonjour ! Comment puis-je vous aider ?" },
+    { sender: "assistant", text: "Bonjour ! Comment puis-je vous aider ?" },
   ]);
 
   // Ouvrir et fermer la fenêtre de chat
@@ -30,7 +30,9 @@ const ChatPopup = () => {
     setMessage(""); // Réinitialiser le champ de message
 
     try {
-      // Envoi du message à l'API pour obtenir la réponse du bot
+      // Créer un message avec le format attendu par l'API
+      const userMessage = { sender: "user", text: message };
+
       const response = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: {
@@ -38,31 +40,46 @@ const ChatPopup = () => {
         },
         body: JSON.stringify({
           messages: [
-            ...messages,
+            ...messages.map(msg => ({
+              role: msg.sender === "assistant" ? "assistant" : msg.sender,
+              content: msg.text,
+            })),
             { role: "user", content: message },
-          ], // Ajouter les messages précédents et le message utilisateur
+          ],
         }),
       });
 
+      if (!response.ok) {
+        console.error("Erreur HTTP lors de l'appel à l'API :", response.statusText);
+        const errorDetails = await response.text(); // Lire le texte de la réponse pour plus de détails
+        console.error("Détails de l'erreur :", errorDetails);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: "assistant", text: "Erreur API, veuillez réessayer plus tard." },
+        ]);
+        return;
+      }
+
       const data = await response.json();
-      
-      // Ajouter la réponse du bot aux messages
+      console.log("Réponse reçue de l'API :", data);
+
+      // Ajouter la réponse de l'assistant aux messages
       if (data && data.choices && data.choices.length > 0) {
         setMessages((prevMessages) => [
           ...prevMessages,
-          { sender: "bot", text: data.choices[0].message.content },
+          { sender: "assistant", text: data.choices[0].message.content },
         ]);
       } else {
         setMessages((prevMessages) => [
           ...prevMessages,
-          { sender: "bot", text: "Désolé, je n'ai pas compris. Peux-tu reformuler ?" },
+          { sender: "assistant", text: "Désolé, je n'ai pas compris. Peux-tu reformuler ?" },
         ]);
       }
     } catch (error) {
       console.error("Erreur lors de l'envoi du message:", error);
       setMessages((prevMessages) => [
         ...prevMessages,
-        { sender: "bot", text: "Oups, quelque chose a mal tourné. Essaie de nouveau plus tard." },
+        { sender: "assistant", text: "Oups, quelque chose a mal tourné. Essaie de nouveau plus tard." },
       ]);
     }
   };
@@ -83,7 +100,7 @@ const ChatPopup = () => {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`message ${msg.sender === "bot" ? "bot" : "user"}`}
+                className={`message ${msg.sender === "assistant" ? "assistant" : "user"}`}
               >
                 <span>{msg.text}</span>
               </div>
