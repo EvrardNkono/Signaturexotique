@@ -1,6 +1,6 @@
 .chat-popup {
   position: fixed;
-  bottom: 100px;
+  bottom: 230px;
   right: 20px;
   z-index: 1000;
 }
