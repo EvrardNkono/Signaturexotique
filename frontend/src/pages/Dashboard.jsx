@@ -481,17 +481,22 @@ const handleUpdateProduct = async () => {
           </Col>
 
           <Col md={6}>
-            <Form.Group className="mb-3">
-              <Form.Label>Détails du produit</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                placeholder="Goût intense, sans conservateurs..."
-                value={product.details}
-                onChange={(e) => setProduct({ ...product, details: e.target.value })}
-              />
-            </Form.Group>
-          </Col>
+  <Form.Group className="mb-3">
+    <Form.Label>Détails du produit</Form.Label>
+    <Form.Control
+      as="textarea"
+      rows={4}
+      placeholder="Goût intense, sans conservateurs..."
+      value={product.details}
+      onChange={(e) => setProduct({ ...product, details: e.target.value })}
+      maxLength={300} // 👈 Limite à 300 caractères
+    />
+    <div className="text-end small text-muted mt-1">
+      {product.details.length}/300 caractères
+    </div>
+  </Form.Group>
+</Col>
+
 
           <Col md={6}>
             <Form.Group>
