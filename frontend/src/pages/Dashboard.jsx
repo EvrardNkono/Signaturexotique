@@ -63,31 +63,47 @@ const [product, setProduct] = useState({
   }, []); // Cette partie est appelée une seule fois lors du premier rendu
 
   const handleAddCategory = async () => {
-    if (categoryInput && !categories.some((cat) => cat.name === categoryInput)) {
-      try {
-        // Envoi de la requête POST au backend pour créer la catégorie
-        const response = await fetch(`${API_URL}/admin/category`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name: categoryInput }),
-        });
+  // Vérifie que le champ n'est pas vide et que la catégorie n'existe pas déjà
+  if (categoryInput.trim() && !categories.some((cat) => cat.name === categoryInput)) {
+    try {
+      // Envoi de la requête POST au backend pour créer la catégorie
+      const response = await fetch(`${API_URL}/admin/category`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: categoryInput }),
+      });
 
-        if (response.ok) {
-          // Si la catégorie est bien créée, ajoute-la à l'état des catégories
-          const newCategory = await response.json();
-          setCategories([...categories, newCategory]);
-          setCategoryInput('');
-        } else {
-          const errorData = await response.json();
-          alert(`Erreur: ${errorData.message}`);
-        }
-      } catch (error) {
-        alert(`Erreur de connexion : ${error.message}`);
+      // Vérifie si la requête a abouti
+      if (response.ok) {
+        const newCategory = await response.json();
+        
+        // Mise à jour de l'état des catégories
+        setCategories((prevCategories) => [...prevCategories, newCategory]);
+
+        // Réinitialise l'input après l'ajout
+        setCategoryInput('');
+        
+        alert('Catégorie ajoutée avec succès!');
+      } else {
+        const errorData = await response.json();
+        alert(`Erreur : ${errorData.message || 'Impossible de créer la catégorie.'}`);
       }
+    } catch (error) {
+      // Affiche une alerte en cas d'erreur réseau
+      alert(`Erreur de connexion : ${error.message}`);
     }
-  };
+  } else {
+    // Si l'input est vide ou la catégorie existe déjà, affiche un message d'erreur
+    if (!categoryInput.trim()) {
+      alert('Le nom de la catégorie ne peut pas être vide.');
+    } else {
+      alert('Cette catégorie existe déjà.');
+    }
+  }
+};
+
   // Préparer le formulaire de modification de catégorie
 const handleEditCategory = (category) => {
   setEditingCategory(category);
@@ -603,11 +619,12 @@ const handleUpdateProduct = async () => {
               <Form.Group>
                 <Form.Label>Nouvelle catégorie</Form.Label>
                 <Form.Control
-                  type="text"
-                  value={editCategoryInput}
-                  onChange={(e) => setEditCategoryInput(e.target.value)}
-                  placeholder="Ex : Fruits, Légumes, Boissons..."
-                />
+  type="text"
+  value={categoryInput}
+  onChange={(e) => setCategoryInput(e.target.value)}
+  placeholder="Ex : Fruits, Légumes, Boissons..."
+/>
+
               </Form.Group>
             </Col>
             <Col md={2}>
