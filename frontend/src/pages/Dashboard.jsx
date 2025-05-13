@@ -334,7 +334,7 @@ const handleUpdateProduct = async () => {
       const token = localStorage.getItem('token');
       if (!token) return alert("Token d'authentification manquant");
 
-      const response = await fetch(`${API_URL}/admin/product/${editingProduct._id}`, {
+      const response = await fetch(`${API_URL}/admin/product/${editingProduct.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -489,10 +489,10 @@ const handleUpdateProduct = async () => {
       placeholder="Goût intense, sans conservateurs..."
       value={product.details}
       onChange={(e) => setProduct({ ...product, details: e.target.value })}
-      maxLength={300} // 👈 Limite à 300 caractères
+      maxLength={225} // 👈 Limite à 225 caractères
     />
     <div className="text-end small text-muted mt-1">
-      {product.details.length}/300 caractères
+      {product.details.length}/225 caractères
     </div>
   </Form.Group>
 </Col>
