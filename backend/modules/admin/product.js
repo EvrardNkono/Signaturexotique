@@ -186,7 +186,6 @@ router.get('/', async (req, res) => {
 
 
 
-
 /**
  * ============================================
  *          MISE À JOUR D’UN PRODUIT
@@ -206,18 +205,20 @@ router.put(
       category,
       unitPrice,
       wholesalePrice,
-      retailWeight, // ✅ Nouveau nom
+      retailWeight,
       wholesaleWeight,
       reduction,
       lotQuantity,
       lotPrice,
-      inStock
+      inStock,
+      details // ✅ ici !
     } = req.body;
 
+    // Si aucune image n'est téléchargée, on garde l'ancienne image
     const image = req.file ? req.file.filename : null;
 
     if (!name || !category || !unitPrice || !wholesalePrice) {
-      return res.status(400).json({ message: 'Tous les champs sont requis.' });
+      return res.status(400).json({ message: 'Tous les champs obligatoires ne sont pas remplis.' });
     }
 
     try {
@@ -229,16 +230,20 @@ router.put(
 
       const stockStatus = inStock === undefined ? product.inStock : (inStock === 'true' ? 1 : 0);
 
-      const updateSql = `
-        UPDATE products
-        SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, reduction = ?, 
-            lotQuantity = ?, lotPrice = ?, inStock = ?, retailWeight = ?, wholesaleWeight = ?
-        WHERE id = ?
-      `;
-
+      // Si aucune image n'est fournie, on garde l'ancienne image
       const imageToUpdate = image || product.image;
+
       const retailWeightToUpdate = retailWeight || product.retailWeight;
       const wholesaleWeightToUpdate = wholesaleWeight || product.wholesaleWeight;
+      const detailsToUpdate = details || product.details;
+
+      // Mise à jour des données dans la BDD
+      const updateSql = `
+        UPDATE products
+        SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, 
+            reduction = ?, lotQuantity = ?, lotPrice = ?, inStock = ?, retailWeight = ?, wholesaleWeight = ?, details = ?
+        WHERE id = ?
+      `;
 
       await db.run(updateSql, [
         name,
@@ -254,9 +259,11 @@ router.put(
         stockStatus,
         retailWeightToUpdate,
         wholesaleWeightToUpdate,
+        detailsToUpdate,
         id
       ]);
 
+      // Envoi de la réponse avec les données mises à jour
       res.status(200).json({
         message: 'Produit mis à jour avec succès',
         product: {
@@ -273,7 +280,8 @@ router.put(
           imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null,
           inStock: stockStatus,
           retailWeight: retailWeightToUpdate,
-          wholesaleWeight: wholesaleWeightToUpdate
+          wholesaleWeight: wholesaleWeightToUpdate,
+          details: detailsToUpdate // ✅ ici aussi
         }
       });
 
@@ -283,6 +291,7 @@ router.put(
     }
   }
 );
+
 
 
 
