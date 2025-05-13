@@ -211,12 +211,6 @@ const ProductCard = ({ product, clientType }) => {
     <Card.Title className="product-card-title">{product.name}</Card.Title>
 
     <Card.Text className="product-card-description">
-      Description : {product.description || 'Pas de description'}
-    </Card.Text>
-    <Card.Text className="product-card-description">
-      Référence : {product.ref || 'N/A'}
-    </Card.Text>
-    <Card.Text className="product-card-description">
       Disponibilité : {product.stock ? `${product.stock} en stock` : 'Stock inconnu'}
     </Card.Text>
 
