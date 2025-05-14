@@ -388,9 +388,10 @@ const handleUpdateProduct = async () => {
   }
 };
 
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [showCategoryForm, setShowCategoryForm] = useState(false);
-  const [showRecipeForm, setShowRecipeForm] = useState(false);
+ const [showProductForm, setShowProductForm] = useState(false);
+const [showCategoryForm, setShowCategoryForm] = useState(false);
+const [showRecipeForm, setShowRecipeForm] = useState(false);
+const [showUploader, setShowUploader] = useState(false);
 
   return (
     <Container className="admin-container py-5">
@@ -398,15 +399,50 @@ const handleUpdateProduct = async () => {
 
       {/* Boutons pour afficher/masquer les sections */}
       <div className="d-flex gap-3 mb-4 justify-content-center">
-        <Button variant="outline-primary" onClick={() => setShowProductForm(!showProductForm)}>
-          {showProductForm ? '🔽 Cacher Produits' : '➕ Créer un Produit'}
-        </Button>
-        <Button variant="outline-success" onClick={() => setShowCategoryForm(!showCategoryForm)}>
-          {showCategoryForm ? '🔽 Cacher Catégories' : '📂 Créer une Catégorie'}
-        </Button>
-        <Button variant="outline-warning" onClick={() => setShowRecipeForm(!showRecipeForm)}>
-          {showRecipeForm ? '🔽 Cacher Recettes' : '🍲 Créer une Recette'}
-        </Button>
+        <Button
+        variant="outline-primary"
+        onClick={() => {
+          setShowProductForm(!showProductForm);
+          setShowCategoryForm(false);
+          setShowRecipeForm(false);
+          setShowUploader(false);
+        }}
+      >
+        {showProductForm ? '🔽 Cacher Produits' : '➕ Créer un Produit'}
+      </Button>
+         <Button
+        variant="outline-success"
+        onClick={() => {
+          setShowCategoryForm(!showCategoryForm);
+          setShowProductForm(false);
+          setShowRecipeForm(false);
+          setShowUploader(false);
+        }}
+      >
+        {showCategoryForm ? '🔽 Cacher Catégories' : '📂 Créer une Catégorie'}
+      </Button>
+        <Button
+        variant="outline-warning"
+        onClick={() => {
+          setShowRecipeForm(!showRecipeForm);
+          setShowProductForm(false);
+          setShowCategoryForm(false);
+          setShowUploader(false);
+        }}
+      >
+        {showRecipeForm ? '🔽 Cacher Recettes' : '🍲 Créer une Recette'}
+      </Button>
+         <Button
+        variant="outline-dark"
+        onClick={() => {
+          setShowUploader(!showUploader);
+          setShowProductForm(false);
+          setShowCategoryForm(false);
+          setShowRecipeForm(false);
+        }}
+      >
+        {showUploader ? '🔽 Cacher Uploader' : '🖼️ Uploader une Image'}
+      </Button>
       </div>
 
      {/* SECTION PRODUITS */}
@@ -691,6 +727,16 @@ const handleUpdateProduct = async () => {
         </Card>
       )}
 
+       {/* SECTION UPLOADER */}
+    {showUploader && (
+      <Card className="admin-section mb-4">
+        <Card.Body>
+          <Card.Title className="admin-section-title">📤 Uploader une Image</Card.Title>
+          <PopupUploader />
+        </Card.Body>
+      </Card>
+    )}
+
       {/* COMMANDES */}
       <Card className="admin-section mb-4">
         <Card.Body>
@@ -699,6 +745,7 @@ const handleUpdateProduct = async () => {
         </Card.Body>
       </Card>
     </Container>
+    
   );
 };
 

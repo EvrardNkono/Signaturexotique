@@ -72,6 +72,11 @@ app.use('/recetteRoutes', recetteRoutes); // les routes des recettes sont mainte
 app.use('/orderRoutes', orderRoutes);
 app.use('/chat', chatRoute);
 
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
+
 
 // Lancement du serveur
 app.listen(5000, () => {
