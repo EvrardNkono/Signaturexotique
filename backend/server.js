@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const archiver = require('archiver');
 const app = express();
 const bodyParser = require('body-parser');
 require('dotenv').config();
@@ -88,6 +89,27 @@ app.get('/download-db', (req, res) => {
     }
   });
 });
+
+
+
+// ⚠️ Route publique TEMPORAIRE pour télécharger les images
+app.get('/download-images', (req, res) => {
+  const folderPath = path.join(__dirname, 'public', 'uploads');
+
+  if (!fs.existsSync(folderPath)) {
+    return res.status(404).send('Dossier introuvable');
+  }
+
+  res.setHeader('Content-Disposition', 'attachment; filename=images.zip');
+  res.setHeader('Content-Type', 'application/zip');
+
+  const archive = archiver('zip', { zlib: { level: 9 } });
+
+  archive.directory(folderPath, false); // "false" = ne garde pas le nom "uploads/" dans le zip
+  archive.pipe(res);
+  archive.finalize();
+});
+
 
 
 // Lancement du serveur
