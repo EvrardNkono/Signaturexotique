@@ -6,6 +6,7 @@ const archiver = require('archiver');
 const app = express();
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const { fileTypeFromBuffer } = require('file-type');
 
 // Crée le dossier des uploads si nécessaire
 const uploadDir = path.join(__dirname, 'public', 'uploads');
@@ -93,20 +94,42 @@ app.get('/download-db', (req, res) => {
 
 
 // ⚠️ Route publique TEMPORAIRE pour télécharger les images
-app.get('/download-images', (req, res) => {
+
+app.get('/download-images', async (req, res) => {
   const folderPath = path.join(__dirname, 'public', 'uploads');
 
   if (!fs.existsSync(folderPath)) {
     return res.status(404).send('Dossier introuvable');
   }
 
-  res.setHeader('Content-Disposition', 'attachment; filename=images.zip');
+  res.setHeader('Content-Disposition', 'attachment; filename=images-renommees.zip');
   res.setHeader('Content-Type', 'application/zip');
 
   const archive = archiver('zip', { zlib: { level: 9 } });
-
-  archive.directory(folderPath, false); // "false" = ne garde pas le nom "uploads/" dans le zip
   archive.pipe(res);
+
+  const files = fs.readdirSync(folderPath);
+
+  for (const file of files) {
+    const filePath = path.join(folderPath, file);
+    const buffer = fs.readFileSync(filePath);
+
+    const fileType = await fileTypeFromBuffer(buffer);
+    if (!fileType) {
+      console.warn(`Type de fichier inconnu pour : ${file}`);
+      continue;
+    }
+
+    // Nom de fichier sans extension d’origine
+    const baseName = path.parse(file).name;
+
+    // Nouveau nom avec la bonne extension détectée
+    const correctedFileName = `${baseName}.${fileType.ext}`;
+
+    // Ajouter dans l’archive sous le nouveau nom
+    archive.append(buffer, { name: correctedFileName });
+  }
+
   archive.finalize();
 });
 
