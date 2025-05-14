@@ -78,6 +78,18 @@ app.get('/ping', (req, res) => {
 
 
 
+// Route TEMPORAIRE pour télécharger la DB
+app.get('/download-db', (req, res) => {
+  const dbPath = path.join(__dirname, 'database.db'); // Ton vrai fichier ici
+  res.download(dbPath, 'database.db', err => {
+    if (err) {
+      console.error('Erreur lors du téléchargement :', err);
+      res.status(500).send('Erreur de téléchargement');
+    }
+  });
+});
+
+
 // Lancement du serveur
 app.listen(5000, () => {
   console.log('🚀 Serveur backend démarré sur http://localhost:5000');
