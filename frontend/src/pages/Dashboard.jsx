@@ -167,6 +167,7 @@ const handleAddProduct = async () => {
     if ((lotPrice && !lotQuantity) || (!lotPrice && lotQuantity)) {
       return alert('Veuillez remplir à la fois la quantité et le prix du lot, ou laissez les deux vides.');
     }
+console.log("🧾 Image avant envoi :", image);
 
     const formData = new FormData();
     formData.append('name', name);
@@ -179,7 +180,12 @@ const handleAddProduct = async () => {
     formData.append('wholesaleWeight', wholesaleWeight);
     formData.append('details', details); // ✅ Ajout dans le FormData
 
-    if (image) formData.append('image', image);
+    if (image instanceof File) {
+  formData.append('image', image); // ✅ Nouvelle image à uploader
+} else if (typeof image === 'string' && image !== '') {
+  formData.append('image', image); // ✅ Ancienne image (nom de fichier déjà stocké)
+}
+
     if (lotQuantity) formData.append('lotQuantity', lotQuantity);
     if (lotPrice) formData.append('lotPrice', lotPrice);
 
@@ -310,10 +316,19 @@ const handleUpdateProduct = async () => {
     inStock,
     retailWeight,
     wholesaleWeight,
-    details, // ✅ Ajout du champ details
+    details,
   } = product;
 
-  if (name && unitPrice && wholesalePrice && category && retailWeight && wholesaleWeight && details && editingProduct) {
+  if (
+    name &&
+    unitPrice &&
+    wholesalePrice &&
+    category &&
+    retailWeight &&
+    wholesaleWeight &&
+    details &&
+    editingProduct
+  ) {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('unitPrice', unitPrice);
@@ -321,12 +336,18 @@ const handleUpdateProduct = async () => {
     formData.append('category', category);
     formData.append('reduction', reduction);
     formData.append('inStock', inStock);
-
     formData.append('retailWeight', retailWeight);
     formData.append('wholesaleWeight', wholesaleWeight);
-    formData.append('details', details); // ✅ Ajout des détails du produit
+    formData.append('details', details);
 
-    if (image) formData.append('image', image);
+    // ✅ Ajouter l'image uniquement si c'est un nouveau fichier
+   if (image && typeof image !== 'string' && image instanceof File) {
+  // ✅ On n'envoie l'image que si c'est un fichier
+  formData.append('image', image);
+}
+
+
+
     if (lotQuantity) formData.append('lotQuantity', lotQuantity);
     if (lotPrice) formData.append('lotPrice', lotPrice);
 
@@ -373,7 +394,7 @@ const handleUpdateProduct = async () => {
           inStock: true,
           retailWeight: '',
           wholesaleWeight: '',
-          details: '', // ✅ Réinitialisation du champ details
+          details: '',
         });
         setEditingProduct(null);
       }
@@ -387,6 +408,7 @@ const handleUpdateProduct = async () => {
     alert('Veuillez remplir tous les champs obligatoires (poids et détails inclus).');
   }
 };
+
 
  const [showProductForm, setShowProductForm] = useState(false);
 const [showCategoryForm, setShowCategoryForm] = useState(false);

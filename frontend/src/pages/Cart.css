@@ -217,3 +217,11 @@
   z-index: 10;
   transform: rotate(2deg);
 }
+
+
+.btn-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

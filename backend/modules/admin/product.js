@@ -211,11 +211,12 @@ router.put(
       lotQuantity,
       lotPrice,
       inStock,
-      details // ✅ ici !
+      details
     } = req.body;
 
-    // Si aucune image n'est téléchargée, on garde l'ancienne image
-    const image = req.file ? req.file.filename : null;
+    // 🧳 DEBUG EXPRESS : ce qu’on reçoit dans req.body et req.file
+    console.log('📦 Champs reçus (req.body):', req.body);
+    console.log('🖼️ Fichier reçu (req.file):', req.file);
 
     if (!name || !category || !unitPrice || !wholesalePrice) {
       return res.status(400).json({ message: 'Tous les champs obligatoires ne sont pas remplis.' });
@@ -223,29 +224,36 @@ router.put(
 
     try {
       const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
-
       if (!product) {
         return res.status(404).json({ message: 'Produit non trouvé' });
       }
 
-      const stockStatus = inStock === undefined ? product.inStock : (inStock === 'true' ? 1 : 0);
+      // Gestion image : nouvelle image > image envoyée dans le body > image déjà en DB
+      const imageToUpdate = req.file?.filename || req.body.image || product.image;
 
-      // Si aucune image n'est fournie, on garde l'ancienne image
-      const imageToUpdate = image || product.image;
+      // Autres champs
+      const retailWeightToUpdate = retailWeight ?? product.retailWeight;
+      const wholesaleWeightToUpdate = wholesaleWeight ?? product.wholesaleWeight;
+      const detailsToUpdate = details ?? product.details;
+      const stockStatus = inStock !== undefined
+        ? (inStock === 'true' || inStock === '1' || inStock === 1 ? 1 : 0)
+        : product.inStock;
+      const reductionToUpdate = reduction ?? product.reduction;
+      const lotQuantityToUpdate = lotQuantity ?? product.lotQuantity;
+      const lotPriceToUpdate = lotPrice ?? product.lotPrice;
 
-      const retailWeightToUpdate = retailWeight || product.retailWeight;
-      const wholesaleWeightToUpdate = wholesaleWeight || product.wholesaleWeight;
-      const detailsToUpdate = details || product.details;
+      console.log("🖼️ Image utilisée pour update :", {
+        file: req.file?.filename,
+        bodyImage: req.body.image,
+        finalImage: imageToUpdate
+      });
 
-      // Mise à jour des données dans la BDD
-      const updateSql = `
+      await db.run(`
         UPDATE products
         SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, 
             reduction = ?, lotQuantity = ?, lotPrice = ?, inStock = ?, retailWeight = ?, wholesaleWeight = ?, details = ?
         WHERE id = ?
-      `;
-
-      await db.run(updateSql, [
+      `, [
         name,
         category,
         unitPrice,
@@ -253,9 +261,9 @@ router.put(
         imageToUpdate,
         product.unit,
         product.wholesaleUnit,
-        reduction || 0,
-        lotQuantity || null,
-        lotPrice || null,
+        reductionToUpdate,
+        lotQuantityToUpdate,
+        lotPriceToUpdate,
         stockStatus,
         retailWeightToUpdate,
         wholesaleWeightToUpdate,
@@ -263,7 +271,6 @@ router.put(
         id
       ]);
 
-      // Envoi de la réponse avec les données mises à jour
       res.status(200).json({
         message: 'Produit mis à jour avec succès',
         product: {
@@ -274,23 +281,26 @@ router.put(
           wholesalePrice,
           unit: product.unit,
           wholesaleUnit: product.wholesaleUnit,
-          reduction: reduction || 0,
-          lotQuantity: lotQuantity || null,
-          lotPrice: lotPrice || null,
+          reduction: reductionToUpdate,
+          lotQuantity: lotQuantityToUpdate,
+          lotPrice: lotPriceToUpdate,
           imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null,
           inStock: stockStatus,
           retailWeight: retailWeightToUpdate,
           wholesaleWeight: wholesaleWeightToUpdate,
-          details: detailsToUpdate // ✅ ici aussi
+          details: detailsToUpdate
         }
       });
 
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du produit :', error);
+      console.error('❌ Erreur lors de la mise à jour du produit :', error);
       res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 );
+
+
+
 
 
 

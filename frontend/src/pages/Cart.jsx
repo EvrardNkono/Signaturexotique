@@ -233,28 +233,31 @@ const Cart = () => {
   <h4 className="cart-total">Total : {totalPrice.toFixed(2)} €</h4>
   <div className="cart-actions">
     <Button
-      variant="outline-danger"
-      onClick={clearCartFromBackend}
-    >
-      Vider le panier
-    </Button>
+  variant="outline-danger"
+  className="btn-center"
+  onClick={clearCartFromBackend}
+>
+  Vider le panier
+</Button>
+
     <Button
   variant="outline-success"
+  className="btn-center"
   onClick={() => {
     const totalWeight = cart.reduce((total, product) => {
       const productWeight = clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight;
       return total + (productWeight * product.quantity);
     }, 0);
 
-    // Stockage temporaire dans le localStorage
     localStorage.setItem("cartTotal", totalPrice);
     localStorage.setItem("totalWeight", totalWeight);
 
     navigate("/delivery");
   }}
 >
-  Passer la commande
+  Commander
 </Button>
+
 
 
   </div>

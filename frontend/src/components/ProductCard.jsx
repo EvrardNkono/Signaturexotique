@@ -41,31 +41,47 @@ const ProductCard = ({ product, clientType }) => {
     }
   }, [cart, product.id, product.lotQuantity]);
 
-  const handleAddToCart = () => {
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      addToCart({ ...product, price: priceToDisplay, userId }, clientType);
-    } else {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      cart.push({ ...product, price: priceToDisplay });
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
+  const [loading, setLoading] = useState(false);
 
-    // Si la quantité est un multiple du lot, mettre à jour la réduction
-    if (product.lotQuantity && quantityInCart > 0 && (quantityInCart + 1) % product.lotQuantity === 0) {
-      setReductionLevel(prev => prev + 1);
+const handleAddToCart = async () => {
+  if (loading) return; // Empêche les clics multiples rapides
+
+  setLoading(true); // Active le verrou
+
+  const userId = localStorage.getItem('userId');
+
+  if (userId) {
+    try {
+      await addToCart({ ...product, price: priceToDisplay, userId }, clientType);
+    } catch (error) {
+      console.error('Erreur lors de l’ajout au panier :', error);
     }
-    window.dispatchEvent(
-      new CustomEvent('itemAdded', {
-        detail: {
-          ...product,
-          price: priceToDisplay,
-          image: fullImagePath,
-          quantity: 3
-        }
-      })
-    );
-  };
+  } else {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push({ ...product, price: priceToDisplay });
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  // Réduction si seuil atteint
+  if (product.lotQuantity && quantityInCart > 0 && (quantityInCart + 1) % product.lotQuantity === 0) {
+    setReductionLevel(prev => prev + 1);
+  }
+
+  // Dispatch l’event pour les autres composants (ex: popup, animation…)
+  window.dispatchEvent(
+    new CustomEvent('itemAdded', {
+      detail: {
+        ...product,
+        price: priceToDisplay,
+        image: fullImagePath,
+        quantity: 3
+      }
+    })
+  );
+
+  setLoading(false); // Déverrouille l’action
+};
+
 
   const handleRemoveOne = () => {
     if (!cart || cart.length === 0) {
@@ -181,15 +197,22 @@ const ProductCard = ({ product, clientType }) => {
 
             {/* Bouton ajouter au panier */}
             <Button
-              style={{
-                backgroundColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00', // Vert pour le grossiste, orange pour le détail
-                borderColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00'
-              }}
-              disabled={!product.inStock}
-              onClick={handleAddToCart}
-            >
-              {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
-            </Button>
+  style={{
+    backgroundColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00',
+    borderColor: clientType === 'wholesale' ? '#28a745' : '#ff6f00',
+    opacity: !product.inStock || loading ? 0.6 : 1, // petit effet visuel de désactivation
+    cursor: !product.inStock || loading ? 'not-allowed' : 'pointer',
+  }}
+  disabled={!product.inStock || loading}
+  onClick={handleAddToCart}
+>
+  {!product.inStock
+    ? 'Indisponible'
+    : loading
+    ? 'Ajout en cours...'
+    : 'Ajouter au panier'}
+</Button>
+
 
             <button
               className="product-card-button"

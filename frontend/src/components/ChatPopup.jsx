@@ -87,8 +87,15 @@ const ChatPopup = () => {
   return (
     <div className={`chat-popup ${isOpen ? "open" : ""}`}>
       <button className="chat-toggle" onClick={toggleChat}>
-        💬
-      </button>
+  <div className="smiley-chat">
+    <div className="eyes">
+      <span className="eye left"></span>
+      <span className="eye right"></span>
+    </div>
+    <div className="bubble-mouth">💬</div>
+  </div>
+</button>
+
 
       {isOpen && (
         <div className="chat-window">
