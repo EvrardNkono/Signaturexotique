@@ -45,11 +45,25 @@ const Footer = () => {
           <Row>
             <Col xl={4} lg={4} className="mb-50">
               <div className="footer-widget">
-                <div className="footer-logo">
-                  <Link to="/">
-                    <img src="assets/logo.png" className="img-fluid" alt="logo Meka France" />
-                  </Link>
-                </div>
+                <div className="footer-logo text-center">
+  <Link to="/">
+    <img
+  src="assets/logo.png"
+  alt="logo Meka France"
+  style={{
+    maxWidth: '300px',
+    height: 'auto',
+    display: 'block',
+    margin: '0 auto',
+    transition: 'transform 0.3s ease',
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+  onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+/>
+
+  </Link>
+</div>
+
                 <div className="footer-text">
                   <p>Meka France, spécialiste des produits exotiques et agroalimentaires d’Afrique, d’Asie et des Caraïbes.</p>
                 </div>
@@ -60,10 +74,25 @@ const Footer = () => {
                   <a href="#"><i className="fab fa-instagram instagram-bg"></i></a>
                   <a href="#"><i className="fab fa-snapchat-ghost snapchat-bg"></i></a>
                 </div>
-                <div className="signature-logo mt-3">
-                  <img src="assets/signature.png" alt="Logo Signature Exotique" style={{ maxWidth: '150px', height: 'auto' }} />
-                  <p style={{ color: 'white', marginTop: '10px' }}>Notre marque Signature Exotique</p>
-                </div>
+                <div className="signature-logo mt-3 text-center">
+  <img
+    src="assets/signature.png"
+    alt="Logo Signature Exotique"
+    style={{ maxWidth: '300px', height: 'auto' }}
+  />
+  <p
+    style={{
+      color: 'white',
+      marginTop: '12px',
+      fontSize: '1.rem',
+      fontWeight: '500',
+      fontFamily: 'cursive',
+    }}
+  >
+    Notre marque Signature Exotique
+  </p>
+</div>
+
               </div>
             </Col>
 

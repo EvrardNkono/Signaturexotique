@@ -154,164 +154,152 @@ const DeliveryForm = () => {
 
 
   return (
-    <form className="delivery-form" onSubmit={handleSubmit}>
-  <h2 className="form-title">Détails de livraison</h2>
+  <form className="delivery-form" onSubmit={handleSubmit}>
+    <h2 className="form-title">Détails de livraison</h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div className="form-group">
-      <label htmlFor="name"><FaUserAlt /> Nom</label>
-      <input
-        type="text"
-        id="name"
-        name="name"
-        value={formData.name}
-        onChange={handleInputChange}
-        placeholder="Entrez votre nom complet"
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="address"><FaMapMarkerAlt /> Adresse</label>
-      <input
-        type="text"
-        id="address"
-        name="address"
-        value={formData.address}
-        onChange={handleInputChange}
-        placeholder="Entrez votre adresse"
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="city"><FaCity /> Ville</label>
-      <input
-        type="text"
-        id="city"
-        name="city"
-        value={formData.city}
-        onChange={handleInputChange}
-        placeholder="Entrez votre ville"
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="postalCode">Code Postal</label>
-      <input
-        type="text"
-        id="postalCode"
-        name="postalCode"
-        value={formData.postalCode}
-        onChange={handleInputChange}
-        placeholder="Code postal"
-      />
-    </div>
-
-    <div className="form-group col-span-1 md:col-span-2">
-      <label htmlFor="country"><FaGlobeEurope /> Pays</label>
-      <div className="country-select flex items-center gap-2">
-        <select
-          id="country"
-          name="country"
-          value={formData.country}
-          onChange={handleCountryChange}
-        >
-          <option value="">-- Sélectionnez un pays --</option>
-          {countries.map((country) => (
-            <option key={country.code} value={country.name}>
-              {country.name}
-            </option>
-          ))}
-        </select>
-        {formData.country && (
-          <CountryFlag
-            code={countries.find((c) => c.name === formData.country).code}
-            alt={formData.country}
-            style={{ width: "24px", height: "16px" }}
-          />
-        )}
-      </div>
-    </div>
-
-    <div className="form-group">
-      <label>Poids total (kg)</label>
-      <p>{(totalWeight / 1000).toFixed(2)} kg</p>
-    </div>
-
-    <div className="form-group">
-      <label>Prix total du panier (€)</label>
-      <p>{formData.totalPrice} €</p>
-    </div>
-
-    <div className="form-group md:col-span-2">
-      <label>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="form-group">
+        <label htmlFor="name"><FaUserAlt /> Nom</label>
         <input
-          type="checkbox"
-          checked={formData.hasInsurance}
-          onChange={handleCheckboxChange}
+          type="text"
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          placeholder="Entrez votre nom complet"
         />
-        <FaShieldAlt /> Assurance
-      </label>
-    </div>
+      </div>
 
-    <div className="form-group md:col-span-2">
-      <label>Distance (km)</label>
-      <p>{formData.distance} km</p>
-    </div>
+      <div className="form-group">
+        <label htmlFor="address"><FaMapMarkerAlt /> Adresse</label>
+        <input
+          type="text"
+          id="address"
+          name="address"
+          value={formData.address}
+          onChange={handleInputChange}
+          placeholder="Entrez votre adresse"
+        />
+      </div>
 
-    {parseFloat(formData.distance) > 40 && (
-      <div className="form-group md:col-span-2">
-        <label>Méthode d’expédition</label>
-        <div className="delivery-options">
-          {[
-            {
+      <div className="form-group">
+        <label htmlFor="city"><FaCity /> Ville</label>
+        <input
+          type="text"
+          id="city"
+          name="city"
+          value={formData.city}
+          onChange={handleInputChange}
+          placeholder="Entrez votre ville"
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="postalCode">Code Postal</label>
+        <input
+          type="text"
+          id="postalCode"
+          name="postalCode"
+          value={formData.postalCode}
+          onChange={handleInputChange}
+          placeholder="Code postal"
+        />
+      </div>
+
+      <div className="form-group col-span-1 md:col-span-2">
+        <label htmlFor="country"><FaGlobeEurope /> Pays</label>
+        <div className="country-select flex items-center gap-2">
+          <select
+            id="country"
+            name="country"
+            value={formData.country}
+            onChange={handleCountryChange}
+          >
+            <option value="">-- Sélectionnez un pays --</option>
+            {countries.map((country) => (
+              <option key={country.code} value={country.name}>
+                {country.name}
+              </option>
+            ))}
+          </select>
+          {formData.country && (
+            <CountryFlag
+              code={countries.find((c) => c.name === formData.country).code}
+              alt={formData.country}
+              style={{ width: "24px", height: "16px" }}
+            />
+          )}
+        </div>
+      </div>
+
+      <div className="form-metrics col-span-1 md:col-span-2">
+        <div className="metric-item">
+          <label>📦 Poids total</label>
+          <p>{(totalWeight / 1000).toFixed(2)} kg</p>
+        </div>
+        <div className="metric-item">
+          <label>💰 Total panier</label>
+          <p>{formData.totalPrice} €</p>
+        </div>
+        <div className="metric-item">
+          <label>🛡️ Assurance</label>
+          <p>{formData.hasInsurance ? 'Oui' : 'Non'}</p>
+        </div>
+        <div className="metric-item">
+          <label>📍 Distance</label>
+          <p>{formData.distance} km</p>
+        </div>
+      </div>
+
+      {parseFloat(formData.distance) > 40 && (
+        <div className="form-group md:col-span-2">
+          <label>Méthode d’expédition</label>
+          <div className="delivery-options">
+            {[{
               label: "Colissimo Domicile sans signature",
               value: "Colissimo Domicile sans signature",
               image: "/assets/colis.png",
-            },
-            {
+            }, {
               label: "Colissimo Point Retrait",
               value: "Colissimo Point Retrait",
               image: "/assets/relais.png",
-            },
-            {
+            }, {
               label: "Colissimo Domicile avec signature",
               value: "Colissimo Domicile avec signature",
               image: "/assets/avec_signature.png",
-            },
-          ].map((option) => (
-            <div
-              key={option.value}
-              className={`delivery-option ${formData.deliveryMethod === option.value ? "selected" : ""}`}
-              onClick={() => {
-                setFormData((prev) => ({
-                  ...prev,
-                  deliveryMethod: option.value,
-                }));
-                debouncedUpdateDeliveryCost({ deliveryMethod: option.value });
-              }}
-            >
-              <img src={option.image} alt={option.label} />
-              <span>{option.label}</span>
-            </div>
-          ))}
+            }].map((option) => (
+              <div
+                key={option.value}
+                className={`delivery-option ${formData.deliveryMethod === option.value ? "selected" : ""}`}
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    deliveryMethod: option.value,
+                  }));
+                  debouncedUpdateDeliveryCost({ deliveryMethod: option.value });
+                }}
+              >
+                <img src={option.image} alt={option.label} />
+                <span>{option.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {formData.deliveryCost != null && (
+      {formData.deliveryCost != null && (
+        <div className="form-group md:col-span-2">
+          <label>Frais de livraison (€)</label>
+          <p className="text-green-600 font-semibold">{formData.deliveryCost} €</p>
+        </div>
+      )}
+
       <div className="form-group md:col-span-2">
-        <label>Frais de livraison (€)</label>
-        <p className="text-green-600 font-semibold">{formData.deliveryCost} €</p>
+        <button type="submit" className="submit-button">Valider</button>
       </div>
-    )}
-
-    <div className="form-group md:col-span-2">
-      <button type="submit" className="submit-button">Valider</button>
     </div>
-  </div>
-</form>
-
-  );
+  </form>
+);
 };
 
 export default DeliveryForm;
