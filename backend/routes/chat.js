@@ -7,74 +7,93 @@ const path = require('path');
 const router = express.Router();
 const dbPath = path.join(__dirname, '..', 'database.db');
 
-// Connexion à la base de données SQLite
+// Connexion à SQLite
 const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
-  if (err) {
-    console.error('Erreur d’ouverture de la base de données :', err.message);
-  } else {
-    console.log('Connexion à la base de données SQLite réussie ✅');
-  }
+  if (err) console.error('Erreur d’ouverture de la base :', err.message);
+  else console.log('Connexion SQLite ✅');
 });
 
-// Fonction pour récupérer tous les produits
+// Récupérer tous les produits
 const getAllProducts = () => {
   return new Promise((resolve, reject) => {
     db.all(`
-      SELECT 
-        name, category, unitPrice, wholesalePrice, lotPrice,
-        lotQuantity, reduction, inStock, retailWeight, wholesaleWeight, details
+      SELECT name, category, unitPrice, wholesalePrice, lotPrice,
+             lotQuantity, reduction, inStock, retailWeight, wholesaleWeight, details
       FROM products
-    `, (err, rows) => {
+    `, (err, rows) => err ? reject(err) : resolve(rows));
+  });
+};
+
+// Récupérer le nombre total de produits
+const getProductCount = () => {
+  return new Promise((resolve, reject) => {
+    db.get(`SELECT COUNT(*) AS total FROM products`, (err, row) => {
       if (err) reject(err);
-      else resolve(rows);
+      else resolve(row.total);
     });
   });
 };
 
-// Route pour gérer les messages et la communication avec OpenRouter
+// Endpoint de chat
 router.post('/', async (req, res) => {
   const { messages } = req.body;
-  console.log("Messages reçus :", messages);
-
   if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: 'Les messages doivent être un tableau' });
+    return res.status(400).json({ error: 'Messages manquants ou invalides.' });
   }
 
   try {
-    const products = await getAllProducts();
-    const productContext = formatProductData(products);
+    const userMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
+    const demandeProduits = /(produit|prix|promo|lot|épice|boisson|vendu|stock|gros|bouteille|combien)/.test(userMessage);
+    
+    let productContext = "";
+    if (demandeProduits) {
+      const products = await getAllProducts();
+      const productCount = await getProductCount();
+      const produitsPertinents = products.slice(0, 15);
+      productContext = `
+Nous avons actuellement ${productCount} produits référencés chez Meka France.
+
+Voici un aperçu de quelques-uns :
+${formatProductData(produitsPertinents)}
+      `.trim();
+    }
 
     const systemPrompt = `
-Tu t'apelle Eric tu travaille chez meka france en occupant le poste d'assistant commercial  tu es tres sympathique, professionnel et chaleureux, conçu et développé par les développeurs de Meka France.
-
-Tu fais partie de l’expérience Meka France, une plateforme e-commerce spécialisée dans les produits alimentaires exotiques du monde entier : épices rares, condiments authentiques, fruits secs savoureux, boissons tropicales, et bien plus encore.
+Tu es Eric, l’assistant commercial intelligent de Meka France. Tu travailles dans le domaine des produits alimentaires exotiques. Tu es sympathique, professionnel, réactif, dynamique et toujours orienté solution.
 
 Ta mission :
+1. Répondre aux clients avec pertinence, clarté et concision.
+2. Présenter des produits avec précision (prix, poids, conditionnement, stock, promos).
+3. Proposer des recommandations personnalisées selon le message du client.
+4. Mettre en avant la gamme SIGNATURE EXOTIQUE (marque Meka France) qui sera disponible tres bientot dès que l’occasion se présente.
+5. Promouvoir les offres pour les professionnels (gros volumes, restauration, épiceries).
 
-Répondre aux questions des clients sur les produits de facon precise et breve, les commandes, les recettes, ou le fonctionnement du site.
+Tu es aussi capable de :
+- Déduire les intentions de l’utilisateur même si elles sont implicites.
+- Reformuler ou clarifier une demande floue.
+- Guider vers la prochaine étape (découverte produit, commande, info pratique).
 
-Donner des recommandations personnalisées (« Tu cherches du gingembre ? Je t’en ai de plusieurs types ! »).
+⚠️ Limites :
+- Tu parles exclusivement d’alimentation exotique (épices, boissons, fruits secs, apéritifs, etc.).
+- Tu refuses poliment toute question hors sujet (mode, technologie, politique...).
 
-Tu ne parles que de l’univers alimentaire exotique. Pas de vêtements, pas de téléphones : que du goût, du vrai.
+🧠 Style :
+- Tu parles avec un ton chaleureux et engageant, comme un vendeur passionné.
+- Tu es rapide, précis et toujours orienté “solution client”.
+- Tu t’adaptes au style du client (formel, curieux, direct, etc.).
+- Tu fais vivre une véritable expérience Meka France.
 
-Petit scoop exclusif 🔥 : Meka France va bientôt lancer sa propre marque nommee SIGNATURE EXOTIQUE de produits exotiques conditionnés — épices de qualité, apéritifs naturels à base de plantes, et bien d’autres surprises venues des quatre coins du monde 🌍 tu n'hesitera pas a en parler aux client a chaque fois que tu as une faille.
-
-Et ce n’est pas tout : les professionnels et commerçants peuvent aussi commander en gros. Si tu entends parler de besoin pour un restaurant, une épicerie ou un événement, n’hésite pas à en parler.
-
-Generalement tu es tres bref comme assistant et tu repond chalereusement en donnant l'essentiel
-
-Voici les produits disponibles :
-
-
+Voici le contexte produit :
 ${productContext}
 
-Sois naturel, dynamique, et toujours tourné vers l’aide à l’utilisateur.
-`;
+Commence toujours ta réponse par une salutation ou un clin d’œil adapté.
+Termine par une question ou une suggestion pour garder la conversation vivante.
+    `.trim();
 
     const response = await axios.post(
-      'https://openrouter.ai/api/v1/chat/completions',
+      'https://api.groq.com/openai/v1/chat/completions',
       {
-        model: 'openai/gpt-4o',
+        model: 'llama3-70b-8192',
         messages: [
           { role: 'system', content: systemPrompt },
           ...messages,
@@ -84,10 +103,8 @@ Sois naturel, dynamique, et toujours tourné vers l’aide à l’utilisateur.
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': process.env.FRONTEND_URL,
-          'X-Title': 'Meka France',
         },
       }
     );
@@ -95,29 +112,24 @@ Sois naturel, dynamique, et toujours tourné vers l’aide à l’utilisateur.
     if (response.data?.choices?.length > 0) {
       res.json(response.data);
     } else {
-      res.status(500).json({
-        error: 'Réponse incorrecte reçue d\'OpenRouter',
-        details: response.data || 'Aucune réponse valide reçue.',
-      });
+      res.status(500).json({ error: 'Réponse vide de Groq' });
     }
+
   } catch (error) {
-    console.error('Erreur OpenRouter/OpenAI:', error.response?.data || error.message);
-    res.status(500).json({
-      error: 'Erreur lors de la communication avec OpenAI via OpenRouter',
-      details: error.response?.data || error.message,
-    });
+    console.error('Erreur Groq:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Erreur Groq', details: error.response?.data || error.message });
   }
 });
 
-// Fonction pour formater les données des produits à envoyer au prompt
+// Formatage produit
 function formatProductData(products) {
   return products.map(p => {
     const dispo = p.inStock > 0 ? 'En stock' : 'Indisponible';
-    const promo = p.reduction > 0 ? `Actuellement en promotion (-${p.reduction}€)` : 'Pas de promotion';
-    const lot = p.lotQuantity > 1 ? `Disponible en lot de ${p.lotQuantity} pour ${p.lotPrice}€` : '';
+    const promo = p.reduction > 0 ? `Promo (-${p.reduction}€)` : 'Pas de promo';
+    const lot = p.lotQuantity > 1 ? `Lot de ${p.lotQuantity} à ${p.lotPrice}€` : '';
     const poids = p.retailWeight ? `Poids : ${p.retailWeight}g` : '';
-    const gros = p.wholesalePrice ? `Prix de gros : ${p.wholesalePrice}€` : '';
-    
+    const gros = p.wholesalePrice ? `Gros : ${p.wholesalePrice}€` : '';
+
     return `- ${p.name} (${p.category}) - ${p.unitPrice}€\n  ${p.details}\n  ${dispo}, ${promo}. ${lot} ${poids} ${gros}`.trim();
   }).join('\n\n');
 }
