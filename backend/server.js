@@ -130,8 +130,11 @@ app.get('/download-images', async (req, res) => {
     archive.append(buffer, { name: correctedFileName });
   }
 
+
+  
   archive.finalize();
 });
+
 
 
 
