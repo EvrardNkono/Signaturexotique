@@ -134,10 +134,9 @@ export function getDeliveryPrice(mode, weight) {
   
 
 // Mise à jour de la fonction de calcul des frais de livraison
-export function calculateDeliveryCost({ distance, weight, hasInsurance, mode }) {
-    console.log('Paramètres reçus pour calcul des frais :', { distance, weight, hasInsurance, mode });
+export function calculateDeliveryCost({ distance, weight, hasInsurance, mode, totalPrice }) {
+    console.log('Paramètres reçus pour calcul des frais :', { distance, weight, hasInsurance, mode, totalPrice });
 
-    // Gestion des valeurs manquantes
     if (distance == null || weight == null) {
         console.error('Erreur : distance ou poids manquants');
         return null;
@@ -145,24 +144,26 @@ export function calculateDeliveryCost({ distance, weight, hasInsurance, mode }) 
 
     let deliveryCost = 0;
 
-    // Livraison locale (calcul selon distance)
     if (distance <= 20) {
-        deliveryCost = 0; // Livraison gratuite
+        if (totalPrice >= 100) {
+            console.log('Livraison gratuite (distance <= 20 km ET total ≥ 100 €)');
+            deliveryCost = 0;
+        } else {
+            console.log('Frais fixe (distance <= 20 km mais total < 100 €)');
+            deliveryCost = 5; // frais fixe pour livraison locale
+        }
     } else if (distance <= 30) {
         deliveryCost = 5;
     } else if (distance <= 40) {
         deliveryCost = 10;
     } else {
-        // Expédition (distance > 40 km)
         console.log('Calcul basé sur le poids pour une distance > 40 km');
 
-        // Vérification du mode de livraison pour une distance > 40 km
         if (!mode) {
             console.error('Mode requis pour calculer les frais d’expédition');
             return null;
         }
 
-        // Appel de la fonction getDeliveryPrice selon le mode et le poids
         deliveryCost = getDeliveryPrice(mode, weight);
 
         if (deliveryCost == null) {
@@ -171,10 +172,9 @@ export function calculateDeliveryCost({ distance, weight, hasInsurance, mode }) 
         }
     }
 
-    // Frais d’assurance si cochée
     if (hasInsurance) {
         console.log('Assurance ajoutée');
-        deliveryCost += 2; // Exemple : 2€ en plus pour l'assurance
+        deliveryCost += 2;
     }
 
     console.log('Frais de livraison calculés :', deliveryCost);
@@ -183,29 +183,41 @@ export function calculateDeliveryCost({ distance, weight, hasInsurance, mode }) 
 
 
 
+
   
   export function updateDeliveryCost(formData) {
-    const { mode, weight, distance, hasInsurance } = formData;
-  
-    // Vérification des paramètres reçus
-    if (mode == null || weight == null || distance == null) {
-      console.error('Données invalides pour updateDeliveryCost', formData);
-      return;
-    }
-  
-    // Appel à la fonction de calcul des frais
-    const { deliveryCost, message } = calculateDeliveryCost({ mode, weight, distance, hasInsurance });
-  
-    if (deliveryCost != null) {
-      console.log('Frais de livraison calculés:', deliveryCost);
-      console.log('Message associé:', message);
-  
-      // Mettre à jour l'interface utilisateur avec le message et le coût
-      // Exemple : formData.deliveryCost = deliveryCost;
-      // Exemple : formData.message = message;
-    } else {
-      console.error('Le calcul des frais de livraison a échoué.', message);
-    }
+  const { mode, weight, distance, hasInsurance } = formData;
+
+  // ✅ Récupération automatique du total depuis le panier localStorage
+  const totalPrice = parseFloat(localStorage.getItem("cartTotal")) || 0;
+  console.log('Total du panier récupéré depuis localStorage :', totalPrice);
+
+  // Vérification des paramètres reçus
+  if (mode == null || weight == null || distance == null) {
+    console.error('Données invalides pour updateDeliveryCost', formData);
+    return;
   }
+
+  // Appel à la fonction de calcul des frais (ajout du totalPrice)
+  const deliveryCost = calculateDeliveryCost({ mode, weight, distance, hasInsurance, totalPrice });
+
+  if (deliveryCost != null) {
+    console.log('Frais de livraison calculés:', deliveryCost);
+
+    // Mettre à jour les données si besoin
+    formData.deliveryCost = deliveryCost;
+
+    // Message facultatif pour l’interface
+    if (distance <= 20 && totalPrice >= 100) {
+      formData.message = "Livraison offerte 🎉 pour les commandes locales supérieures à 100 € !";
+    } else {
+      formData.message = `Frais de livraison : ${deliveryCost.toFixed(2)} €`;
+    }
+  } else {
+    console.error('Le calcul des frais de livraison a échoué.');
+    formData.message = "Erreur dans le calcul des frais de livraison.";
+  }
+}
+
   
   
