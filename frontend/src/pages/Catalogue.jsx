@@ -6,7 +6,6 @@ import ProductGrid from '../components/ProductGrid';
 import Filters from '../components/Filters';
 import { useCart } from '../context/CartContext';
 import { API_URL } from '../config';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const Catalogue = () => {
   const [allProducts, setAllProducts] = useState([]);
@@ -19,28 +18,19 @@ const Catalogue = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${API_URL}/admin/product`);
+      const response = await fetch(`${API_URL}/routes/catalogue`); // ✅ Utilisation de la nouvelle route
       const data = await response.json();
+
       setAllProducts(data);
     } catch (error) {
       console.error('Erreur chargement des produits:', error);
+      setErrorMessage('Erreur lors du chargement des produits. Veuillez réessayer plus tard.');
     }
   };
 
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  useEffect(() => {
-    if (categoryFilter) {
-      const filtered = allProducts.filter((product) => {
-        return product?.categorie?.toLowerCase() === categoryFilter.toLowerCase();
-      });
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts(allProducts);
-    }
-  }, [categoryFilter, allProducts]);
 
   const handleClientTypeChange = () => {
     const confirmChange = window.confirm(
@@ -53,19 +43,14 @@ const Catalogue = () => {
     }
   };
 
-  const productsToDisplay = filteredProducts.length > 0 ? filteredProducts : allProducts;
-
   return (
     <Container className="catalogue-container my-4">
       <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Rye, sans-serif' }}>
-  CATALOGUE DE PRODUITS
-</Typography>
-
+        CATALOGUE DE PRODUITS
+      </Typography>
 
       {errorMessage && (
-        <Alert variant="danger">
-          {errorMessage}
-        </Alert>
+        <Alert variant="danger">{errorMessage}</Alert>
       )}
 
       <div className="mb-3 text-end">
@@ -77,14 +62,18 @@ const Catalogue = () => {
         </Button>
       </div>
 
-      <Filters onFilterChange={(filtered) => setFilteredProducts(filtered)} />
+      <Filters
+        products={allProducts}
+        onFilterChange={(filtered) => setFilteredProducts(filtered)}
+        initialCategory={categoryFilter}
+      />
 
       {filteredProducts.length === 0 ? (
         <Typography variant="h6" className="mt-4">
           AUCUN PRODUIT NE CORRESPOND À VOTRE RECHERCHE.
         </Typography>
       ) : (
-        <ProductGrid products={productsToDisplay} clientType={clientType} />
+        <ProductGrid products={filteredProducts} clientType={clientType} />
       )}
     </Container>
   );

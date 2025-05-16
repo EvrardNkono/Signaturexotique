@@ -130,58 +130,73 @@ router.post(
  * Accès : Public
  */
 router.get('/', async (req, res) => {
+  console.log("Requête reçue avec query :", req.query);
+
   try {
     const {
       nom,
       categorie,
       prixMax,
-      poidsMinRetail,     // ✅ Nouveau nom
-      poidsMaxRetail,     // ✅ Nouveau nom
+      poidsMinRetail,
+      poidsMaxRetail,
       poidsMinWholesale,
-      poidsMaxWholesale
+      poidsMaxWholesale,
+      includeHidden // ✅ Paramètre admin
     } = req.query;
 
     let query = 'SELECT * FROM products WHERE 1=1';
+    const params = [];
+
+    // 🔍 Filtrer par visibilité sauf si includeHidden = '1'
+    if (includeHidden !== '1') {
+      query += ' AND isVisible = 1';
+    }
 
     if (nom) {
-      query += ` AND name LIKE '%${nom}%'`;
+      query += ' AND name LIKE ?';
+      params.push(`%${nom}%`);
     }
 
     if (categorie) {
-      query += ` AND category = '${categorie}'`;
+      query += ' AND category = ?';
+      params.push(categorie);
     }
 
     if (prixMax) {
-      query += ` AND unitPrice <= ${prixMax}`;
+      query += ' AND unitPrice <= ?';
+      params.push(prixMax);
     }
 
     if (poidsMinRetail) {
-      query += ` AND retailWeight >= ${poidsMinRetail}`;  // ✅ nouvelle colonne
+      query += ' AND retailWeight >= ?';
+      params.push(poidsMinRetail);
     }
 
     if (poidsMaxRetail) {
-      query += ` AND retailWeight <= ${poidsMaxRetail}`;  // ✅ nouvelle colonne
+      query += ' AND retailWeight <= ?';
+      params.push(poidsMaxRetail);
     }
 
     if (poidsMinWholesale) {
-      query += ` AND wholesaleWeight >= ${poidsMinWholesale}`;
+      query += ' AND wholesaleWeight >= ?';
+      params.push(poidsMinWholesale);
     }
 
     if (poidsMaxWholesale) {
-      query += ` AND wholesaleWeight <= ${poidsMaxWholesale}`;
+      query += ' AND wholesaleWeight <= ?';
+      params.push(poidsMaxWholesale);
     }
 
-    // Récupération des produits avec tous les critères
-    const products = await dbAll(query);
+    const products = await dbAll(query, params);
 
-    // Envoi des produits récupérés avec les détails
     res.json(products);
-
   } catch (err) {
     console.error('Erreur récupération produits :', err);
     res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
   }
 });
+
+
 
 
 
@@ -298,6 +313,30 @@ router.put(
     }
   }
 );
+
+
+/**
+ * ============================================
+ *       Changer la visibilite.
+ * ============================================
+ **/
+
+
+
+// PATCH /products/:id/visibility
+router.patch('/:id/visibility', async (req, res) => {
+    console.log('PATCH reçu avec id :', req.params.id, 'isVisible :', req.body.isVisible);
+  const { id } = req.params;
+  const { isVisible } = req.body;
+
+  try {
+    await db.run('UPDATE products SET isVisible = ? WHERE id = ?', [isVisible, id]);
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error('Erreur PATCH visibilité produit :', err);
+    res.status(500).json({ error: 'Échec de la mise à jour de visibilité' });
+  }
+});
 
 
 

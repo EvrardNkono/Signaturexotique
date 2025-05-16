@@ -8,7 +8,7 @@ import {
   Typography,
   InputAdornment,
   Button,
-  CircularProgress // Ajouté ici pour le spinner
+  CircularProgress,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -21,15 +21,13 @@ const Filters = ({ onFilterChange }) => {
   const [prixValue, setPrixValue] = useState(100);
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
-  const [loadingProducts, setLoadingProducts] = useState(false); // Ajouté un état pour le chargement des produits
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
-  // Récupération des catégories
   const fetchCategories = async () => {
     setLoadingCategories(true);
     try {
       const response = await fetch(`${API_URL}/admin/category`);
       const data = await response.json();
-      console.log('Categories:', data); // Debug
       if (Array.isArray(data)) {
         setCategories(data);
       } else {
@@ -42,34 +40,31 @@ const Filters = ({ onFilterChange }) => {
     }
   };
 
-  // Envoi des filtres
   const fetchFilteredProducts = async () => {
-    setLoadingProducts(true); // Affiche le spinner
+    setLoadingProducts(true);
     const queryParams = new URLSearchParams({
       nom,
       categorie,
       prixMax: prixValue,
     }).toString();
-    console.log('QueryParams:', queryParams); // Log des paramètres
 
     try {
-      const response = await fetch(`${API_URL}/admin/product/filter?${queryParams}`);
+      console.log(`${API_URL}/routes/catalogue/filter?${queryParams}`);
+
+      const response = await fetch(`${API_URL}/routes/catalogue/filter?${queryParams}`); // ✅ route mise à jour
       const data = await response.json();
-      console.log('Filtered Products:', data); // Log des résultats
       onFilterChange(data);
     } catch (error) {
       console.error('Erreur lors du fetch des produits:', error);
     } finally {
-      setLoadingProducts(false); // Masque le spinner une fois le fetch terminé
+      setLoadingProducts(false);
     }
   };
 
-  // Appel initial
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  // Déclenchement filtré avec debounce
   useEffect(() => {
     const debouncedFetch = debounce(() => {
       fetchFilteredProducts();
@@ -79,17 +74,9 @@ const Filters = ({ onFilterChange }) => {
     return () => debouncedFetch.cancel();
   }, [nom, categorie, prixValue]);
 
-  const handleNomChange = (e) => {
-    setNom(e.target.value);
-  };
-
-  const handleCategorieChange = (e) => {
-    setCategorie(e.target.value);
-  };
-
-  const handlePrixChange = (e, newValue) => {
-    setPrixValue(newValue);
-  };
+  const handleNomChange = (e) => setNom(e.target.value);
+  const handleCategorieChange = (e) => setCategorie(e.target.value);
+  const handlePrixChange = (_, newValue) => setPrixValue(newValue);
 
   const resetFilters = () => {
     setNom('');
@@ -100,7 +87,6 @@ const Filters = ({ onFilterChange }) => {
   return (
     <Box className="p-3 mb-4 border rounded shadow-sm bg-light">
       <Row className="align-items-center">
-        {/* Filtre par nom */}
         <Col md={4} className="mb-3">
           <TextField
             fullWidth
@@ -118,7 +104,6 @@ const Filters = ({ onFilterChange }) => {
           />
         </Col>
 
-        {/* Filtre par catégorie */}
         <Col md={4} className="mb-3">
           <TextField
             select
@@ -148,7 +133,6 @@ const Filters = ({ onFilterChange }) => {
           </TextField>
         </Col>
 
-        {/* Slider pour le prix max */}
         <Col md={4} className="mb-3">
           <Typography gutterBottom>
             Prix maximum : {prixValue} €
@@ -174,7 +158,6 @@ const Filters = ({ onFilterChange }) => {
         </Col>
       </Row>
 
-      {/* Afficher le spinner de chargement des produits */}
       {loadingProducts && (
         <Row className="justify-content-center mt-4">
           <CircularProgress />

@@ -51,7 +51,8 @@ const [product, setProduct] = useState({
         setCategories(categoriesData);
 
         // Récupérer les produits
-        const productsResponse = await fetch(`${API_URL}/admin/product`);
+        const productsResponse = await fetch(`${API_URL}/admin/product?includeHidden=1`);
+
         const productsData = await productsResponse.json();
         setProducts(productsData);
       } catch (error) {
@@ -248,6 +249,33 @@ console.log("🧾 Image avant envoi :", image);
 };
 
 
+
+const toggleVisibility = async (id, newVisibility) => {
+  console.log('Changement visibilité pour produit :', id, '->', newVisibility);
+
+  try {
+    const response = await fetch(`${API_URL}/admin/product/${id}/visibility`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ isVisible: newVisibility }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Échec de la mise à jour côté serveur');
+    }
+
+    // ✅ Met à jour localement sans re-fetch
+    setProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod.id === id ? { ...prod, isVisible: newVisibility } : prod
+      )
+    );
+  } catch (error) {
+    console.error('Erreur lors du changement de visibilité', error);
+  }
+};
 
 
 
@@ -646,19 +674,26 @@ const [showUploader, setShowUploader] = useState(false);
         </thead>
         <tbody>
           {products.map((prod) => (
-            <tr key={prod.id || `${prod.name}-${Math.random()}`}>
-              <td>{prod.image && <img src={prod.image} alt={prod.name} width="60" />}</td>
-              <td>{prod.name}</td>
-              <td><Badge bg="info">{prod.unitPrice} €</Badge></td>
-              <td><Badge bg="warning">{prod.wholesalePrice} €</Badge></td>
-              <td>{prod.reduction} %</td>
-              <td>{prod.category}</td>
-              <td>
-                <Button size="sm" variant="outline-warning" onClick={() => handleEditProduct(prod)}>✏️</Button>{' '}
-                <Button size="sm" variant="outline-danger" onClick={() => handleDeleteProduct(prod.id)}>🗑️</Button>
-              </td>
-            </tr>
-          ))}
+  <tr key={prod.id || `${prod.name}-${Math.random()}`}>
+    <td>{prod.image && <img src={prod.image} alt={prod.name} width="60" />}</td>
+    <td>{prod.name}</td>
+    <td><Badge bg="info">{prod.unitPrice} €</Badge></td>
+    <td><Badge bg="warning">{prod.wholesalePrice} €</Badge></td>
+    <td>{prod.reduction} %</td>
+    <td>{prod.category}</td>
+    <td>
+      <Button size="sm" variant="outline-warning" onClick={() => handleEditProduct(prod)}>✏️</Button>{' '}
+      <Button size="sm" variant="outline-danger" onClick={() => handleDeleteProduct(prod.id)}>🗑️</Button>{' '}
+      <Button
+        onClick={() => toggleVisibility(prod.id, !prod.isVisible)}
+        className={`p-2 rounded ${prod.isVisible ? 'bg-red-500' : 'bg-green-500'} text-white ml-2`}
+      >
+        {prod.isVisible ? 'Masquer' : 'Afficher'}
+      </Button>
+    </td>
+  </tr>
+))}
+
         </tbody>
       </Table>
     </Card.Body>
