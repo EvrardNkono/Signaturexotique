@@ -105,7 +105,9 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  position: relative; /* <-- Ajouté */
 }
+
 
 /* Smiley principal avec effet pulse */
 .smiley-chat {
@@ -166,3 +168,44 @@
     transform: scale(1);
   }
 }
+
+
+.chat-notification {
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 999px;
+  position: absolute;
+  top: 4px;    /* Ajuste finement si besoin */
+  right: 4px;  /* Ajuste finement si besoin */
+  font-weight: bold;
+  box-shadow: 0 0 2px black;
+  z-index: 1;  /* S'assure qu'elle reste visible */
+}
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
+}
+
+
+
+
+

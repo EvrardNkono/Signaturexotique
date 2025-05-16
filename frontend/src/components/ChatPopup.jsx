@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import "./ChatPopup.css"; // Tu peux personnaliser les styles ici
-import Form from "react-bootstrap/Form"; // en haut de ton fichier
-import { API_URL } from '../config'; // Importer l'URL de l'API
+import React, { useState, useEffect, useRef } from "react";
+import "./ChatPopup.css";
+import Form from "react-bootstrap/Form";
+import { API_URL } from '../config';
+import avatarEric from '../../public/assets/avatareric.jpg';
+import avatarUser from '../../public/assets/avataruser.jpg';
 
 const ChatPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,93 +11,101 @@ const ChatPopup = () => {
   const [messages, setMessages] = useState([
     { sender: "assistant", text: "Bonjour ! Comment puis-je vous aider ?" },
   ]);
+  const [hasUnread, setHasUnread] = useState(false);
 
-  // Ouvrir et fermer la fenêtre de chat
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const seenThisSession = sessionStorage.getItem("chatSeen");
+    if (!seenThisSession) {
+      setHasUnread(true);
+      sessionStorage.setItem("chatSeen", "true");
+    }
+  }, []);
+
   const toggleChat = () => {
     setIsOpen(!isOpen);
+    setHasUnread(false);
   };
 
-  // Gérer le changement du message utilisateur
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
   };
 
-  // Gérer l'envoi du message
-  const handleSendMessage = async (e) => {
-    e.preventDefault(); // Pour éviter le rechargement de la page
-    if (message.trim() === "") return; // Ne rien envoyer si le message est vide
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(e);
+    }
+  };
 
-    // Ajouter le message utilisateur dans le chat
-    setMessages([...messages, { sender: "user", text: message }]);
-    setMessage(""); // Réinitialiser le champ de message
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (message.trim() === "") return;
+
+    setMessages((prev) => [...prev, { sender: "user", text: message }]);
+    const currentMessage = message;
+    setMessage("");
 
     try {
-      // Créer un message avec le format attendu par l'API
-      const userMessage = { sender: "user", text: message };
-
       const response = await fetch(`${API_URL}/chat`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [
             ...messages.map(msg => ({
               role: msg.sender === "assistant" ? "assistant" : msg.sender,
               content: msg.text,
             })),
-            { role: "user", content: message },
+            { role: "user", content: currentMessage },
           ],
         }),
       });
 
       if (!response.ok) {
-        console.error("Erreur HTTP lors de l'appel à l'API :", response.statusText);
-        const errorDetails = await response.text(); // Lire le texte de la réponse pour plus de détails
-        console.error("Détails de l'erreur :", errorDetails);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: "assistant", text: "Erreur API, veuillez réessayer plus tard." },
-        ]);
+        const errorDetails = await response.text();
+        console.error("Erreur API :", errorDetails);
+        setMessages(prev => [...prev, {
+          sender: "assistant",
+          text: "Erreur API, veuillez réessayer plus tard.",
+        }]);
         return;
       }
 
       const data = await response.json();
-      console.log("Réponse reçue de l'API :", data);
-
-      // Ajouter la réponse de l'assistant aux messages
-      if (data && data.choices && data.choices.length > 0) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: "assistant", text: data.choices[0].message.content },
-        ]);
-      } else {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: "assistant", text: "Désolé, je n'ai pas compris. Peux-tu reformuler ?" },
-        ]);
-      }
+      const assistantReply = data?.choices?.[0]?.message?.content || "Désolé, je n'ai pas compris.";
+      setMessages(prev => [...prev, { sender: "assistant", text: assistantReply }]);
     } catch (error) {
-      console.error("Erreur lors de l'envoi du message:", error);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "assistant", text: "Oups, quelque chose a mal tourné. Essaie de nouveau plus tard." },
-      ]);
+      console.error("Erreur:", error);
+      setMessages(prev => [...prev, {
+        sender: "assistant",
+        text: "Oups, quelque chose a mal tourné. Essaie de nouveau plus tard.",
+      }]);
     }
   };
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  useEffect(() => {
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isOpen]);
 
   return (
     <div className={`chat-popup ${isOpen ? "open" : ""}`}>
       <button className="chat-toggle" onClick={toggleChat}>
-  <div className="smiley-chat">
-    <div className="eyes">
-      <span className="eye left"></span>
-      <span className="eye right"></span>
-    </div>
-    <div className="bubble-mouth">💬</div>
-  </div>
-</button>
-
+        <div className="smiley-chat">
+          <div className="eyes">
+            <span className="eye left"></span>
+            <span className="eye right"></span>
+          </div>
+          <div className="bubble-mouth">💬</div>
+        </div>
+        {hasUnread && <span className="chat-notification">1</span>}
+      </button>
 
       {isOpen && (
         <div className="chat-window">
@@ -105,13 +115,19 @@ const ChatPopup = () => {
           </div>
           <div className="chat-messages">
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`message ${msg.sender === "assistant" ? "assistant" : "user"}`}
-              >
-                <span>{msg.text}</span>
+              <div key={index} className={`message ${msg.sender}`}>
+                <div className="avatar">
+  <img
+    src={msg.sender === "assistant" ? avatarEric : avatarUser}
+    alt={msg.sender}
+    className="avatar-img"
+  />
+</div>
+
+                <span className="message-text">{msg.text}</span>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
           <Form className="chat-input" onSubmit={handleSendMessage}>
             <Form.Group className="flex-grow-1 me-2 mb-0">
@@ -121,6 +137,7 @@ const ChatPopup = () => {
                 placeholder="Écrivez un message..."
                 value={message}
                 onChange={handleMessageChange}
+                onKeyDown={handleKeyDown}
                 className="chat-textarea"
               />
             </Form.Group>
