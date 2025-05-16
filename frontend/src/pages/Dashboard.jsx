@@ -408,7 +408,10 @@ const handleUpdateProduct = async () => {
       console.log('Produit mis à jour:', responseData);
 
       if (responseData && responseData.product) {
-        const updatedProducts = products.map(p => p._id === responseData.product._id ? responseData.product : p);
+       const updatedProducts = products.map(p =>
+  p.id === responseData.product.id ? responseData.product : p
+);
+
         setProducts(updatedProducts);
         setProduct({
           name: '',
