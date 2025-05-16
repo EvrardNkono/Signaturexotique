@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Form, Button, Card, Table, Badge } from 'react-bootstrap';
 import './AdminPage.css'; // Fichier CSS personnalisé
 import OrderList from '../components/OrderList';
@@ -14,8 +14,10 @@ const AdminPage = () => {
 const [editCategoryInput, setEditCategoryInput] = useState(''); // Nom modifié
 const [reductionInput, setReductionInput] = useState(''); // Champ pour entrer la réduction
   const [editingProduct, setEditingProduct] = useState(null); // Produit en cours d'édition
- 
+ const [searchTerm, setSearchTerm] = useState("");
 
+
+const formTitleRef = useRef(null);
  const [products, setProducts] = useState([]);
 
 const [product, setProduct] = useState({
@@ -62,6 +64,17 @@ const [product, setProduct] = useState({
 
     fetchCategoriesAndProducts();
   }, []); // Cette partie est appelée une seule fois lors du premier rendu
+
+
+  useEffect(() => {
+  if (editingProduct && formTitleRef.current) {
+    formTitleRef.current.classList.add('flash-highlight');
+    setTimeout(() => {
+      formTitleRef.current.classList.remove('flash-highlight');
+    }, 1500);
+  }
+}, [editingProduct]);
+
 
   const handleAddCategory = async () => {
   // Vérifie que le champ n'est pas vide et que la catégorie n'existe pas déjà
@@ -248,7 +261,9 @@ console.log("🧾 Image avant envoi :", image);
   }
 };
 
-
+ const filteredProducts = products.filter(prod =>
+    prod.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
 const toggleVisibility = async (id, newVisibility) => {
   console.log('Changement visibilité pour produit :', id, '->', newVisibility);
@@ -284,6 +299,7 @@ const toggleVisibility = async (id, newVisibility) => {
 
 // Lorsqu'on clique sur "Modifier", on remplit le formulaire avec les infos existantes
 const handleEditProduct = (prod) => {
+  // Remplit le formulaire avec les infos du produit
   setEditingProduct(prod);
   setProduct({
     name: prod.name,
@@ -294,12 +310,31 @@ const handleEditProduct = (prod) => {
     image: null,
     lotQuantity: prod.lotQuantity || '',
     lotPrice: prod.lotPrice || '',
-    inStock: prod.inStock ?? true, // ✅ Garde le booléen même s’il est false
-    retailWeight: prod.retailWeight || '',       // ✅ Nouveau champ
-    wholesaleWeight: prod.wholesaleWeight || '', // ✅ Nouveau champ
-    details: prod.details || '',  // ✅ Nouveau champ details
+    inStock: prod.inStock ?? true,
+    retailWeight: prod.retailWeight || '',
+    wholesaleWeight: prod.wholesaleWeight || '',
+    details: prod.details || '',
   });
+
+  // Étape 1 : rendre le formulaire visible (et uniquement celui-là)
+  setShowProductForm(true);
+  setShowCategoryForm(false);
+  setShowRecipeForm(false);
+  setShowUploader(false);
+
+  // Étape 2 : attendre que le DOM ait bien rendu le formulaire avant de scroller
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 300); // ⏱ Un petit délai pour laisser React afficher le composant
 };
+
+
+
+
+
+
+
+
 
 const handleDeleteProduct = async (id) => {
   try {
@@ -441,6 +476,8 @@ const handleUpdateProduct = async () => {
 };
 
 
+
+
  const [showProductForm, setShowProductForm] = useState(false);
 const [showCategoryForm, setShowCategoryForm] = useState(false);
 const [showRecipeForm, setShowRecipeForm] = useState(false);
@@ -502,9 +539,13 @@ const [showUploader, setShowUploader] = useState(false);
 {showProductForm && (
   <Card className="admin-section mb-4">
     <Card.Body>
-      <Card.Title className="admin-section-title">
-        {editingProduct ? '✏️ Modifier un Produit' : '🧺 Créer un Produit'}
-      </Card.Title>
+      <div ref={formTitleRef}>
+  <Card.Title className="admin-section-title">
+    {editingProduct ? '✏️ Modifier un Produit' : '🧺 Créer un Produit'}
+  </Card.Title>
+</div>
+
+
 
       {/* Formulaire création/modification */}
       <Form>
@@ -660,8 +701,24 @@ const [showUploader, setShowUploader] = useState(false);
       </Form>
 
       <hr className="my-4" />
+      {/* Champ de recherche */}
+      <div className="relative w-full max-w-md mx-auto my-4">
+  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+    🔍
+  </span>
+  <input
+    type="text"
+    placeholder="Rechercher un produit exotique..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition duration-200"
+  />
+</div>
+
+
 
       {/* Liste des produits */}
+      
       <Card.Title className="mt-4">📦 Produits existants</Card.Title>
       <Table responsive hover>
         <thead>
@@ -676,28 +733,32 @@ const [showUploader, setShowUploader] = useState(false);
           </tr>
         </thead>
         <tbody>
-          {products.map((prod) => (
-  <tr key={prod.id || `${prod.name}-${Math.random()}`}>
-    <td>{prod.image && <img src={prod.image} alt={prod.name} width="60" />}</td>
-    <td>{prod.name}</td>
-    <td><Badge bg="info">{prod.unitPrice} €</Badge></td>
-    <td><Badge bg="warning">{prod.wholesalePrice} €</Badge></td>
-    <td>{prod.reduction} %</td>
-    <td>{prod.category}</td>
-    <td>
-      <Button size="sm" variant="outline-warning" onClick={() => handleEditProduct(prod)}>✏️</Button>{' '}
-      <Button size="sm" variant="outline-danger" onClick={() => handleDeleteProduct(prod.id)}>🗑️</Button>{' '}
-      <Button
-        onClick={() => toggleVisibility(prod.id, !prod.isVisible)}
-        className={`p-2 rounded ${prod.isVisible ? 'bg-red-500' : 'bg-green-500'} text-white ml-2`}
-      >
-        {prod.isVisible ? 'Masquer' : 'Afficher'}
-      </Button>
-    </td>
-  </tr>
-))}
+  {products
+    .filter((prod) =>
+      prod.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .map((prod) => (
+      <tr key={prod.id || `${prod.name}-${Math.random()}`}>
+        <td>{prod.image && <img src={prod.image} alt={prod.name} width="60" />}</td>
+        <td>{prod.name}</td>
+        <td><Badge bg="info">{prod.unitPrice} €</Badge></td>
+        <td><Badge bg="warning">{prod.wholesalePrice} €</Badge></td>
+        <td>{prod.reduction} %</td>
+        <td>{prod.category}</td>
+        <td>
+          <Button size="sm" variant="outline-warning" onClick={() => handleEditProduct(prod)}>✏️</Button>{' '}
+          <Button size="sm" variant="outline-danger" onClick={() => handleDeleteProduct(prod.id)}>🗑️</Button>{' '}
+          <Button
+            onClick={() => toggleVisibility(prod.id, !prod.isVisible)}
+            className={`p-2 rounded ${prod.isVisible ? 'bg-red-500' : 'bg-green-500'} text-white ml-2`}
+          >
+            {prod.isVisible ? 'Masquer' : 'Afficher'}
+          </Button>
+        </td>
+      </tr>
+  ))}
+</tbody>
 
-        </tbody>
       </Table>
     </Card.Body>
   </Card>

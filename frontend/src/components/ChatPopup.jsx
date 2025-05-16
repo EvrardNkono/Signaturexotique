@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import "./ChatPopup.css";
 import Form from "react-bootstrap/Form";
 import { API_URL } from '../config';
-import avatarEric from '../../public/assets/avatareric.jpg';
-import avatarUser from '../../public/assets/avataruser.jpg';
+
+// Utilisation des chemins accessibles publiquement depuis le dossier public/
+const avatarEric = "/assets/avatareric.jpg";
+const avatarUser = "/assets/avataruser.jpg";
 
 const ChatPopup = () => {
   const [isOpen, setIsOpen] = useState(false);

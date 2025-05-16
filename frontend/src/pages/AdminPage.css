@@ -24,3 +24,11 @@
     margin-bottom: 20px;
   }
   
+ .flash-highlight {
+  animation: flash 1.2s ease-in-out;
+}
+@keyframes flash {
+  0% { background-color: #ffe8a1; }
+  100% { background-color: transparent; }
+}
+
