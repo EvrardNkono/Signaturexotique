@@ -173,15 +173,15 @@ const handleAddProduct = async () => {
     inStock,
     retailWeight,
     wholesaleWeight,
-    details, // ✅ Ajout du champ details
+    details,
   } = product;
 
-  // ✅ Validation : tous les champs obligatoires sont remplis
   if (name && unitPrice && wholesalePrice && category && retailWeight && wholesaleWeight) {
     if ((lotPrice && !lotQuantity) || (!lotPrice && lotQuantity)) {
       return alert('Veuillez remplir à la fois la quantité et le prix du lot, ou laissez les deux vides.');
     }
-console.log("🧾 Image avant envoi :", image);
+
+    console.log("🧾 Image avant envoi :", image);
 
     const formData = new FormData();
     formData.append('name', name);
@@ -192,13 +192,17 @@ console.log("🧾 Image avant envoi :", image);
     formData.append('inStock', inStock);
     formData.append('retailWeight', retailWeight);
     formData.append('wholesaleWeight', wholesaleWeight);
-    formData.append('details', details); // ✅ Ajout dans le FormData
+    formData.append('details', details);
 
     if (image instanceof File) {
-  formData.append('image', image); // ✅ Nouvelle image à uploader
-} else if (typeof image === 'string' && image !== '') {
-  formData.append('image', image); // ✅ Ancienne image (nom de fichier déjà stocké)
-}
+      console.log('📤 Nouvelle image à uploader :', image.name);
+      formData.append('image', image);
+    } else if (typeof image === 'string' && image.trim() !== '') {
+      console.log('📎 Ancienne image conservée :', image);
+      formData.append('image', image.trim());
+    } else {
+      console.warn('⚠️ Aucun champ image envoyé');
+    }
 
     if (lotQuantity) formData.append('lotQuantity', lotQuantity);
     if (lotPrice) formData.append('lotPrice', lotPrice);
@@ -230,7 +234,7 @@ console.log("🧾 Image avant envoi :", image);
       }
 
       const responseData = await response.json();
-      console.log('Réponse du serveur:', responseData);
+      console.log('✅ Réponse du serveur:', responseData);
 
       if (responseData && responseData.product) {
         setProducts([...products, responseData.product]);
@@ -246,14 +250,14 @@ console.log("🧾 Image avant envoi :", image);
           inStock: true,
           retailWeight: '',
           wholesaleWeight: '',
-          details: '', // ✅ Reset du champ
+          details: '',
         });
       } else {
         alert('Produit créé avec succès, mais la réponse est invalide.');
       }
 
     } catch (error) {
-      console.error('Erreur lors de la requête:', error);
+      console.error('💥 Erreur lors de la requête:', error);
       alert(`Erreur serveur : ${error.message}`);
     }
   } else {
@@ -261,12 +265,9 @@ console.log("🧾 Image avant envoi :", image);
   }
 };
 
- const filteredProducts = products.filter(prod =>
-    prod.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+// 🔄 Mise à jour visibilité d’un produit
 const toggleVisibility = async (id, newVisibility) => {
-  console.log('Changement visibilité pour produit :', id, '->', newVisibility);
+  console.log('🔁 Changement visibilité pour produit :', id, '->', newVisibility);
 
   try {
     const response = await fetch(`${API_URL}/admin/product/${id}/visibility`, {
@@ -281,16 +282,16 @@ const toggleVisibility = async (id, newVisibility) => {
       throw new Error('Échec de la mise à jour côté serveur');
     }
 
-    // ✅ Met à jour localement sans re-fetch
     setProducts((prevProducts) =>
       prevProducts.map((prod) =>
         prod.id === id ? { ...prod, isVisible: newVisibility } : prod
       )
     );
   } catch (error) {
-    console.error('Erreur lors du changement de visibilité', error);
+    console.error('💥 Erreur lors du changement de visibilité', error);
   }
 };
+
 
 
 
@@ -397,20 +398,20 @@ const handleUpdateProduct = async () => {
     formData.append('unitPrice', unitPrice);
     formData.append('wholesalePrice', wholesalePrice);
     formData.append('category', category);
-    formData.append('reduction', reduction);
-    formData.append('inStock', inStock);
+    formData.append('reduction', reduction ?? 0);
+    formData.append('inStock', inStock ? '1' : '0'); // le backend attend un booléen ou équivalent
     formData.append('retailWeight', retailWeight);
     formData.append('wholesaleWeight', wholesaleWeight);
     formData.append('details', details);
 
-    // ✅ Ajouter l'image uniquement si c'est un nouveau fichier
-   if (image && typeof image !== 'string' && image instanceof File) {
-  // ✅ On n'envoie l'image que si c'est un fichier
-  formData.append('image', image);
-}
+    // ✅ Gestion de l'image (nouvelle ou existante)
+    if (image && typeof image !== 'string' && image instanceof File) {
+      formData.append('image', image); // 📸 nouvelle image
+    } else if (typeof image === 'string' && image.trim() !== '') {
+      formData.append('image', image); // 🔁 image déjà existante
+    }
 
-
-
+    // ✅ Champs optionnels
     if (lotQuantity) formData.append('lotQuantity', lotQuantity);
     if (lotPrice) formData.append('lotPrice', lotPrice);
 
@@ -433,7 +434,7 @@ const handleUpdateProduct = async () => {
           const errorData = JSON.parse(errorText);
           errorMessage = errorData.message || errorMessage;
         } catch (e) {
-          console.error('Erreur JSON', e);
+          console.error('Erreur de parsing JSON :', e);
         }
         alert(errorMessage);
         return;
@@ -442,10 +443,10 @@ const handleUpdateProduct = async () => {
       const responseData = await response.json();
       console.log('Produit mis à jour:', responseData);
 
-      if (responseData && responseData.product) {
-       const updatedProducts = products.map(p =>
-  p.id === responseData.product.id ? responseData.product : p
-);
+      if (responseData?.product) {
+        const updatedProducts = products.map(p =>
+          p.id === responseData.product.id ? responseData.product : p
+        );
 
         setProducts(updatedProducts);
         setProduct({
@@ -466,7 +467,7 @@ const handleUpdateProduct = async () => {
       }
 
     } catch (error) {
-      console.error('Erreur réseau ou serveur :', error);
+      console.error('❌ Erreur réseau ou serveur :', error);
       alert(`Erreur serveur : ${error.message}`);
     }
 
@@ -474,6 +475,8 @@ const handleUpdateProduct = async () => {
     alert('Veuillez remplir tous les champs obligatoires (poids et détails inclus).');
   }
 };
+
+
 
 
 

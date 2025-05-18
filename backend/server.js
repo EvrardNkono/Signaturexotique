@@ -20,7 +20,8 @@ app.use(cors());
 
 app.use(express.json()); // Suffit, plus besoin de body-parser
 app.use('/uploads', express.static(uploadDir)); // Sert les images
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 // Importation des routes admin
 const categoryRoutes = require('./modules/admin/category');
 const productRoutes = require('./modules/admin/product');

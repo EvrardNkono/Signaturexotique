@@ -3,31 +3,54 @@ const multer = require('multer');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const util = require('util');
+const fs = require('fs');
 
 const db = require('../../config/db'); // Connexion à la base SQLite
 const dbAll = util.promisify(db.all).bind(db); // Promisify pour db.all
 
 const router = express.Router();
-const fs = require('fs');
-const fsPromises = require('fs').promises;
 
 // Middleware d'authentification
 const verifyJWT = require('../../middleware/verifyJWT');
 const checkRole = require('../../middleware/checkRole'); // Vérifie les rôles (admin/superadmin)
 
-// Configuration de Multer pour l’upload d’images
+// Configuration de Multer pour l’upload d’images avec dossier dynamique
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'public/uploads/');
+        try {
+            const rawCategory = req.body.category || 'autres';
+            const safeCategory = rawCategory.replace(/\s+/g, '-').toLowerCase(); // 🛡️ sécurisation du nom de dossier
+
+            const uploadPath = path.join(__dirname, '../../public/uploads/images', safeCategory);
+
+            // Création du dossier s’il n'existe pas
+            if (!fs.existsSync(uploadPath)) {
+                fs.mkdirSync(uploadPath, { recursive: true });
+            }
+
+            cb(null, uploadPath);
+        } catch (err) {
+            cb(err, null);
+        }
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
+        const ext = path.extname(file.originalname).toLowerCase();
+
+        // 🛡️ Optionnel : filtrer les extensions
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+        if (!allowedExtensions.includes(ext)) {
+            return cb(new Error('Extension de fichier non autorisée'), null);
+        }
+
         cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     }
 });
 
 const upload = multer({ storage: storage });
+
+
+
 
 /**
  * ============================================
@@ -51,23 +74,25 @@ router.post(
       lotQuantity,
       lotPrice,
       inStock,
-      retailWeight,     // ✅ Poids pour particulier (nouveau nom)
-      wholesaleWeight,  // ✅ Poids pour grossiste
-      details           // ✅ Détails supplémentaires du produit (nouveau champ)
+      retailWeight,
+      wholesaleWeight,
+      details
     } = req.body;
 
-    const image = req.file ? req.file.filename : null;
+    // 🛡️ Nettoie la catégorie pour éviter les espaces ou majuscules dans le chemin
+    const safeCategory = category.replace(/\s+/g, '-').toLowerCase();
 
-    // Validation des champs obligatoires
+    // 📸 Construit le chemin relatif de l'image si elle existe
+    const imagePath = req.file ? `uploads/images/${safeCategory}/${req.file.filename}` : null;
+
+    // ✅ Validation des champs obligatoires
     if (!name || !category || !unitPrice || !wholesalePrice || !retailWeight || !wholesaleWeight || !details) {
       return res.status(400).json({ message: 'Tous les champs sont requis, y compris les détails.' });
     }
 
-    // Validation de inStock (par défaut à true si non fourni)
     const stockStatus = inStock === undefined ? 1 : inStock === 'true' ? 1 : 0;
 
     try {
-      // Création de l'insertion SQL avec le champ details
       const insertSql = `
         INSERT INTO products (
           name, category, unitPrice, wholesalePrice, image, reduction,
@@ -81,14 +106,14 @@ router.post(
         category,
         unitPrice,
         wholesalePrice,
-        image,
+        imagePath, // ✅ On enregistre le chemin complet ici
         reduction || 0,
         lotQuantity || null,
         lotPrice || null,
         stockStatus,
-        retailWeight,       // ✅ Poids pour particulier
-        wholesaleWeight,    // ✅ Poids pour grossiste
-        details             // ✅ Nouveau champ "details" pour description
+        retailWeight,
+        wholesaleWeight,
+        details
       ]);
 
       res.status(201).json({
@@ -103,10 +128,10 @@ router.post(
           lotQuantity: lotQuantity || null,
           lotPrice: lotPrice || null,
           inStock: stockStatus === 1,
-          retailWeight,      // ✅ Poids pour particulier
-          wholesaleWeight,   // ✅ Poids pour grossiste
-          details,           // ✅ Détails du produit
-          imageURL: image ? `/uploads/${image}` : null
+          retailWeight,
+          wholesaleWeight,
+          details,
+          imageURL: imagePath ? `/${imagePath}` : null // ✅ URL relative accessible depuis frontend
         }
       });
 
@@ -116,6 +141,9 @@ router.post(
     }
   }
 );
+
+
+
 
 
 
@@ -212,7 +240,7 @@ router.put(
   '/:id',
   verifyJWT,
   checkRole(['admin', 'superadmin']),
-  upload.single('image'),
+  upload.fields([{ name: 'image', maxCount: 1 }]),
   async (req, res) => {
     const { id } = req.params;
     const {
@@ -226,12 +254,12 @@ router.put(
       lotQuantity,
       lotPrice,
       inStock,
-      details
+      details,
+      image: imageFromBody
     } = req.body;
 
-    // 🧳 DEBUG EXPRESS : ce qu’on reçoit dans req.body et req.file
     console.log('📦 Champs reçus (req.body):', req.body);
-    console.log('🖼️ Fichier reçu (req.file):', req.file);
+    console.log('🖼️ Fichiers reçus (req.files):', req.files);
 
     if (!name || !category || !unitPrice || !wholesalePrice) {
       return res.status(400).json({ message: 'Tous les champs obligatoires ne sont pas remplis.' });
@@ -243,48 +271,78 @@ router.put(
         return res.status(404).json({ message: 'Produit non trouvé' });
       }
 
-      // Gestion image : nouvelle image > image envoyée dans le body > image déjà en DB
-      const imageToUpdate = req.file?.filename || req.body.image || product.image;
+      // 📂 Traitement de l’image
+      let imageToUpdate = product.image;
+      const uploadedFile = req.files?.image?.[0];
 
-      // Autres champs
-      const retailWeightToUpdate = retailWeight ?? product.retailWeight;
-      const wholesaleWeightToUpdate = wholesaleWeight ?? product.wholesaleWeight;
-      const detailsToUpdate = details ?? product.details;
-      const stockStatus = inStock !== undefined
+      if (uploadedFile?.filename) {
+        imageToUpdate = uploadedFile.filename;
+
+        if (product.image && product.image !== imageToUpdate) {
+          const oldImagePath = path.join(__dirname, '../public/uploads', product.image);
+          fs.access(oldImagePath, fs.constants.F_OK, (err) => {
+            if (!err) {
+              fs.unlink(oldImagePath, (unlinkErr) => {
+                if (unlinkErr) {
+                  console.error('❌ Erreur suppression ancienne image :', unlinkErr);
+                } else {
+                  console.log('🧹 Ancienne image supprimée :', product.image);
+                }
+              });
+            }
+          });
+        }
+      } else if (
+        typeof imageFromBody === 'string' &&
+        imageFromBody.trim() !== '' &&
+        imageFromBody !== 'null'
+      ) {
+        imageToUpdate = imageFromBody.trim();
+      }
+
+      // 📦 Mise à jour des autres champs
+      const stockStatus = (inStock !== undefined)
         ? (inStock === 'true' || inStock === '1' || inStock === 1 ? 1 : 0)
         : product.inStock;
-      const reductionToUpdate = reduction ?? product.reduction;
-      const lotQuantityToUpdate = lotQuantity ?? product.lotQuantity;
-      const lotPriceToUpdate = lotPrice ?? product.lotPrice;
 
-      console.log("🖼️ Image utilisée pour update :", {
-        file: req.file?.filename,
-        bodyImage: req.body.image,
-        finalImage: imageToUpdate
-      });
-
-      await db.run(`
+      await db.run(
+        `
         UPDATE products
-        SET name = ?, category = ?, unitPrice = ?, wholesalePrice = ?, image = ?, unit = ?, wholesaleUnit = ?, 
-            reduction = ?, lotQuantity = ?, lotPrice = ?, inStock = ?, retailWeight = ?, wholesaleWeight = ?, details = ?
+        SET 
+          name = ?, 
+          category = ?, 
+          unitPrice = ?, 
+          wholesalePrice = ?, 
+          image = ?, 
+          unit = ?, 
+          wholesaleUnit = ?, 
+          reduction = ?, 
+          lotQuantity = ?, 
+          lotPrice = ?, 
+          inStock = ?, 
+          retailWeight = ?, 
+          wholesaleWeight = ?, 
+          details = ?
         WHERE id = ?
-      `, [
-        name,
-        category,
-        unitPrice,
-        wholesalePrice,
-        imageToUpdate,
-        product.unit,
-        product.wholesaleUnit,
-        reductionToUpdate,
-        lotQuantityToUpdate,
-        lotPriceToUpdate,
-        stockStatus,
-        retailWeightToUpdate,
-        wholesaleWeightToUpdate,
-        detailsToUpdate,
-        id
-      ]);
+      `,
+        [
+          name,
+          category,
+          unitPrice,
+          wholesalePrice,
+          imageToUpdate,
+          product.unit,
+          product.wholesaleUnit,
+          reduction ?? product.reduction,
+          lotQuantity ?? product.lotQuantity,
+          lotPrice ?? product.lotPrice,
+          stockStatus,
+          retailWeight ?? product.retailWeight,
+          wholesaleWeight ?? product.wholesaleWeight,
+          details ?? product.details,
+          id
+        ]
+      );
 
       res.status(200).json({
         message: 'Produit mis à jour avec succès',
@@ -296,23 +354,23 @@ router.put(
           wholesalePrice,
           unit: product.unit,
           wholesaleUnit: product.wholesaleUnit,
-          reduction: reductionToUpdate,
-          lotQuantity: lotQuantityToUpdate,
-          lotPrice: lotPriceToUpdate,
+          reduction: reduction ?? product.reduction,
+          lotQuantity: lotQuantity ?? product.lotQuantity,
+          lotPrice: lotPrice ?? product.lotPrice,
           imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null,
           inStock: stockStatus,
-          retailWeight: retailWeightToUpdate,
-          wholesaleWeight: wholesaleWeightToUpdate,
-          details: detailsToUpdate
+          retailWeight: retailWeight ?? product.retailWeight,
+          wholesaleWeight: wholesaleWeight ?? product.wholesaleWeight,
+          details: details ?? product.details
         }
       });
-
     } catch (error) {
       console.error('❌ Erreur lors de la mise à jour du produit :', error);
       res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 );
+
 
 
 /**

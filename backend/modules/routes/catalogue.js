@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
       poidsMaxWholesale
     } = req.query;
 
-    let query = 'SELECT * FROM products WHERE isVisible = 1'; // 🚫 Aucun produit masqué
+    let query = 'SELECT * FROM products WHERE isVisible = 1';
     const params = [];
 
     if (nom) {
@@ -69,7 +69,20 @@ router.get('/', async (req, res) => {
 
     const products = await dbAll(query, params);
 
-    res.json(products);
+    const baseUrl = `${req.protocol}://${req.get('host')}/`; // 🔧 Corrigé ici aussi
+
+const productsWithImageUrl = products.map(product => {
+  const fullUrl = product.image ? baseUrl + product.image : null;
+  console.log(`🖼️ [FILTER] Image récupérée pour "${product.name}": ${fullUrl}`);
+  return {
+    ...product,
+    imageUrl: fullUrl
+  };
+});
+
+
+
+    res.json(productsWithImageUrl);
   } catch (err) {
     console.error('Erreur récupération catalogue :', err);
     res.status(500).json({ message: 'Erreur lors de la récupération du catalogue' });
@@ -77,6 +90,13 @@ router.get('/', async (req, res) => {
 });
 
 
+/**
+ * ============================================
+ *         FILTRAGE DE PRODUITS (BASIC)
+ * ============================================
+ * Route : GET /admin/catalogue/filter
+ * Accès : Public
+ */
 router.get('/filter', async (req, res) => {
   const { nom, categorie, prixMax } = req.query;
 
@@ -100,13 +120,18 @@ router.get('/filter', async (req, res) => {
     }
 
     const products = await dbAll(query, params);
-    res.json(products);
+
+    const baseUrl = `${req.protocol}://${req.get('host')}/static/`;
+    const productsWithImageUrl = products.map(product => ({
+      ...product,
+      imageUrl: product.image ? baseUrl + product.image : null
+    }));
+
+    res.json(productsWithImageUrl);
   } catch (error) {
     console.error('Erreur lors du filtrage des produits:', error);
     res.status(500).json({ error: 'Erreur serveur lors du filtrage' });
   }
 });
-
-
 
 module.exports = router;
