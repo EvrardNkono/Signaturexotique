@@ -74,7 +74,7 @@ const RecommendationsGrid = () => {
                   {/* Image du produit */}
                   <Card.Img
                     variant="top"
-                    src={`${API_URL}/uploads/${product.image}`}
+                    src={`${API_URL}/${product.image}`}
                     alt={product.name}
                     className="card-img-top"
                   />

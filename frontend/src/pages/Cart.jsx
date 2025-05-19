@@ -180,7 +180,7 @@ const Cart = () => {
                 <Row className="w-100">
                   <Col md={3} className="d-flex justify-content-center align-items-center">
                     <Card.Img
-                      src={`${API_URL}/uploads/${product.image}`}
+                      src={`${API_URL}/${product.image}`}
                       alt={product.name}
                       className="cart-image"
                     />
