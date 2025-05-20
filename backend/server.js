@@ -39,7 +39,7 @@ const recetteRoutes = require('./routes/recetteRoutes');
 const orderRoutes = require('./routes/order');  // Importer la route de commande
 const chatRoute = require('./routes/chat');  // Utilisation de require
 const catalogueRoutes = require('./modules/routes/catalogue');
-
+const contactMailRoute = require('./modules/routes/contactmail');
 
 
 // Utilisation des routes
@@ -78,6 +78,8 @@ app.use('/recetteRoutes', recetteRoutes); // les routes des recettes sont mainte
 app.use('/orderRoutes', orderRoutes);
 app.use('/chat', chatRoute);
 app.use('/routes/catalogue', catalogueRoutes);
+app.use('/routes/contactmail', contactMailRoute)
+
 
 app.get('/ping', (req, res) => {
   res.status(200).send('pong');

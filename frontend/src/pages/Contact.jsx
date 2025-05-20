@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { API_URL } from '../config'; // ✅ Ajout de l'import manquant
 import './Contact.css';
 
 const Contact = () => {
@@ -8,6 +9,7 @@ const Contact = () => {
     email: '',
     message: ''
   });
+
   const [responseMessage, setResponseMessage] = useState('');
 
   const handleChange = (e) => {
@@ -20,31 +22,31 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!formData.name || !formData.email || !formData.message) {
       setResponseMessage('Tous les champs sont requis.');
       return;
     }
-  
+
     try {
-      const response = await fetch(`${API_URL}/modules/contact/emailRoutes`, {
+      const response = await fetch(`${API_URL}/routes/contactmail`, { // ✅ Correction de l’URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-  
+
       const result = await response.json();
-  
+
       if (response.ok) {
-        setResponseMessage('Message envoyé avec succès!');
+        setResponseMessage('Message envoyé avec succès !');
         setFormData({ name: '', email: '', message: '' });
       } else {
-        setResponseMessage('Erreur lors de l\'envoi du message.');
+        setResponseMessage(result.message || "Erreur lors de l'envoi du message.");
       }
     } catch (error) {
-      setResponseMessage('Une erreur est survenue lors de l\'envoi du message.');
+      setResponseMessage("Une erreur est survenue lors de l'envoi du message.");
     }
   };
 
@@ -61,9 +63,9 @@ const Contact = () => {
           </Col>
           <Col md={6}>
             <div className="contact-form p-4 rounded shadow">
-            <h2 className="text-center mb-4 text-uppercase" style={{ fontFamily: 'Rye, sans-serif' }}>
-  CONTACTEZ-NOUS
-</h2>
+              <h2 className="text-center mb-4 text-uppercase" style={{ fontFamily: 'Rye, sans-serif' }}>
+                Contactez-nous
+              </h2>
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formName" className="mb-3">
@@ -110,7 +112,11 @@ const Contact = () => {
                 </div>
               </Form>
 
-              {responseMessage && <p className="response-message">{responseMessage}</p>}
+              {responseMessage && (
+                <p className="response-message mt-3 text-center">
+                  {responseMessage}
+                </p>
+              )}
             </div>
           </Col>
         </Row>
