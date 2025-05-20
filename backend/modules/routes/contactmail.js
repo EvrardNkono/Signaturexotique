@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 
   try {
     const result = await resend.emails.send({
-      from: 'onboarding@resend.dev', // ⚠️ Utilisable en dev, à changer après configuration de domaine
+      from: 'contact@mekafrance.fr', // ⚠️ Utilisable en dev, à changer après configuration de domaine
       to: 'mekafrance@outlook.fr', // 🎯 Adresse de réception réelle
       subject: '📩 Nouveau message depuis le formulaire de contact',
       html: `
