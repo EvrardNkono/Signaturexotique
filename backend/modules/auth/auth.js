@@ -73,44 +73,47 @@ router.post('/login', (req, res) => {
 });
 
 
+
 router.post('/register', (req, res) => {
-    const { nom, email, mot_de_passe, num_tel, adresse } = req.body;
-  
-    // Vérification des champs obligatoires
-    if (!nom || !email || !mot_de_passe || !num_tel || !adresse) {
-      return res.status(400).json({ error: 'Tous les champs sont requis.' });
+  const { nom, email, mot_de_passe, num_tel, adresse, acceptOffers } = req.body;
+
+  // Vérification des champs obligatoires
+  if (!nom || !email || !mot_de_passe || !num_tel || !adresse) {
+    return res.status(400).json({ error: 'Tous les champs sont requis.' });
+  }
+
+  // Vérifier si l'email existe déjà dans la base de données
+  db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Erreur serveur.' });
     }
-  
-    // Vérifier si l'email existe déjà dans la base de données
-    db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
+
+    if (user) {
+      return res.status(400).json({ error: 'Cet email est déjà utilisé.' });
+    }
+
+    // Hachage du mot de passe
+    bcrypt.hash(mot_de_passe, 10, (err, hashedPassword) => {
       if (err) {
-        return res.status(500).json({ error: 'Erreur serveur.' });
+        return res.status(500).json({ error: 'Erreur lors du hachage du mot de passe.' });
       }
-  
-      if (user) {
-        return res.status(400).json({ error: 'Cet email est déjà utilisé.' });
-      }
-  
-      // Hachage du mot de passe
-      bcrypt.hash(mot_de_passe, 10, (err, hashedPassword) => {
+
+      // Insertion de l'utilisateur dans la base de données avec acceptOffers
+      const query = `
+        INSERT INTO users (nom, email, mot_de_passe, num_tel, adresse, role, is_active, acceptOffers)
+        VALUES (?, ?, ?, ?, ?, 'client', 1, ?)
+      `;
+
+      db.run(query, [nom, email, hashedPassword, num_tel, adresse, acceptOffers ? 1 : 0], function(err) {
         if (err) {
-          return res.status(500).json({ error: 'Erreur lors du hachage du mot de passe.' });
+          return res.status(500).json({ error: 'Erreur lors de l\'enregistrement de l\'utilisateur.' });
         }
-  
-        // Insertion de l'utilisateur dans la base de données
-        const query = `INSERT INTO users (nom, email, mot_de_passe, num_tel, adresse, role, is_active) 
-                       VALUES (?, ?, ?, ?, ?, 'client', 1)`;
-  
-        db.run(query, [nom, email, hashedPassword, num_tel, adresse], function(err) {
-          if (err) {
-            return res.status(500).json({ error: 'Erreur lors de l\'enregistrement de l\'utilisateur.' });
-          }
-  
-          res.status(201).json({ message: 'Utilisateur enregistré avec succès.' });
-        });
+
+        res.status(201).json({ message: 'Utilisateur enregistré avec succès.' });
       });
     });
   });
+});
   // Dans ton fichier server.js ou app.js, ou le fichier où tu définis les routes
 router.post('/logout', (req, res) => {
     res.json({ message: 'Déconnexion réussie ! Vous devez maintenant supprimer le token côté client.' });

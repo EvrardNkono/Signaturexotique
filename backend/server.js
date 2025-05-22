@@ -40,6 +40,8 @@ const orderRoutes = require('./routes/order');  // Importer la route de commande
 const chatRoute = require('./routes/chat');  // Utilisation de require
 const catalogueRoutes = require('./modules/routes/catalogue');
 const contactMailRoute = require('./modules/routes/contactmail');
+const usersRoutes = require('./modules/routes/users');
+
 
 
 // Utilisation des routes
@@ -79,6 +81,7 @@ app.use('/orderRoutes', orderRoutes);
 app.use('/chat', chatRoute);
 app.use('/routes/catalogue', catalogueRoutes);
 app.use('/routes/contactmail', contactMailRoute)
+app.use('/users', usersRoutes);
 
 
 app.get('/ping', (req, res) => {

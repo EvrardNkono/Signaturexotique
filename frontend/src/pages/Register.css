@@ -85,3 +85,31 @@
     font-weight: bold;
   }
   
+
+  .checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 1rem;
+  font-size: 14px;
+}
+
+.checkbox-group input[type='checkbox'] {
+  margin-top: 4px;
+  accent-color: #ff7a00;
+}
+
+.password-group {
+  position: relative;
+}
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+.toggle-password:hover {
+  color: #000;
+}

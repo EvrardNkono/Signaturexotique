@@ -1,26 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
-import { FaUser, FaEnvelope, FaPhone, FaLock, FaHome } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaLock, FaHome, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Register.css';
 
 const Register = () => {
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [adresse, setAdresse] = useState('');
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    name: '',
+    phone: '',
+    adresse: '',
+    acceptOffers: false,
+  });
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { email, password, confirmPassword, name, phone, adresse, acceptOffers } = form;
 
-    if (!email || !password || !name || !phone || !adresse) {
+    if (!email || !password || !confirmPassword || !name || !phone || !adresse) {
       setMessage('Tous les champs sont requis.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setMessage('Le mot de passe doit contenir au moins 6 caractères.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setMessage('Les mots de passe ne correspondent pas.');
       return;
     }
 
@@ -36,7 +67,8 @@ const Register = () => {
           mot_de_passe: password,
           nom: name,
           num_tel: phone,
-          adresse
+          adresse,
+          acceptOffers,
         }),
       });
 
@@ -44,10 +76,10 @@ const Register = () => {
 
       if (response.ok) {
         setMessage('Inscription réussie !');
-        login(email, password);
+        await login(email, password);
         navigate('/');
       } else {
-        setMessage(data.message || 'Erreur lors de l\'inscription');
+        setMessage(data.message || "Erreur lors de l'inscription.");
       }
     } catch (error) {
       console.error(error);
@@ -60,63 +92,65 @@ const Register = () => {
   return (
     <div className="form-page">
       <div className="form-container">
-      <h2 className="text-center mb-4 text-uppercase" style={{ fontFamily: 'Rye, sans-serif' }}>
-  S'INSCRIRE
-</h2>
+        <h2 className="text-center mb-4 text-uppercase" style={{ fontFamily: 'Rye, sans-serif' }}>
+          S'INSCRIRE
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <div className="icon-wrapper"><FaUser /></div>
-            <input
-              type="text"
-              placeholder="Nom"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+            <input type="text" name="name" placeholder="Nom" value={form.name} onChange={handleChange} required />
           </div>
           <div className="input-group">
             <div className="icon-wrapper"><FaEnvelope /></div>
+            <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
+          </div>
+          <div className="input-group password-group">
+            <div className="icon-wrapper"><FaLock /></div>
             <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Mot de passe"
+              value={form.password}
+              onChange={handleChange}
               required
             />
+            <span onClick={() => setShowPassword(!showPassword)} className="toggle-password">
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
           </div>
           <div className="input-group">
             <div className="icon-wrapper"><FaLock /></div>
             <input
               type="password"
-              placeholder="Mot de passe"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="confirmPassword"
+              placeholder="Confirmer le mot de passe"
+              value={form.confirmPassword}
+              onChange={handleChange}
               required
             />
           </div>
           <div className="input-group">
             <div className="icon-wrapper"><FaPhone /></div>
-            <input
-              type="tel"
-              placeholder="Numéro de téléphone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
+            <input type="tel" name="phone" placeholder="Numéro de téléphone" value={form.phone} onChange={handleChange} required />
           </div>
           <div className="input-group">
             <div className="icon-wrapper"><FaHome /></div>
-            <input
-              type="text"
-              placeholder="Adresse"
-              value={adresse}
-              onChange={(e) => setAdresse(e.target.value)}
-              required
-            />
+            <input type="text" name="adresse" placeholder="Adresse" value={form.adresse} onChange={handleChange} required />
           </div>
-          <button type="submit" disabled={loading}>S'inscrire</button>
+
+          <div className="checkbox-group">
+            <input type="checkbox" id="offers" name="acceptOffers" checked={form.acceptOffers} onChange={handleChange} />
+            <label htmlFor="offers">
+              Je souhaite recevoir les bons plans, réductions et offres exclusives adaptées à mes achats.
+            </label>
+          </div>
+
+          <button type="submit" disabled={loading}>
+            {loading ? 'Chargement...' : "S'inscrire"}
+          </button>
         </form>
+
         {message && (
           <p className={message.includes('Erreur') ? 'error' : 'success'}>
             {message}

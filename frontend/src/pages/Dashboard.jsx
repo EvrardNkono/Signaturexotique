@@ -5,6 +5,7 @@ import OrderList from '../components/OrderList';
 import { API_URL } from '../config'; 
 import PopupUploader from '../components/PopupUploader';
 import AdminRecipeForm from '../components/AdminRecipeForm';
+import AdminUsers from '../components/AdminUsers'
 
 
 const AdminPage = () => {
@@ -15,6 +16,7 @@ const [editCategoryInput, setEditCategoryInput] = useState(''); // Nom modifié
 const [reductionInput, setReductionInput] = useState(''); // Champ pour entrer la réduction
   const [editingProduct, setEditingProduct] = useState(null); // Produit en cours d'édition
  const [searchTerm, setSearchTerm] = useState("");
+
 
 
 const formTitleRef = useRef(null);
@@ -322,6 +324,7 @@ const handleEditProduct = (prod) => {
   setShowCategoryForm(false);
   setShowRecipeForm(false);
   setShowUploader(false);
+  setShowUserList(false);
 
   // Étape 2 : attendre que le DOM ait bien rendu le formulaire avant de scroller
   setTimeout(() => {
@@ -485,6 +488,7 @@ const handleUpdateProduct = async () => {
 const [showCategoryForm, setShowCategoryForm] = useState(false);
 const [showRecipeForm, setShowRecipeForm] = useState(false);
 const [showUploader, setShowUploader] = useState(false);
+const [showUserList, setShowUserList] = useState(false);
 
   return (
     <Container className="admin-container py-5">
@@ -510,6 +514,7 @@ const [showUploader, setShowUploader] = useState(false);
           setShowProductForm(false);
           setShowRecipeForm(false);
           setShowUploader(false);
+          setShowUserList(false);
         }}
       >
         {showCategoryForm ? '🔽 Cacher Catégories' : '📂 Créer une Catégorie'}
@@ -521,6 +526,7 @@ const [showUploader, setShowUploader] = useState(false);
           setShowProductForm(false);
           setShowCategoryForm(false);
           setShowUploader(false);
+          setShowUserList(false);
         }}
       >
         {showRecipeForm ? '🔽 Cacher Recettes' : '🍲 Créer une Recette'}
@@ -532,10 +538,25 @@ const [showUploader, setShowUploader] = useState(false);
           setShowProductForm(false);
           setShowCategoryForm(false);
           setShowRecipeForm(false);
+          setShowUserList(false);
         }}
       >
         {showUploader ? '🔽 Cacher Uploader' : '🖼️ Uploader une Image'}
       </Button>
+      <Button
+        variant="outline-dark"
+        onClick={() => {
+          setShowUploader(false);
+          setShowProductForm(false);
+          setShowCategoryForm(false);
+          setShowRecipeForm(false);
+          setShowUserList(!showUserList);
+        }}
+      >
+        {showUserList ? '🔽 utilisateurs on' : '👤 Afficher les utilisateurs'}
+      </Button>
+      
+
       </div>
 
      {/* SECTION PRODUITS */}
@@ -860,6 +881,20 @@ const [showUploader, setShowUploader] = useState(false);
         </Card.Body>
       </Card>
     )}
+
+    {/* SECTION Utilisateurs */}
+    {showUploader && (
+      <Card className="admin-section mb-4">
+        <Card.Body>
+          <Card.Title className="admin-section-title">🧑‍🤝‍🧑 Liste des utilisateurs</Card.Title>
+          <AdminUsers />
+        </Card.Body>
+      </Card>
+    )}
+
+    
+    {showUserList && <AdminUsers />}
+
 
       {/* COMMANDES */}
       <Card className="admin-section mb-4">
