@@ -17,13 +17,14 @@ const ChatPopup = () => {
 
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    const seenThisSession = sessionStorage.getItem("chatSeen");
-    if (!seenThisSession) {
-      setHasUnread(true);
-      sessionStorage.setItem("chatSeen", "true");
-    }
-  }, []);
+ useEffect(() => {
+  const seenThisSession = sessionStorage.getItem("chatSeen");
+  if (!seenThisSession) {
+    setIsOpen(true); // On ouvre le chat directement
+    setHasUnread(false); // On peut annuler la pastille ici si le chat est ouvert
+    sessionStorage.setItem("chatSeen", "true");
+  }
+}, []);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
