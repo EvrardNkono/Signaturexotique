@@ -50,32 +50,34 @@ const DeliveryForm = () => {
   ];
 
   const debouncedUpdateAddress = useCallback(
-    debounce(async (address) => {
-      try {
-        const distanceRaw = await CalculateDistance(address);
-        const distance = parseFloat(distanceRaw);
-        if (isNaN(distance)) return;
+  debounce(async (fullAddress) => {
+    try {
+      console.log("Adresse envoyée :", fullAddress);
+      const distanceRaw = await CalculateDistance(fullAddress);
+      const distance = parseFloat(distanceRaw);
+      if (isNaN(distance)) return;
 
-        const poidsConverti = totalWeight ? parseFloat(totalWeight) / 1000 : 0;
+      const poidsConverti = totalWeight ? parseFloat(totalWeight) / 1000 : 0;
 
-        const deliveryCost = calculateDeliveryCost({
-          distance,
-          weight: poidsConverti,
-          hasInsurance: formData.hasInsurance,
-          mode: distance > 40 ? formData.deliveryMethod : "livraison",
-        });
+      const deliveryCost = calculateDeliveryCost({
+        distance,
+        weight: poidsConverti,
+        hasInsurance: formData.hasInsurance,
+        mode: distance > 40 ? formData.deliveryMethod : "livraison",
+      });
 
-        setFormData((prev) => ({
-          ...prev,
-          distance: distance.toFixed(2),
-          deliveryCost,
-        }));
-      } catch (err) {
-        console.error("Erreur de calcul de distance :", err);
-      }
-    }, 700),
-    [formData.hasInsurance, formData.deliveryMethod, totalWeight]
-  );
+      setFormData((prev) => ({
+        ...prev,
+        distance: distance.toFixed(2),
+        deliveryCost,
+      }));
+    } catch (err) {
+      console.error("Erreur de calcul de distance :", err);
+    }
+  }, 700),
+  [formData.hasInsurance, formData.deliveryMethod, totalWeight]
+);
+
 
   const updateDeliveryCost = async (newData = {}, recalculateDistance = false) => {
     let distance = parseFloat(formData.distance);
@@ -121,11 +123,26 @@ const DeliveryForm = () => {
   );
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const { name, value } = e.target;
 
-    if (name === "address") debouncedUpdateAddress(value);
-  };
+  setFormData((prev) => {
+    const updatedFormData = {
+      ...prev,
+      [name]: value,
+    };
+
+    // Vérifie que tous les champs nécessaires sont présents
+    const { address, postalCode, city, country } = updatedFormData;
+
+    if (address && postalCode && city && country) {
+      const fullAddress = `${address}, ${postalCode} ${city}, ${country}`;
+      debouncedUpdateAddress(fullAddress);
+    }
+
+    return updatedFormData;
+  });
+};
+
 
   const handleCountryChange = (e) => {
     const countryName = e.target.value;
@@ -171,7 +188,7 @@ const DeliveryForm = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="address"><FaMapMarkerAlt /> Adresse</label>
+        <label htmlFor="address"><FaMapMarkerAlt /> Rue</label>
         <input
           type="text"
           id="address"
