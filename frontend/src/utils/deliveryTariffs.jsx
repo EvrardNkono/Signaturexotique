@@ -132,6 +132,24 @@ export function getDeliveryPrice(mode, weight) {
     return null; // Aucun tarif trouvé pour ce poids
   }
   
+  export function calculateInsuranceFee(total, withInsurance) {
+  if (!withInsurance) return 0;
+
+  const levels = [
+    { min: 5000, fee: 33.00 },
+    { min: 2000, fee: 13.20 },
+    { min: 1000, fee: 6.60 },
+    { min: 500, fee: 3.30 },
+    { min: 300, fee: 2.20 },
+    { min: 150, fee: 1.10 },
+  ];
+
+  for (let level of levels) {
+    if (total >= level.min) return level.fee;
+  }
+
+  return 0;
+}
 
 // Mise à jour de la fonction de calcul des frais de livraison
 export function calculateDeliveryCost({ distance, weight, hasInsurance, mode, totalPrice }) {
@@ -172,9 +190,15 @@ export function calculateDeliveryCost({ distance, weight, hasInsurance, mode, to
         }
     }
 
+    
+
+
     if (hasInsurance) {
         console.log('Assurance ajoutée');
-        deliveryCost += 2;
+        const assuranceFee = calculateInsuranceFee(totalPrice, hasInsurance);
+deliveryCost += assuranceFee;console.log(`💸 Frais d'assurance ajoutés : ${assuranceFee} €`);
+
+
     }
 
     console.log('Frais de livraison calculés :', deliveryCost);
@@ -218,6 +242,9 @@ export function calculateDeliveryCost({ distance, weight, hasInsurance, mode, to
     formData.message = "Erreur dans le calcul des frais de livraison.";
   }
 }
+
+
+
 
   
   

@@ -251,12 +251,14 @@ const Cart = () => {
 
     localStorage.setItem("cartTotal", totalPrice);
     localStorage.setItem("totalWeight", totalWeight);
+    localStorage.setItem("cart", JSON.stringify(cart)); // 🔥 ajout magique ici
 
     navigate("/delivery");
   }}
 >
   Commander
 </Button>
+
 
 
 

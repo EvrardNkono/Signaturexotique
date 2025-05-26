@@ -1,6 +1,14 @@
 import React, { useState, useCallback } from "react";
 import debounce from "lodash.debounce";
 import CountryFlag from "react-world-flags";
+import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
+import { API_URL } from '../config';
+ import { useEffect } from "react"; // ← si ce n’est pas déjà importé
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+
 import {
   FaMapMarkerAlt,
   FaUserAlt,
@@ -13,25 +21,77 @@ import "./DeliveryForm.css";
 
 import CalculateDistance from "../api/calculateDistance";
 import { calculateDeliveryCost } from "../utils/deliveryTariffs";
+import { calculateInsuranceFee } from "../utils/deliveryTariffs";
+
+
+
+
 
 const DeliveryForm = () => {
+
+  // 🛒 Récupération du panier
+   
+
+
+useEffect(() => {
+  if (
+    formData.address &&
+    formData.postalCode &&
+    formData.city &&
+    formData.country
+  ) {
+    const fullAddress = `${formData.address}, ${formData.postalCode} ${formData.city}, ${formData.country}`;
+    debouncedUpdateAddress(fullAddress);
+  }
+}, []);
+
   const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    country: "",
-    hasInsurance: false,
-    zone: "",
-    deliveryMethod: "",
-    distance: 0,
-    deliveryCost: 0,
-    weight: 0,
-    totalPrice: localStorage.getItem("cartTotal") || 0,
-  });
+  name: "",
+  address: "",
+  city: "",
+  postalCode: "",
+  country: "",
+  hasInsurance: false,
+  zone: "",
+  deliveryMethod: "",
+  distance: 0,
+  deliveryCost: 0,
+  weight: 0,
+  totalPrice: localStorage.getItem("cartTotal") || 0,
+});
+
+ const storedCart = localStorage.getItem("cart");
+    const panier = storedCart ? JSON.parse(storedCart) : [];
+
+    // 💰 Total du panier pour calcul de l’assurance
+    const panierTotal = panier.reduce((total, item) => {
+      if (item.name && item.unitPrice && item.quantity) {
+        return total + (item.unitPrice * item.quantity);
+      }
+      return total;
+    }, 0);
+
+    // 🛡️ Calcul du prix d’assurance selon le total et la case cochée
+    const assurancePrice = calculateInsuranceFee(panierTotal, formData.hasInsurance);
+ 
+
+// ⬇️ Ajoute ce useEffect juste ici :
+useEffect(() => {
+  const { address, postalCode, city, country } = formData;
+
+  if (address && postalCode && city && country) {
+    const fullAddress = `${address}, ${postalCode} ${city}, ${country}`;
+    console.log("📦 Déclenchement du calcul automatique (champs préremplis)");
+    debouncedUpdateAddress(fullAddress);
+  }
+}, [formData.address, formData.postalCode, formData.city, formData.country]);
+
+
+  
 
   const totalPrice = localStorage.getItem("cartTotal");
   const totalWeight = localStorage.getItem("totalWeight");
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
   const countries = [
     { name: "Allemagne", code: "DE", zone: "Zone 1" },
@@ -49,10 +109,15 @@ const DeliveryForm = () => {
     { name: "Suède", code: "SE", zone: "Zone 3" },
   ];
 
-  const debouncedUpdateAddress = useCallback(
+  const [calculEnCours, setCalculEnCours] = useState(false);
+
+const debouncedUpdateAddress = useCallback(
   debounce(async (fullAddress) => {
+    let isMounted = true; // pour éviter setState après démontage
     try {
-      console.log("Adresse envoyée :", fullAddress);
+      setCalculEnCours(true);
+      console.log("📍 Adresse envoyée pour calcul :", fullAddress);
+
       const distanceRaw = await CalculateDistance(fullAddress);
       const distance = parseFloat(distanceRaw);
       if (isNaN(distance)) return;
@@ -66,17 +131,26 @@ const DeliveryForm = () => {
         mode: distance > 40 ? formData.deliveryMethod : "livraison",
       });
 
-      setFormData((prev) => ({
-        ...prev,
-        distance: distance.toFixed(2),
-        deliveryCost,
-      }));
+      if (isMounted) {
+        setFormData((prev) => ({
+          ...prev,
+          distance: distance.toFixed(2),
+          deliveryCost,
+        }));
+      }
     } catch (err) {
-      console.error("Erreur de calcul de distance :", err);
+      console.error("❌ Erreur de calcul de distance :", err);
+    } finally {
+      if (isMounted) setCalculEnCours(false);
     }
-  }, 700),
+
+    return () => {
+      isMounted = false;
+    };
+  }, 300), // ⏱️ debounce de 300ms
   [formData.hasInsurance, formData.deliveryMethod, totalWeight]
 );
+
 
 
   const updateDeliveryCost = async (newData = {}, recalculateDistance = false) => {
@@ -160,14 +234,66 @@ const DeliveryForm = () => {
     debouncedUpdateDeliveryCost({ hasInsurance: checked });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (parseFloat(formData.distance) > 40 && !formData.deliveryMethod) {
-      alert("Veuillez sélectionner un mode d’expédition.");
-      return;
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (calculEnCours) {
+    alert("⏳ Veuillez patienter pendant le calcul de la distance.");
+    return;
+  }
+
+  if (parseFloat(formData.distance) > 40 && !formData.deliveryMethod) {
+    alert("Veuillez sélectionner un mode d’expédition.");
+    return;
+  }
+
+  try {
+    
+
+    // 🧾 Construction des items à envoyer à Stripe
+    const items = [
+      ...panier
+        .filter(item => item.name && item.unitPrice && item.quantity)
+        .map(item => ({
+          name: item.name,
+          price: item.unitPrice,
+          quantity: item.quantity,
+        })),
+      {
+        name: 'Frais de livraison',
+        price: parseFloat(formData.deliveryCost),
+        quantity: 1,
+      },
+      ...(assurancePrice > 0
+        ? [{
+            name: 'Assurance Ad Valorem',
+            price: assurancePrice,
+            quantity: 1,
+          }]
+        : []),
+    ];
+
+    console.log("🛒 Produits envoyés à Stripe :", items);
+
+    const response = await axios.post(`${API_URL}/stripe/create-checkout-session`, { items });
+
+    const stripe = await stripePromise;
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: response.data.sessionId,
+    });
+
+    if (result.error) {
+      console.error("Erreur de redirection Stripe :", result.error.message);
     }
-    console.log("Formulaire soumis :", formData);
-  };
+  } catch (err) {
+    console.error("Erreur lors de la soumission du formulaire ou Stripe :", err);
+    alert("Une erreur est survenue lors de la redirection vers le paiement.");
+  }
+};
+
+
+
 
 
   return (
@@ -259,13 +385,31 @@ const DeliveryForm = () => {
           <p>{formData.totalPrice} €</p>
         </div>
         <div className="metric-item">
-          <label>🛡️ Assurance</label>
-          <p>{formData.hasInsurance ? 'Oui' : 'Non'}</p>
-        </div>
+  <label>🛡️ Assurance</label>
+  {formData.hasInsurance ? (
+    <p>
+      Oui –{" "}
+      {calculateInsuranceFee(
+        panier.reduce((total, item) => {
+          if (item.name && item.unitPrice && item.quantity) {
+            return total + item.unitPrice * item.quantity;
+          }
+          return total;
+        }, 0),
+        true
+      ).toFixed(2)}{" "}
+      €
+    </p>
+  ) : (
+    <p>Non</p>
+  )}
+</div>
+
+
         <div className="metric-item">
-          <label>📍 Distance</label>
-          <p>{formData.distance} km</p>
-        </div>
+    <label>📍 Distance</label>
+    <p>{calculEnCours ? "⏳ Calcul en cours..." : `${formData.distance} km`}</p>
+  </div>
       </div>
 
       {parseFloat(formData.distance) > 40 && (
@@ -310,9 +454,22 @@ const DeliveryForm = () => {
           <p className="text-green-600 font-semibold">{formData.deliveryCost} €</p>
         </div>
       )}
+      <div className="form-group md:col-span-2">
+  <label>
+    <input
+      type="checkbox"
+      checked={formData.hasInsurance}
+      onChange={handleCheckboxChange}
+    />{" "}
+    Ajouter une assurance Ad Valorem
+  </label>
+</div>
 
       <div className="form-group md:col-span-2">
-        <button type="submit" className="submit-button">Valider</button>
+        <button type="submit" className="submit-button" disabled={calculEnCours}>
+  {calculEnCours ? "⏳ Calcul..." : "Valider"}
+</button>
+
       </div>
     </div>
   </form>

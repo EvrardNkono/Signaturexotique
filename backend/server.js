@@ -74,7 +74,8 @@ app.use('/modules/contact/emailRoutes', emailRoutes);
 app.use('/routes/recommendations', recommendationRoutes);
 app.use('/admin', popupRoutes); // pour POST
 app.use('/', popupRoutes); // pour GET /popup
-app.use('/payement', stripeRoutes);
+app.use('/stripe', stripeRoutes); // au lieu de /payement
+
 
 app.use('/recetteRoutes', recetteRoutes); // les routes des recettes sont maintenant accessibles via /api/recettes
 app.use('/orderRoutes', orderRoutes);

@@ -1,59 +1,80 @@
 require('dotenv').config();
-
-// Vérification de la clé API Stripe
-console.log("TEST STRIPE KEY", process.env.STRIPE_SECRET_KEY); // 🔍 Vérifie que la clé est bien chargée
-
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY); // Ta clé secrète Stripe
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const db = require('../../config/db'); // ← SQLite ici
 
-// Test de la connexion Stripe
-(async () => {
-  try {
-    const products = await stripe.products.list({ limit: 1 });
-    console.log("Stripe fonctionne !", products);
-  } catch (err) {
-    console.error("Erreur Stripe :", err.message);
-  }
-})();
+// Helper pour les requêtes SQLite en Promesse
+const getProductByName = (name) => {
+  return new Promise((resolve, reject) => {
+    db.get("SELECT name, unitPrice FROM products WHERE name = ?", [name], (err, row) => {
+      if (err) return reject(err);
+      resolve(row);
+    });
+  });
+};
 
 // Route POST pour créer la session de paiement
 router.post('/create-checkout-session', async (req, res) => {
+  console.log("✅ Requête reçue sur /create-checkout-session !");
   const { items } = req.body;
-  console.log("Items reçus pour Stripe :", items); // Affiche les items reçus pour Stripe
+  console.log("Items reçus pour Stripe :", items);
 
   try {
-    // Affichage des détails des items avant de créer la session
-    console.log("Détails des items pour la session Stripe :");
-    items.forEach(item => {
-      console.log(`Nom: ${item.name}, Prix: ${item.price}, Quantité: ${item.quantity}`);
-    });
+    const stripeItems = [];
 
-    // Création de la session de paiement Stripe
+for (const item of items) {
+  if (!item.name) continue;
+
+  if (item.name === 'Frais de livraison') {
+    stripeItems.push({
+      price_data: {
+        currency: 'eur',
+        product_data: { name: 'Frais de livraison' },
+        unit_amount: Math.round(Number(item.price) * 100),
+      },
+      quantity: 1,
+    });
+    continue;
+  }
+
+  const product = await getProductByName(item.name);
+
+  if (product) {
+    stripeItems.push({
+      price_data: {
+        currency: 'eur',
+        product_data: {
+          name: product.name,
+        },
+        unit_amount: Math.round(Number(product.unitPrice) * 100),
+      },
+      quantity: item.quantity || 1,
+    });
+  } else {
+    console.warn(`🛑 Produit non trouvé en base : ${item.name}`);
+  }
+}
+
+
+    if (stripeItems.length === 0) {
+      return res.status(400).json({ error: 'Aucun article valide pour Stripe.' });
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
-      line_items: items.map(item => ({
-        price_data: {
-          currency: 'eur',
-          product_data: {
-            name: item.name,
-          },
-          unit_amount: Math.round(item.price * 100), // Conversion en centimes
-        },
-        quantity: item.quantity,
-      })),
+      line_items: stripeItems,
       success_url: process.env.STRIPE_SUCCESS_URL,
       cancel_url: process.env.STRIPE_CANCEL_URL,
-      
     });
 
-    console.log("Session Stripe créée avec succès !", session.id); // Affiche l'ID de la session créée
-    res.json({ sessionId: session.id }); // Retourne l'ID de la session pour redirection
+    console.log("✅ Session Stripe créée avec succès :", session.id);
+    res.json({ sessionId: session.id });
   } catch (error) {
-    console.error('Erreur lors de la création de la session Stripe :', error);
-    res.status(500).json({ error: 'Erreur lors de la création de la session Stripe.' });
+    console.error('❌ Erreur lors de la création de la session Stripe :', error.message);
+    res.status(500).json({ error: 'Erreur serveur lors de la création de la session Stripe.' });
   }
 });
 
