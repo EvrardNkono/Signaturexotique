@@ -125,11 +125,25 @@ const Cart = () => {
     // Sauvegarder le poids total dans le localStorage
     localStorage.setItem('totalWeight', totalWeight);
 
-    // Créer une session Stripe
+    // 💡 Ici on ajuste le panier pour l'envoi à Stripe / livraison
+    const adjustedCart = cart.map(product => {
+      const appliedPrice = clientType === 'wholesale' ? product.wholesalePrice : product.price;
+
+      return {
+        ...product,
+        appliedPrice,
+        totalPrice: appliedPrice * product.quantity,
+        weight: (clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight) * product.quantity
+      };
+    });
+
+    console.log('🧾 Panier ajusté pour Stripe / livraison:', adjustedCart);
+
+    // Créer une session Stripe avec les bons éléments
     const response = await fetch(`${API_URL}/payement/create-checkout-session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: cart }),
+      body: JSON.stringify({ items: adjustedCart }), // <- C'est ici qu'on envoie le bon panier
     });
 
     const data = await response.json();
@@ -147,6 +161,7 @@ const Cart = () => {
     alert(`Erreur paiement : ${error.message}`);
   }
 };
+
 
 
   useEffect(() => {

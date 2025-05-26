@@ -131,7 +131,7 @@ export function getDeliveryPrice(mode, weight) {
   
     return null; // Aucun tarif trouvé pour ce poids
   }
-  
+
   export function calculateInsuranceFee(total, withInsurance) {
   if (!withInsurance) return 0;
 
@@ -144,12 +144,10 @@ export function getDeliveryPrice(mode, weight) {
     { min: 150, fee: 1.10 },
   ];
 
-  for (let level of levels) {
-    if (total >= level.min) return level.fee;
-  }
-
-  return 0;
+  const level = levels.find(l => total >= l.min);
+  return level ? level.fee : 0;
 }
+
 
 // Mise à jour de la fonction de calcul des frais de livraison
 export function calculateDeliveryCost({ distance, weight, hasInsurance, mode, totalPrice }) {

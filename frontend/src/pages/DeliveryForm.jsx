@@ -250,28 +250,35 @@ const debouncedUpdateAddress = useCallback(
   try {
     
 
-    // 🧾 Construction des items à envoyer à Stripe
-    const items = [
-      ...panier
-        .filter(item => item.name && item.unitPrice && item.quantity)
-        .map(item => ({
-          name: item.name,
-          price: item.unitPrice,
-          quantity: item.quantity,
-        })),
-      {
-        name: 'Frais de livraison',
-        price: parseFloat(formData.deliveryCost),
+    const cartTotal = parseFloat(localStorage.getItem('cartTotal')) || 0;
+const deliveryCost = parseFloat(formData.deliveryCost) || 0;
+const assurance = assurancePrice || 0;
+
+const totalFinal = cartTotal + deliveryCost + assurance;
+
+const items = [
+  {
+    name: 'Total panier (déjà calculé)',
+    price: cartTotal,
+    quantity: 1,
+  },
+  {
+    name: 'Frais de livraison',
+    price: deliveryCost,
+    quantity: 1,
+  },
+  ...(assurance > 0
+    ? [{
+        name: 'Assurance Ad Valorem',
+        price: assurance,
         quantity: 1,
-      },
-      ...(assurancePrice > 0
-        ? [{
-            name: 'Assurance Ad Valorem',
-            price: assurancePrice,
-            quantity: 1,
-          }]
-        : []),
-    ];
+      }]
+    : []),
+];
+
+// 🔍 Pour déboguer :
+console.log("Items envoyés à Stripe : ", items);
+
 
     console.log("🛒 Produits envoyés à Stripe :", items);
 
@@ -291,8 +298,18 @@ const debouncedUpdateAddress = useCallback(
     alert("Une erreur est survenue lors de la redirection vers le paiement.");
   }
 };
+ const assuranceAmount = calculateInsuranceFee(totalPrice, formData.hasInsurance);
+function LivraisonSummary({ panier, formData }) {
+  // Tu places ce code ici, AVANT le return
+  const totalPrice = panier.reduce((total, item) => {
+    if (item.name && item.unitPrice && item.quantity) {
+      return total + item.unitPrice * item.quantity;
+    }
+    return total;
+  }, 0);
 
-
+ 
+}
 
 
 
@@ -387,23 +404,12 @@ const debouncedUpdateAddress = useCallback(
         <div className="metric-item">
   <label>🛡️ Assurance</label>
   {formData.hasInsurance ? (
-    <p>
-      Oui –{" "}
-      {calculateInsuranceFee(
-        panier.reduce((total, item) => {
-          if (item.name && item.unitPrice && item.quantity) {
-            return total + item.unitPrice * item.quantity;
-          }
-          return total;
-        }, 0),
-        true
-      ).toFixed(2)}{" "}
-      €
-    </p>
+    <p> {assuranceAmount.toFixed(2)} €</p>
   ) : (
     <p>Non</p>
   )}
 </div>
+
 
 
         <div className="metric-item">
