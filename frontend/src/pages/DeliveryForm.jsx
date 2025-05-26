@@ -255,6 +255,7 @@ const deliveryCost = parseFloat(formData.deliveryCost) || 0;
 const assurance = assurancePrice || 0;
 
 const totalFinal = cartTotal + deliveryCost + assurance;
+console.log("🔎 Valeur de l'assurance :", assurance, typeof assurance);
 
 const items = [
   {
@@ -267,13 +268,14 @@ const items = [
     price: deliveryCost,
     quantity: 1,
   },
-  ...(assurance > 0
+   ...(formData.hasInsurance && Number(assuranceAmount) > 0
     ? [{
         name: 'Assurance Ad Valorem',
-        price: assurance,
+        price: Number(assuranceAmount),
         quantity: 1,
       }]
-    : []),
+    : [])
+,
 ];
 
 // 🔍 Pour déboguer :
