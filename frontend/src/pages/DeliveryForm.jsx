@@ -462,16 +462,19 @@ function LivraisonSummary({ panier, formData }) {
           <p className="text-green-600 font-semibold">{formData.deliveryCost} €</p>
         </div>
       )}
-      <div className="form-group md:col-span-2">
-  <label>
-    <input
-      type="checkbox"
-      checked={formData.hasInsurance}
-      onChange={handleCheckboxChange}
-    />{" "}
-    Ajouter une assurance Ad Valorem
-  </label>
-</div>
+      {totalPrice >= 150 && (
+  <div className="form-group md:col-span-2"> 
+    <label>
+      <input
+        type="checkbox"
+        checked={formData.hasInsurance}
+        onChange={handleCheckboxChange}
+      />{" "}
+      Ajouter une assurance Ad Valorem
+    </label>
+  </div>
+)}
+
 
       <div className="form-group md:col-span-2">
         <button type="submit" className="submit-button" disabled={calculEnCours}>
