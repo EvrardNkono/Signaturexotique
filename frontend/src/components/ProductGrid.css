@@ -1,0 +1,80 @@
+/* Conteneur global centré avec padding */
+.custom-grid-container {
+  width: 100%;
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+}
+/* Grille responsive sans Bootstrap */
+.custom-grid {
+  display: grid;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  /* Grille responsive */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+
+  /* La magie du centrage vertical + horizontal */
+  place-items: center;
+  justify-content: center;
+}
+
+/* Chaque carte : wrapper qui garde le ratio */
+.product-card-wrapper {
+  position: relative;
+  aspect-ratio: 3 / 4; /* Ratio 450x600 */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Intérieur de la carte : scale complet avec le wrapper */
+.product-card {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: white;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  font-size: 1rem; /* Le secret du scale responsive 👇 */
+  transform: scale(1);
+  transform-origin: center;
+}
+
+/* RESPONSIVE FONT & SCALE (tout scale ensemble en fonction du wrapper) */
+@media (min-width: 768px) {
+  .custom-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .custom-grid {
+    grid-template-columns: repeat(4, 1fr);
+    justify-content: center;
+    margin-left: 700px !important;
+  }
+}
+
+.product-card-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.product-card {
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 3 / 4;
+  /* ou height: auto; si tu veux que le contenu s'adapte sans déformer */
+}

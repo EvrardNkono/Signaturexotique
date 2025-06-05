@@ -1,25 +1,18 @@
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
 import ProductCard from './ProductCard';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './ProductGrid.css'; // Assurez-vous que le CSS est bien importé
+import './ProductGrid.css'; // On conserve le CSS mais on vire Bootstrap ici
 
 const ProductGrid = ({ products, clientType }) => {
   return (
-    <Container className="product-grid-container">
-      {/* Ajout de gaps responsive entre les cartes */}
-      <Row className="justify-content-center g-1 g-sm-2 g-md-3 g-lg-4">
+    <div className="custom-grid-container">
+      <div className="custom-grid">
         {products.map((product) => (
-          <Col 
-            key={product.id} 
-            xs={12} sm={6} md={4} lg={3}
-            className="d-flex justify-content-center"
-          >
+          <div className="product-card-wrapper" key={product.id}>
             <ProductCard product={product} clientType={clientType} />
-          </Col>
+          </div>
         ))}
-      </Row>
-    </Container>
+      </div>
+    </div>
   );
 };
 
