@@ -328,7 +328,7 @@ body {
   left: 0!important;
   width: 65%!important;
   height: 100%!important;
-  background-image: url("assets/back.jpg")!important;
+  background-image: url("/assets/back.jpg")!important;
   background-size: cover!important;
   background-position: center!important;
   overflow: hidden!important;
