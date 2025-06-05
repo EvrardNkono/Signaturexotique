@@ -468,8 +468,24 @@ body {
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  
+  position: relative; /* nécessaire pour que z-index fonctionne */
+  z-index: 9999 !important;
+  margin-bottom: 10rem !important;
 }
+
+.product-quantity span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+  font-size: 1rem;
+  line-height: 1;
+  margin-bottom: 4.5rem !important;
+  height: 100%; /* s’aligne bien si les boutons sont en flex également */
+}
+
 
 .quantity-button {
   padding: 0.3rem 0.8rem;
