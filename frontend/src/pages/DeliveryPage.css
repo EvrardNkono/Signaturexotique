@@ -1,0 +1,116 @@
+.page-livraison {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #1a1a1a;
+  background: #fafafa;
+  line-height: 1.7;
+}
+
+.page-livraison h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #ff6b00;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.page-livraison h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 2.5rem 0 1rem;
+  color: #222;
+  border-left: 4px solid #ff6b00;
+  padding-left: 1rem;
+}
+
+.page-livraison p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+.page-livraison ul,
+.page-livraison ol {
+  padding-left: 1.5rem;
+  margin-top: 1rem;
+}
+
+.page-livraison li {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.page-livraison ul li::marker {
+  color: #ff6b00;
+}
+
+.page-livraison ol li::marker {
+  font-weight: bold;
+  color: #ff6b00;
+}
+
+.page-livraison section {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-top: 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.page-livraison section:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.page-livraison table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  overflow-x: auto;
+}
+
+.page-livraison table th,
+.page-livraison table td {
+  padding: 1rem;
+  text-align: center;
+}
+
+.page-livraison table th {
+  background-color: #fff3e6;
+  color: #ff6b00;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.page-livraison table td {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.page-livraison .note {
+  font-size: 0.9rem;
+  color: #999;
+  margin-top: 1rem;
+  font-style: italic;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .page-livraison h1 {
+    font-size: 2rem;
+  }
+
+  .page-livraison section {
+    padding: 1.5rem;
+  }
+
+  .page-livraison table th,
+  .page-livraison table td {
+    padding: 0.75rem;
+  }
+}

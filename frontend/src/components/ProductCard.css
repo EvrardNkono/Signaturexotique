@@ -47,11 +47,28 @@ body {
 @media (max-width: 780px) {
   .custom-grid {
     grid-template-columns: repeat(2, 1fr);
-    column-gap: 200px !important;
+    column-gap: 50px !important;
     gap: 1rem; /* plus petit gap si nécessaire */
     padding: 1rem;
     margin-left: 100px !important;
   }
+
+ .detail-btn {
+  height: 10px!important;
+  width: 100%!important;
+  max-width: 150px!important;
+  background-color: #423ffd!important;
+  color: white!important;
+  border: none!important;
+  border-radius: 25px!important;
+  font-weight: bold!important;
+  cursor: pointer!important;
+  padding: 0 1.5rem!important;
+  white-space: nowrap!important;
+  transition: background-color 0.3s ease!important;
+  z-index: 3;
+}
+
 
   .product-card {
     max-width: 100% !important;
@@ -74,7 +91,7 @@ body {
   }
 
   .title-wrapper {
-  
+  padding-top: 0% !important;
   justify-content: center!important;
   margin: 0rem 0!important;
 }
@@ -97,7 +114,7 @@ body {
   overflow: hidden!important;
   border: 5px solid rgb(0, 0, 0)!important;
   position: absolute!important;
-  top: 20px!important;
+  top: 5px!important;
   left: 50%!important;
   transform: translateX(-50%)!important;
   background: #fff!important;
@@ -110,7 +127,7 @@ body {
   display: flex!important; /* Flex pour centrage */
   align-items: center!important; /* Centre verticalement */
   justify-content: center!important; /* Centre horizontalement */
-  background: rgb(76, 47, 243)!important;
+  background: rgb(255, 123, 0)!important;
   padding: 3px!important;
   z-index: 2!important;
   transform: scale(0.96)!important;
@@ -127,6 +144,7 @@ body {
 
 
 .title-wrapper {
+  margin-top: -5% !important;
   display: flex!important;
   flex-direction: column!important; /* empile le titre et le prix */
   align-items: center!important;     /* centre horizontalement */
@@ -138,7 +156,7 @@ body {
 .product-title {
   display: inline-block!important;
   background: rgb(240, 238, 238)!important;
-  padding: 1rem 2rem!important;
+  padding: 0.2rem 1rem!important;
   font-size: 1rem;
   font-weight: bold!important;
   color: #333!important;
@@ -179,7 +197,7 @@ body {
   justify-content: center!important;
   align-items: center!important;
   background: rgb(235, 231, 231)!important;
-  padding: 1rem 2rem!important;
+  padding: 0.5rem 1rem!important;
   font-size: 0.8rem!important;
   font-weight: bold!important;
   color: #444!important;
@@ -201,7 +219,7 @@ body {
   display: flex!important;
   justify-content: center!important;
   align-items: center!important;
-  background:  rgb(76, 47, 243)!important;
+  background:  rgb(255, 136, 0)!important;
   padding: 3px!important;
   transform: scale(0.96)!important;
   z-index: 2!important;
@@ -225,24 +243,29 @@ body {
 
 
 /* Conteneur général des deux boutons */
+/* Conteneur général des deux boutons */
 .product-buttons-wrapper {
-  display: flex!important;
-  justify-content: space-between!important;
-  align-items: center!important;
-  width: 100%!important;
-  padding: 1rem!important;
-  box-sizing: border-box!important;
-  position: absolute!important;  /* <--- On passe en absolute */
-  bottom: 0rem;         /* <--- Position basse */
-  left: 0;
+  display: flex !important;
+  flex-direction: column !important; /* <-- empile verticalement */
+  align-items: stretch !important;   /* <-- même largeur */
+  gap: 0.5rem !important;            /* <-- petit espace entre les boutons */
+  width: 100% !important;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  bottom: 0;
+  left: 5%;
+  background-color: white; /* facultatif : si le fond est transparent */
+  align-items: center !important;
 }
+
 
 /* Bouton gauche (ajouter au panier avec fond bleu) */
 .product-button2 {
-  height: 40px!important;
+  height: 30px!important;
   max-width: 220px!important;
   width: 100%!important;
-  background-color: #423ffd!important;
+  background-color: #ff9100!important;
   border-radius: 25px!important;
   display: flex!important;
   align-items: center!important;
@@ -275,9 +298,9 @@ body {
 }
 
 .cart-circle {
-  min-width: 40px!important;
-  min-height: 40px!important;
-  background-color: #423ffd!important;
+  min-width: 30px!important;
+  min-height: 30px!important;
+  background-color: #ff7300!important;
   border-radius: 50%!important;
   display: flex!important;
   align-items: center!important;
@@ -290,20 +313,20 @@ body {
 
 /* Bouton à droite */
 .detail-button {
-  height: 50px!important;
+  height: 25px!important;
   max-width: 150px!important;
   width: 100%!important;
-  margin-left: 1rem!important;
+  margin-left: 0rem!important;
   display: flex!important;
   align-items: center!important;
   justify-content: flex-end!important;
 }
 
 .detail-btn {
-  height: 50px!important;
+  height: 30px !important;
   width: 100%!important;
   max-width: 150px!important;
-  background-color: #423ffd!important;
+  background-color: #ff9100!important;
   color: white!important;
   border: none!important;
   border-radius: 25px!important;
@@ -322,17 +345,27 @@ body {
 }
 
 .decorative-container {
-  position: absolute!important;
-  z-index: 2!important;
-  top: 0!important;
-  left: 0!important;
-  width: 65%!important;
-  height: 100%!important;
-  background-image: url("/assets/back.jpg")!important;
-  background-size: cover!important;
-  background-position: center!important;
-  overflow: hidden!important;
+  position: absolute !important;
+  z-index: 2 !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 65% !important;
+  height: 100% !important;
+  background-size: cover !important;
+  background-position: center !important;
+  overflow: hidden !important;
+  transition: background-image 0.5s ease-in-out;
 }
+
+
+.decorative-container.retail {
+  background-image: url("/assets/back.jpg") !important;
+}
+
+.decorative-container.wholesale {
+  background-image: url("/assets/back1.jpg") !important;
+}
+
 
 
 .wave-mask {
@@ -460,7 +493,49 @@ body {
     justify-content: space-between;
     padding: 1rem;
   }
+
+  .quantity-button {
+  padding: 0.1rem 0.8rem !important;
+  background-color: #ff7f00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 4;
+  margin-bottom: 6rem !important;
+  width: 40px ;
+  height: 20px;
+  padding-top:  0px !important;
+  
+  
 }
+
+.product-quantity {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+
+
+}
+
+.badge {
+  background-color: red !important;
+  color: white !important;
+  border-radius: 50%;
+  padding: 0.3em 0.6em;
+  font-size: 1rem !important;
+  margin-left: 0.5rem;
+  z-index: 1000 !important;
+  margin-top: -90px !important;
+}
+
 
 
 .product-quantity {
@@ -468,24 +543,8 @@ body {
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  
-  position: relative; /* nécessaire pour que z-index fonctionne */
-  z-index: 9999 !important;
-  margin-bottom: 10rem !important;
+  margin-top: 1rem;
 }
-
-.product-quantity span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: rgb(0, 0, 0);
-  font-size: 1rem;
-  line-height: 1;
-  margin-bottom: 4.5rem !important;
-  height: 100%; /* s’aligne bien si les boutons sont en flex également */
-}
-
 
 .quantity-button {
   padding: 0.3rem 0.8rem;
@@ -498,15 +557,15 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
   z-index: 4;
-  margin-bottom: 4.5rem !important;
+  margin-bottom: 6rem !important;
   width: 40px;
+  
 }
 
 .quantity-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-
 
 
 

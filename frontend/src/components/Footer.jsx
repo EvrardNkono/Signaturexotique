@@ -108,6 +108,7 @@ const Footer = () => {
                   <li><Link to="/recettes">Recettes</Link></li>
                   <li><Link to="/contact">Contact</Link></li>
                   <li><Link to="/aboutus">À propos de nous</Link></li>
+                  <li><Link to="/livraison">Expedition</Link></li>
                 </ul>
               </div>
             </Col>

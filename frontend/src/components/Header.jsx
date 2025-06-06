@@ -80,7 +80,8 @@ const Header = () => {
   <Link to="/bonplans" onClick={handleLinkClick} className="bonplans-link">🔥 Bons Plans</Link>
   <Link to="/recettes" onClick={handleLinkClick} className="recettes-link">🍽️ Nos Recettes</Link> {/* Nouveau lien */}
   <Link to="/contact" onClick={handleLinkClick}>Contact</Link>
-  <Link to="/newsletter" onClick={handleLinkClick}>📰 Newsletter</Link>
+<Link to="/newsletter" onClick={handleLinkClick}>📰 Newsletter</Link>
+<Link to="/livraison" onClick={handleLinkClick}>📦 Livraison</Link>
   <Link to="/aboutus" onClick={handleLinkClick}>À propos de nous</Link>
   <Link to="/dashboard" onClick={handleLinkClick}>Tableau de bord</Link>
   <Link to="/panier" onClick={handleLinkClick}>

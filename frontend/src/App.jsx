@@ -32,6 +32,10 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DeliveryForm from './pages/DeliveryForm'; // ✅ c’est une page, donc on le traite comme tel
 import ChatPopup from "./components/ChatPopup";
+import DeliveryPage from "./pages/DeliveryPage";
+
+
+
 
 // Import du composant ScrollToTop
 import ScrollToTop from './components/ScrollToTop'; // à créer
@@ -53,6 +57,8 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/recettes" element={<RecipePage />} />
                 <Route path="/aboutus" element={<AboutUs />} />
+               <Route path="/livraison" element={<DeliveryPage />} />
+
                 <Route path="/newsletter" element={<NewsletterPage />} />
                 <Route 
                   path="/dashboard" 

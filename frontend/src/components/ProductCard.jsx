@@ -132,6 +132,10 @@ const handleAddToCart = async () => {
     : `${numericWeight} g`;
 };
 
+const backgroundImagePath =
+  clientType === 'wholesale'
+    ? 'assets/back1.jpg'
+    : 'assets/back.jpg';
 
   return (
       <div className="scoped-reset-card">
@@ -170,16 +174,17 @@ const handleAddToCart = async () => {
         </defs>
 
         <image
-          href="assets/back.jpg"
-          width="300"
-          height="400"
-          clipPath="url(#crazyClip)"
-          preserveAspectRatio="xMidYMid slice"
-        />
+  href={backgroundImagePath}
+  width="300"
+  height="400"
+  clipPath="url(#crazyClip)"
+  preserveAspectRatio="xMidYMid slice"
+/>
+
       </svg>
 
       {/* Le reste de la carte */}
-      <div className="decorative-container">
+      <div className={`decorative-container ${clientType}`}>
         <div className="wave-mask"></div>
       </div>
 
@@ -235,7 +240,7 @@ const handleAddToCart = async () => {
         >
           -
         </button>
-        <span>{quantityInCart}</span>
+        <span className="badge">{quantityInCart}</span>
         <button
           className={`quantity-button ${clientType}`}
           onClick={handleAddToCart}
