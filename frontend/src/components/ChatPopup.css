@@ -29,15 +29,9 @@
 
 /* Animation de pulsation */
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 /* Notification de nouveau message */
@@ -195,44 +189,68 @@
   background-color: #e6b800;
 }
 
-/* Responsive */
-
-/* Écrans de 12 pouces (par exemple, 1366x768) */
+/* Responsive - écrans HD et laptop */
 @media screen and (max-width: 1366px) and (max-height: 768px) {
   .chat-window {
-    height: 400px !important;
+    height: 400px;
   }
 }
 
-/* Écrans de 15 pouces (par exemple, 1920x1080) */
 @media screen and (min-width: 1367px) and (max-width: 1920px) and (max-height: 1080px) {
   .chat-window {
-    height: 550px !important;
+    height: 550px;
   }
 }
 
-/* Écrans de 17 pouces (par exemple, 1920x1200) */
 @media screen and (min-width: 1921px) and (max-height: 1200px) {
   .chat-window {
-    height: 500px !important;
+    height: 500px;
   }
 }
 
-/* Mobiles */
-@media (max-width: 400px) {
-  .chat-window {
-    width: 40%;
-    height: 100%;
-    border-radius: 0;
-  }
+/* Mobiles et petits écrans */
+@media (max-width: 600px) {
+  
 
   .chat-popup {
-    bottom: 0;
-    right: 0;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+  .chat-toggle {
+    bottom: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
   }
 
-  .chat-header {
+  .chat-window {
+    
+    width: 200px;
+    height: 50vh;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    
+    margin-right: -10px;
+  }
+
+  .chat-header,
+  .chat-input,
+  .chat-messages {
     padding: 10px;
+  }
+
+  .chat-textarea {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .chat-input button {
+    padding: 10px 16px;
+    font-size: 14px;
   }
 
   .close-chat {
@@ -241,5 +259,23 @@
     width: 25px;
     height: 25px;
     font-size: 14px;
+  }
+}
+
+/* Tablettes */
+@media (min-width: 601px) and (max-width: 900px) {
+  .chat-window {
+    width: 80%;
+    height: 85vh;
+    right: 10%;
+    bottom: 5%;
+  }
+}
+
+/* Tablettes en paysage & laptops */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .chat-window {
+    width: 400px;
+    height: 500px;
   }
 }

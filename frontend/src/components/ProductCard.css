@@ -46,11 +46,14 @@ body {
 
 @media (max-width: 780px) {
   .custom-grid {
+    
+    position: relative;
     grid-template-columns: repeat(2, 1fr);
-    column-gap: 50px !important;
+    column-gap: 160px !important;
     gap: 1rem; /* plus petit gap si nécessaire */
     padding: 1rem;
-    margin-left: 100px !important;
+    margin-left: 150px !important;
+    row-gap: 0px !important; /* contrôle vertical */
   }
 
  .detail-btn {
@@ -72,7 +75,7 @@ body {
 
   .product-card {
     max-width: 100% !important;
- width: 200px !important;
+ width: 150px !important;
   height: 375px !important;
     padding-top: clamp(80px, 30vw, 180px) !important;
     font-size: clamp(0.7rem, 1.2vw, 0.9rem) !important;
@@ -511,16 +514,17 @@ body {
   padding-top:  0px !important;
   
   
+  
 }
 
-.product-quantity {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
+.title-wrapper {
+  margin-top: 30% !important;
+  display: flex!important;
+  flex-direction: column!important; /* empile le titre et le prix */
+  align-items: center!important;     /* centre horizontalement */
+  justify-content: center!important;
+  margin: 2rem 0;
 }
-
 
 
 }
@@ -557,9 +561,9 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
   z-index: 4;
-  margin-bottom: 6rem !important;
+  margin-bottom: 5rem !important;
   width: 40px;
-  
+  height: 30px !important;
 }
 
 .quantity-button:disabled {
