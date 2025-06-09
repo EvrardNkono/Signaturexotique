@@ -92,7 +92,7 @@ const Header = () => {
           <Link to="/recettes" onClick={handleLinkClick} className="recettes-link">🍽️ Nos Recettes</Link>
           <Link to="/contact" onClick={handleLinkClick}>Contact</Link>
           <Link to="/newsletter" onClick={handleLinkClick}>📰 Newsletter</Link>
-          <Link to="/livraison" onClick={handleLinkClick}>📦 Livraison</Link>
+          <Link to="/livraison" onClick={handleLinkClick}>📦  Envoie de colis</Link>
           <Link to="/aboutus" onClick={handleLinkClick}>À propos de nous</Link>
           <Link to="/dashboard" onClick={handleLinkClick}>Tableau de bord</Link>
           <Link to="/panier" onClick={handleLinkClick}>

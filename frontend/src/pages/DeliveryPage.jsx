@@ -8,14 +8,14 @@ const DeliveryPageTemp = () => {
 
       <p>
         Envoyer un colis au Cameroun n’a jamais été aussi simple ! Grâce à notre service de livraison
-        fiable, vos proches reçoivent leurs produits en toute sécurité, où qu’ils soient au pays.
+        fiable, vos proches reçoivent leurs colis en toute sécurité, où qu’ils soient au pays.
       </p>
 
       <section>
         <h2>Pourquoi choisir notre service ?</h2>
         <ul>
           <li>✅ Livraison sécurisée et traçable</li>
-          <li>✅ Délais optimisés (7 à 10 jours ouvrés)</li>
+          <li>✅ Délais optimisés (7 à 15 jours ouvrés)</li>
           <li>✅ Tarifs compétitifs, adaptés au poids et à la destination</li>
           <li>✅ Assurance colis disponible selon la valeur déclarée</li>
           <li>✅ Service client réactif pour vous accompagner</li>
@@ -65,7 +65,7 @@ const DeliveryPageTemp = () => {
         <ol>
           <li>📦 Préparez votre colis</li>
           <li>📲 Remplissez le formulaire ou contactez-nous via WhatsApp</li>
-          <li>📍 Choisissez l’adresse de livraison</li>
+          <li>📍 Choisissez le point de depos du colis</li>
           <li>💳 Payez en ligne ou en agence</li>
           <li>📬 Suivez votre livraison</li>
         </ol>

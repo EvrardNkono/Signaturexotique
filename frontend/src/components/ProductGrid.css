@@ -57,7 +57,7 @@
 @media (min-width: 768px) {
   .custom-grid {
     grid-template-columns: repeat(2, 1fr);
-    row-gap: 1.5rem; /* Réduit légèrement l’espace entre les cartes */
+    row-gap: -1.5rem !important; /* Réduit légèrement l’espace entre les cartes */
     justify-content: center; /* Pour bien centrer les colonnes */
     place-items: start center;
   }
@@ -66,16 +66,31 @@
     padding: 1.5rem 1rem; /* Un peu plus compact */
   }
 
-  .product-card-wrapper {
-    aspect-ratio: 3 / 4; /* Garde un format cohérent */
-  }
+  
 
   .product-card {
     padding: 0.8rem;
     font-size: 0.95rem;
   }
+  
+
+
+}
+@media (max-width: 768px) {
+
+.custom-grid {
+    
+    row-gap: -2rem !important; /* Réduit légèrement l’espace entre les cartes */
+    justify-content: center; /* Pour bien centrer les colonnes */
+    place-items: start center;
+  }
+
+  .product-card-wrapper {
+  margin-bottom: -3rem; /* Colle davantage les cartes entre elles */
 }
 
+
+}
 
 @media (min-width: 1200px) {
   .custom-grid {
