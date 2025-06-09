@@ -1,7 +1,10 @@
 import React from "react";
 import "./DeliveryPage.css";
+import { useNavigate } from "react-router-dom";
 
 const DeliveryPageTemp = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="page-livraison">
       <h1>Livraison de Colis au Cameroun 🇨🇲</h1>
@@ -10,6 +13,13 @@ const DeliveryPageTemp = () => {
         Envoyer un colis au Cameroun n’a jamais été aussi simple ! Grâce à notre service de livraison
         fiable, vos proches reçoivent leurs colis en toute sécurité, où qu’ils soient au pays.
       </p>
+
+       {/* 👇 Ici, le bouton vers le formulaire */}
+      <div className="form-button-wrapper">
+        <button className="btn-orange" onClick={() => navigate("/envoyer-colis")}>
+          ✍️ Remplir le formulaire d’envoi
+        </button>
+      </div>
 
       <section>
         <h2>Pourquoi choisir notre service ?</h2>

@@ -33,7 +33,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import DeliveryForm from './pages/DeliveryForm'; // ✅ c’est une page, donc on le traite comme tel
 import ChatPopup from "./components/ChatPopup";
 import DeliveryPage from "./pages/DeliveryPage";
-
+import SendParcelForm from "./components/SendParcelForm";
 
 
 
@@ -58,7 +58,7 @@ const App = () => {
                 <Route path="/recettes" element={<RecipePage />} />
                 <Route path="/aboutus" element={<AboutUs />} />
                <Route path="/livraison" element={<DeliveryPage />} />
-
+                  
                 <Route path="/newsletter" element={<NewsletterPage />} />
                 <Route 
                   path="/dashboard" 
@@ -76,7 +76,7 @@ const App = () => {
                 <Route path="/success" element={<Success />} />
                 <Route path="/cancel" element={<Cancel />} />
                 <Route path="/delivery" element={<DeliveryForm />} />
-
+                  <Route path="/envoyer-colis" element={<SendParcelForm />} />
               </Routes>
             </main>
             <ChatPopup /> {/* Chat disponible sur toutes les pages */}
