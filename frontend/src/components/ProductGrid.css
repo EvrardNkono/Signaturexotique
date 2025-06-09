@@ -86,7 +86,7 @@
   }
 
   .product-card-wrapper {
-  margin-bottom: -3rem; /* Colle davantage les cartes entre elles */
+  margin-bottom: -4rem; /* Colle davantage les cartes entre elles (lignes) */
 }
 
 
