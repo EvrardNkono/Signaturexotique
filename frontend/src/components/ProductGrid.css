@@ -8,19 +8,20 @@
 /* Grille responsive sans Bootstrap */
 .custom-grid {
   display: grid;
-  gap: 2rem;
+  row-gap: 0.5rem;        /* Écart VERTICAL encore plus réduit */
+  column-gap: 1rem;       /* Écart HORIZONTAL raisonnable */
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
 
-  /* Grille responsive */
+  /* Grille responsive mobile-first */
   grid-template-columns: repeat(2, minmax(0, 1fr));
 
-
-  /* La magie du centrage vertical + horizontal */
-  place-items: center;
+  /* Centrage parfait */
+  place-items: start center; /* align-items: start (pour coller en haut), justify-items: center */
   justify-content: center;
 }
+
 
 /* Chaque carte : wrapper qui garde le ratio */
 .product-card-wrapper {
@@ -56,8 +57,25 @@
 @media (min-width: 768px) {
   .custom-grid {
     grid-template-columns: repeat(2, 1fr);
+    row-gap: 1.5rem; /* Réduit légèrement l’espace entre les cartes */
+    justify-content: center; /* Pour bien centrer les colonnes */
+    place-items: start center;
+  }
+
+  .custom-grid-container {
+    padding: 1.5rem 1rem; /* Un peu plus compact */
+  }
+
+  .product-card-wrapper {
+    aspect-ratio: 3 / 4; /* Garde un format cohérent */
+  }
+
+  .product-card {
+    padding: 0.8rem;
+    font-size: 0.95rem;
   }
 }
+
 
 @media (min-width: 1200px) {
   .custom-grid {
