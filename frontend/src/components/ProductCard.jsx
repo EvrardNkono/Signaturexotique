@@ -264,11 +264,13 @@ const backgroundImagePath =
             onClick={handleAddToCart}
           >
             <span className="cart-circle">🛒</span>
-            {!product.inStock
-              ? 'Indisponible'
-              : loading
-              ? 'Ajout en cours...'
-              : 'Ajouter au panier'}
+            <span className="add-to-cart-text">
+    {!product.inStock
+      ? 'Indisponible'
+      : loading
+      ? 'Ajout en cours...'
+      : 'Ajouter au panier'}
+  </span>
           </button>
         </div>
 

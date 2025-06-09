@@ -573,6 +573,16 @@ body {
 
 
 
+@media screen and (max-width: 768px) {
+  .product-button {
+    font-size: 0.6rem !important; /* Taille réduite pour mobile */
+    padding: 0rem 0em !important;
+  }
+  .add-to-cart-text{
+    margin-left: -12px !important;
+  }
+}
+
 
 
 
