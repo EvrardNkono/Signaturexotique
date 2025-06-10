@@ -100,7 +100,7 @@ body {
 }
 
 .product-buttons-wrapper {
-  bottom: -10px !important;
+  bottom: -12px !important;
   margin: 0rem !important;
   margin-left: -10px !important;
 }
@@ -122,7 +122,7 @@ body {
 
 /* Nouveau prix */
 .price-discounted .new-price {
-  font-size: 0.8rem !important;
+  font-size: 0.9rem !important;
   font-weight: 700;
   color: #e65100;
   margin-bottom: -10px !important; /* espace sous le prix réduit */
@@ -142,6 +142,8 @@ body {
   white-space: nowrap;
   display: inline-block; /* pour que le badge ne prenne pas toute la largeur */
 }
+
+
 
 }
 
@@ -540,15 +542,15 @@ body {
   background-color: #ff7f00;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 25% !important;
   font-weight: bold;
   font-size: 1.2rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
   z-index: 4;
   margin-bottom: 6rem !important;
-  width: 40px ;
-  height: 20px;
+  width: 40px !important ;
+  height: 15px !important;
   padding-top:  0px !important;
   
   
@@ -614,6 +616,7 @@ body {
   margin-bottom: 5rem !important;
   width: 40px;
   height: 30px !important;
+  margin-top: -7px !important;
 }
 
 .quantity-button:disabled {
