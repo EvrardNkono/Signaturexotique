@@ -126,6 +126,10 @@ body {
   font-weight: 700;
   color: #e65100;
   margin-bottom: -10px !important; /* espace sous le prix réduit */
+  margin-left: -10px !important;
+  margin-right: -10px !important;
+  
+  display: block; 
 }
 
 /* Badge réduction sous les prix */
