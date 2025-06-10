@@ -207,6 +207,7 @@ const backgroundImagePath =
 
         <div className="product-price2">
           {product.reduction > 0 ? (
+            <div className="product-price">
             <div className="price-discounted">
               <div className="old-price">
                 {priceToDisplay.toFixed(2)} € / {formatWeight(clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight)}
@@ -217,6 +218,7 @@ const backgroundImagePath =
               <div className="reduction-badge">
                 -{product.reduction}% 🔥
               </div>
+            </div>
             </div>
           ) : (
             <div className="product-price">

@@ -94,7 +94,7 @@ body {
   }
 
   .title-wrapper {
-  padding-top: 0% !important;
+  margin-top: -10px !important;
   justify-content: center!important;
   margin: 0rem 0!important;
 }
@@ -105,6 +105,44 @@ body {
   margin-left: -10px !important;
 }
   
+/* Empilement vertical au lieu de flex horizontal */
+.price-discounted {
+  display: block; /* <<< changement */
+  position: relative;
+  margin-bottom: -10px;
+}
+
+/* Ancien prix barré */
+.price-discounted .old-price {
+  color: #999;
+  text-decoration: line-through;
+  font-size: 0.6rem !important;
+  margin-bottom: -10px; /* un petit espace sous l'ancien prix */
+}
+
+/* Nouveau prix */
+.price-discounted .new-price {
+  font-size: 0.8rem !important;
+  font-weight: 700;
+  color: #e65100;
+  margin-bottom: -10px !important; /* espace sous le prix réduit */
+}
+
+/* Badge réduction sous les prix */
+.price-discounted .reduction-badge {
+  background-color: #ff5722;
+  color: white;
+  font-weight: 700;
+  font-size: 0.6rem !important;
+  padding: 3px 8px;
+  border-radius: 12px;
+  user-select: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  animation: pulse 1.5s infinite ease-in-out;
+  white-space: nowrap;
+  display: inline-block; /* pour que le badge ne prenne pas toute la largeur */
+}
+
 }
 
 
@@ -147,7 +185,7 @@ body {
 
 
 .title-wrapper {
-  margin-top: -5% !important;
+  margin-top: -10% !important;
   display: flex!important;
   flex-direction: column!important; /* empile le titre et le prix */
   align-items: center!important;     /* centre horizontalement */
@@ -475,7 +513,7 @@ body {
 }
 
 
-@media (max-width: 780px) {
+@media (max-width: 500px) {
   .flip-card-back {
     max-width: 100% !important;
     width: 250px !important;
@@ -526,6 +564,18 @@ body {
   margin: 2rem 0;
 }
 
+.product-title {
+  display: inline-block!important;
+  background: rgb(240, 238, 238)!important;
+  padding: 0.2rem 1rem!important;
+  font-size: 0.8rem;
+  font-weight: bold!important;
+  color: #333!important;
+  position: relative!important;
+  z-index: 2!important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.699)!important;
+  text-align: center!important;
+}
 
 }
 
@@ -584,11 +634,40 @@ body {
 }
 
 
+/* Empilement vertical au lieu de flex horizontal */
+.price-discounted {
+  display: block; /* <<< changement */
+  position: relative;
+  margin-bottom: -10px;
+}
 
+/* Ancien prix barré */
+.price-discounted .old-price {
+  color: #999;
+  text-decoration: line-through;
+  font-size: 1rem;
+  margin-bottom: -10px; /* un petit espace sous l'ancien prix */
+}
 
+/* Nouveau prix */
+.price-discounted .new-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #e65100;
+  margin-bottom: -10px !important; /* espace sous le prix réduit */
+}
 
-
-
-
-
-
+/* Badge réduction sous les prix */
+.price-discounted .reduction-badge {
+  background-color: #ff5722;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  user-select: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  animation: pulse 1.5s infinite ease-in-out;
+  white-space: nowrap;
+  display: inline-block; /* pour que le badge ne prenne pas toute la largeur */
+}
