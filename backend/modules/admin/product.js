@@ -276,10 +276,15 @@ router.put(
       const uploadedFile = req.files?.image?.[0];
 
       if (uploadedFile?.filename) {
-        imageToUpdate = uploadedFile.filename;
+        // Nettoyer la catégorie pour le chemin (comme au POST)
+        const safeCategory = category.replace(/\s+/g, '-').toLowerCase();
 
+        // Chemin complet à stocker
+        imageToUpdate = `uploads/images/${safeCategory}/${uploadedFile.filename}`;
+
+        // Supprimer l’ancienne image si elle existe et différente
         if (product.image && product.image !== imageToUpdate) {
-          const oldImagePath = path.join(__dirname, '../public/uploads', product.image);
+          const oldImagePath = path.join(__dirname, '../public', product.image);
           fs.access(oldImagePath, fs.constants.F_OK, (err) => {
             if (!err) {
               fs.unlink(oldImagePath, (unlinkErr) => {
@@ -357,7 +362,7 @@ router.put(
           reduction: reduction ?? product.reduction,
           lotQuantity: lotQuantity ?? product.lotQuantity,
           lotPrice: lotPrice ?? product.lotPrice,
-          imageURL: imageToUpdate ? `/uploads/${imageToUpdate}` : null,
+          imageURL: imageToUpdate ? `/${imageToUpdate}` : null,
           inStock: stockStatus,
           retailWeight: retailWeight ?? product.retailWeight,
           wholesaleWeight: wholesaleWeight ?? product.wholesaleWeight,
@@ -370,6 +375,7 @@ router.put(
     }
   }
 );
+
 
 
 

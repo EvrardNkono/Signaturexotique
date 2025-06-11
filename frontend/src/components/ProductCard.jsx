@@ -26,11 +26,12 @@ const ProductCard = ({ product, clientType }) => {
   const discountedPrice = product.reduction > 0
     ? priceToDisplay * (1 - product.reduction / 100)
     : priceToDisplay;
-  console.log("Nom de l'image depuis product.image :", product.image); // <-- ici !
+ 
   const fullImagePath = product.image
     ? `${API_URL}/${product.image}`
     : '';
 
+    
   useEffect(() => {
     const cartItem = cart.find(item => item.productId === product.id);
     const qty = cartItem ? cartItem.quantity : 0;
