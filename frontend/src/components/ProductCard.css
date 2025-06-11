@@ -75,7 +75,7 @@ body {
 
   .product-card {
     max-width: 100% !important;
- width: 150px !important;
+ width: 145px !important;
   height: 375px !important;
     padding-top: clamp(80px, 30vw, 180px) !important;
     font-size: clamp(0.7rem, 1.2vw, 0.9rem) !important;
