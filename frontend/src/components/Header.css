@@ -8,6 +8,7 @@
   top: 0;
   z-index: 999;
   border-bottom: 4px solid black; /* Bord plus épais */
+  margin-top: -60px;
 }
 
 .navbar {
@@ -15,7 +16,7 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 0px;
   height: 120px; /* Réduction de la hauteur du header pour mieux s'adapter */
 }
 
