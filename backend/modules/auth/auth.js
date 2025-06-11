@@ -119,7 +119,8 @@ router.post('/logout', (req, res) => {
     res.json({ message: 'Déconnexion réussie ! Vous devez maintenant supprimer le token côté client.' });
   });
   // Route pour l'inscription d'un utilisateur
-router.post('/auth/register', (req, res) => {
+router.post('/register', (req, res) => {
+  console.log("🔥 Route /register appelée !");
     const { email, password, name, phone } = req.body;
   
     // Vérifier si l'utilisateur existe déjà

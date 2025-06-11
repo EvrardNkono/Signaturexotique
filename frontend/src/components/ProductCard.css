@@ -243,11 +243,11 @@ body {
   display: flex!important; /* 👈 correction ici */
   justify-content: center!important;
   align-items: center!important;
-  background: rgb(235, 231, 231)!important;
+  background: rgb(255, 255, 255)!important;
   padding: 0.5rem 1rem!important;
   font-size: 0.8rem!important;
   font-weight: bold!important;
-  color: #444!important;
+  color: #0a0a0a!important;
   position: relative!important;
   z-index: 2!important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3)!important;
@@ -650,7 +650,7 @@ body {
 
 /* Ancien prix barré */
 .price-discounted .old-price {
-  color: #999;
+  color: #4d4a4a;
   text-decoration: line-through;
   font-size: 1rem;
   margin-bottom: -10px; /* un petit espace sous l'ancien prix */
