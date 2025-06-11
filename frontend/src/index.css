@@ -38,7 +38,7 @@ h1 {
   line-height: 1.1;
 }
 /* Anti scroll horizontal fantôme */
-html, body {
+body {
   overflow-x: hidden;
 }
 
