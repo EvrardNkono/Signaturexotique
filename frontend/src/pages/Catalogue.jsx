@@ -44,7 +44,7 @@ const Catalogue = () => {
   };
 
   return (
-    <Container className="catalogue-container my-4">
+    <Container className="catalogue-container my-4 safe-container">
       <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Rye, sans-serif' }}>
         CATALOGUE DE PRODUITS
       </Typography>
