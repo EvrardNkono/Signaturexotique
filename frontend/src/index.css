@@ -37,6 +37,15 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+/* Anti scroll horizontal fantôme */
+html, body {
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 
 button {
   border-radius: 8px;
