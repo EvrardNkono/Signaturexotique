@@ -215,7 +215,7 @@
   .chat-popup {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  right: 40px;
   z-index: 1000;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -233,8 +233,8 @@
     height: 50vh;
     border-radius: 10px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    margin-right: 0px;
     
-    margin-right: -10px;
   }
 
   .chat-header,
