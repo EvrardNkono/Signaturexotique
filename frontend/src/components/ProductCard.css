@@ -54,6 +54,12 @@ body {
     row-gap: 0px !important; /* contrôle vertical */
   }
 
+  .flip-card {
+  width: 145px !important;
+  height: 450px !important;
+  
+}
+
  .detail-btn {
   height: 10px!important;
   width: 100%!important;
@@ -564,7 +570,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     padding: 1rem;
-    margin-left: 150px !important;
+    
   }
 
   .quantity-button {

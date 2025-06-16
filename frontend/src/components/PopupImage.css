@@ -105,5 +105,7 @@
     width: 90vw;       /* S’adapte à la largeur de l’écran mobile */
     max-width: 100px;  /* Limite de taille si besoin */
   }
+
+  
 }
 

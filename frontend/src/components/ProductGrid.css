@@ -11,6 +11,14 @@
     margin-left: -340px !important;
   }
 }
+
+@media screen and (max-width: 780px) {
+  .custom-grid-container {
+    margin-left: -70px !important;
+  }
+
+  
+}
 /* Grille responsive sans Bootstrap */
 .custom-grid {
   display: grid;
