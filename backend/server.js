@@ -41,6 +41,8 @@ const chatRoute = require('./routes/chat');  // Utilisation de require
 const catalogueRoutes = require('./modules/routes/catalogue');
 const contactMailRoute = require('./modules/routes/contactmail');
 const usersRoutes = require('./modules/routes/users');
+const verifyEmailRoute = require('./modules/routes/verifyEmail');
+
 
 
 
@@ -82,6 +84,7 @@ app.use('/orderRoutes', orderRoutes);
 app.use('/chat', chatRoute);
 app.use('/routes/catalogue', catalogueRoutes);
 app.use('/routes/contactmail', contactMailRoute)
+app.use('/verify-email', verifyEmailRoute);
 app.use('/users', usersRoutes);
 
 

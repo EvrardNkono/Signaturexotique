@@ -37,57 +37,70 @@ const Register = () => {
   }, [message]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { email, password, confirmPassword, name, phone, adresse, acceptOffers } = form;
+  e.preventDefault();
+  const { email, password, confirmPassword, name, phone, adresse, acceptOffers } = form;
 
-    if (!email || !password || !confirmPassword || !name || !phone || !adresse) {
-      setMessage('Tous les champs sont requis.');
-      return;
-    }
+  if (!email || !password || !confirmPassword || !name || !phone || !adresse) {
+    setMessage('Tous les champs sont requis.');
+    return;
+  }
 
-    if (password.length < 6) {
-      setMessage('Le mot de passe doit contenir au moins 6 caractères.');
-      return;
-    }
+  if (password.length < 6) {
+    setMessage('Le mot de passe doit contenir au moins 6 caractères.');
+    return;
+  }
 
-    if (password !== confirmPassword) {
-      setMessage('Les mots de passe ne correspondent pas.');
-      return;
-    }
+  if (password !== confirmPassword) {
+    setMessage('Les mots de passe ne correspondent pas.');
+    return;
+  }
 
-    setLoading(true);
-    setMessage('');
+  setLoading(true);
+  setMessage('');
 
-    try {
-      const response = await fetch(`${API_URL}/auth/register`, {
+  try {
+    // 1. Création du compte utilisateur
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        mot_de_passe: password,
+        nom: name,
+        num_tel: phone,
+        adresse,
+        acceptOffers,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setMessage('Inscription réussie ! Un email de vérification vous a été envoyé.');
+
+      // 2. Envoi du mail de vérification email
+      await fetch(`${API_URL}/verify-email/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          mot_de_passe: password,
-          nom: name,
-          num_tel: phone,
-          adresse,
-          acceptOffers,
-        }),
+        body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
+      // 3. Tu peux choisir d'attendre la validation avant login,
+      //    ou connecter directement comme tu fais
+      await login(email, password);
 
-      if (response.ok) {
-        setMessage('Inscription réussie !');
-        await login(email, password);
-        navigate('/');
-      } else {
-        setMessage(data.message || "Erreur lors de l'inscription.");
-      }
-    } catch (error) {
-      console.error(error);
-      setMessage('Erreur de connexion au serveur.');
-    } finally {
-      setLoading(false);
+      navigate('/'); // ou page "Merci, vérifiez votre mail !"
+    } else {
+      setMessage(data.message || "Erreur lors de l'inscription.");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    setMessage('Erreur de connexion au serveur.');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="form-page">
