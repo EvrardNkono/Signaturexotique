@@ -4,6 +4,12 @@
   padding: 2rem 1rem;
   display: flex;
   justify-content: center;
+  
+}
+@media screen and (min-width: 1440px) {
+  .custom-grid-container {
+    margin-left: -340px !important;
+  }
 }
 /* Grille responsive sans Bootstrap */
 .custom-grid {
@@ -13,6 +19,7 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  
 
   /* Grille responsive mobile-first */
   grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -91,7 +91,8 @@ const Register = () => {
 
       navigate('/'); // ou page "Merci, vérifiez votre mail !"
     } else {
-      setMessage(data.message || "Erreur lors de l'inscription.");
+      setMessage(data.message || data.error || "Erreur lors de l'inscription.");
+
     }
   } catch (error) {
     console.error(error);

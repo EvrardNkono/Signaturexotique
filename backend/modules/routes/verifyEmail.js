@@ -12,6 +12,7 @@ const db = new sqlite3.Database('./db.sqlite');
 
 // 📤 Route POST /verify-email/send à appeler après inscription
 router.post('/send', (req, res) => {
+  console.log("Body reçu :", req.body);
   const { email, userId } = req.body;
 
   if (!email || !userId) {

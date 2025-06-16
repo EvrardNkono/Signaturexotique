@@ -25,7 +25,6 @@ a:hover {
 body {
   margin: 0;
   padding: 0; /* Ajout de padding: 0 pour s'assurer qu'il n'y a pas de padding */
-  display: flex;
   place-items: center;
   min-width: 320px;
   width: 100%; /* Pour s'assurer que le body occupe toute la largeur */
