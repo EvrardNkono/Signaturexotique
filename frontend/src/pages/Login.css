@@ -113,3 +113,18 @@
     margin-top: 20px;
   }
   
+  .inscription-link {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.inscription-link a {
+  color: #ff6600;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.inscription-link a:hover {
+  text-decoration: underline;
+}

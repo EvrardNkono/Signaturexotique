@@ -1,11 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import { useCart } from '../context/CartContext';
 import './Checkout.css';
 import { API_URL } from '../config'; // adapte le chemin selon ta structure
+import { useNavigate } from 'react-router-dom'; // 💡 Il manquait ça
 
 const Checkout = () => {
-  const { cart, clearCartFromBackend } = useCart(); // Modifier l'importation ici
+    const { cart, clearCartFromBackend } = useCart(); // Modifier l'importation ici
+     const navigate = useNavigate(); // ici, dans le composant
+    
+  // 🔐 Redirection si non connecté
+ const [isAuthorized, setIsAuthorized] = useState(null);
+
+useEffect(() => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    localStorage.setItem('redirectAfterLogin', window.location.pathname);
+    alert('Vous devez être connecté pour accéder au checkout.');
+    navigate('/login');
+  } else {
+    setIsAuthorized(true);
+  }
+}, [navigate]);
+
 
   const [form, setForm] = useState({
     firstName: '',
@@ -26,13 +43,19 @@ const Checkout = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    const total = cart.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
+     const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Vous devez être connecté pour finaliser votre commande.');
+    return;
+  }
+
+  const total = cart.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
   
-    const orderData = {
-      customer: form,
-      items: cart,
-      total,
-    };
+  const orderData = {
+    customer: form,
+    items: cart,
+    total,
+  };
   
     // ✅ Étape 1 : Envoi de la commande au backend
     try {
@@ -76,6 +99,14 @@ const Checkout = () => {
   };
   
   const total = cart.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
+if (isAuthorized === null) {
+  return null; // ou un spinner sympa pour patienter
+}
+
+if (isAuthorized === false) {
+  // En théorie jamais vu car tu navigues, mais tu peux gérer un fallback ici
+  return <p>Accès refusé. Vous devez vous connecter.</p>;
+}
 
   return (
     <Container className="checkout-container">

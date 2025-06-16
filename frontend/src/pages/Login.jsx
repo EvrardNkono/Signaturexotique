@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { API_URL } from '../config';
 import './Login.css';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -136,7 +137,15 @@ const Login = () => {
           </div>
           <button type="submit">Se connecter</button>
         </form>
+        <p className="inscription-link">
+  Vous n'avez pas de compte ?{' '}
+  <Link to="/register" onClick={() => console.log("Redirection vers la page d'inscription")}>
+    S'inscrire
+  </Link>
+</p>
       </div>
+      
+
     </div>
   );
 };

@@ -259,6 +259,16 @@ const Cart = () => {
   variant="outline-success"
   className="btn-center"
   onClick={() => {
+    const token = localStorage.getItem('token');  // ← Vérif du token
+
+    if (!token) {
+      alert("Vous devez être connecté pour commander.");
+      localStorage.setItem('redirectAfterLogin', '/delivery'); // Optionnel: revenir ici après login
+      navigate('/login');
+      return; // Stopper l'exécution ici
+    }
+
+    // Sinon, on continue normalement
     const totalWeight = cart.reduce((total, product) => {
       const productWeight = clientType === 'wholesale' ? product.wholesaleWeight : product.retailWeight;
       return total + (productWeight * product.quantity);
@@ -273,6 +283,7 @@ const Cart = () => {
 >
   Commander
 </Button>
+
 
 
 

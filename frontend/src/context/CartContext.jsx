@@ -1,7 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { API_URL } from '../config';
 
+function isTokenExpired(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp < now;
+  } catch (error) {
+    console.error("Erreur lors de la vérification du token :", error);
+    return true; // On considère qu'il est expiré en cas de problème
+  }
+}
+
 const CartContext = createContext();
+const token = localStorage.getItem('token');
+const isLoggedIn = token && !isTokenExpired(token); // Nouvelle variable
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]); // Initialisation du panier avec un tableau vide
@@ -14,15 +27,15 @@ export const CartProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         console.log('Token récupéré :', token); // 👀 Vérification immédiate
     
-        if (!token) {
-          console.error('Aucun token trouvé, veuillez vous reconnecter.');
-          return; // ⚠️ Stopper ici si pas de token
-        }
+        if (!token || isTokenExpired(token)) {
+  console.log('Utilisateur non connecté, chargement du panier local.');
+  const localCart = JSON.parse(localStorage.getItem('guest_cart')) || [];
+  setCart(localCart);
+  return;
+}
+
     
-        if (isTokenExpired(token)) {
-          console.error('Token invalide ou expiré. Redirection vers la page de connexion...');
-          return;
-        }
+        
     
         const res = await fetch(`${API_URL}/modules/cart/cart`, {
           method: 'GET',
@@ -46,17 +59,6 @@ export const CartProvider = ({ children }) => {
       }
     };
     
-    const isTokenExpired = (token) => {
-      try {
-        const decoded = JSON.parse(atob(token.split('.')[1]));  // Décode le payload du JWT
-        const exp = decoded.exp;  // Date d'expiration du token
-        const currentTime = Date.now() / 1000;  // Temps actuel en secondes
-        return exp < currentTime;
-      } catch (e) {
-        console.error('Erreur lors de la vérification du token:', e);
-        return true;  // Si le décodage échoue, on suppose que le token est invalide
-      }
-    };
     
     loadCart();
   }, []);
@@ -82,6 +84,28 @@ export const CartProvider = ({ children }) => {
     console.log('Prix de gros du produit:', product.wholesalePrice);
   
     try {
+      if (!isLoggedIn) {
+  const guestCart = [...cart];
+  const existingProduct = guestCart.find(item => item.productId === product.id);
+
+  if (existingProduct) {
+    existingProduct.quantity += 1;
+  } else {
+    guestCart.push({
+      productId: product.id,
+      quantity: 1,
+      price: clientType === 'wholesale' ? product.wholesalePrice : product.price,
+      name: product.name,
+      image: product.image,
+    });
+  }
+
+  setCart(guestCart);
+  localStorage.setItem('guest_cart', JSON.stringify(guestCart));
+  setLastAddedItem({ ...product, quantity: 1 });
+  return;
+}
+
       // Vérification si le prix est disponible
       const priceToUse = clientType === 'wholesale' && product.wholesalePrice ? product.wholesalePrice : product.price;
   
