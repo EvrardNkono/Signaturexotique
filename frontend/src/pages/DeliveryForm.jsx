@@ -125,11 +125,13 @@ const debouncedUpdateAddress = useCallback(
       const poidsConverti = totalWeight ? parseFloat(totalWeight) / 1000 : 0;
 
       const deliveryCost = calculateDeliveryCost({
-        distance,
-        weight: poidsConverti,
-        hasInsurance: formData.hasInsurance,
-        mode: distance > 40 ? formData.deliveryMethod : "livraison",
-      });
+  distance,
+  weight: poidsConverti,
+  hasInsurance: formData.hasInsurance,
+  mode: distance > 20 ? formData.deliveryMethod : "livraison",
+  cartTotal: totalPrice // ← on l’a calculé plus haut
+});
+
 
       if (isMounted) {
         setFormData((prev) => ({
@@ -169,12 +171,18 @@ const debouncedUpdateAddress = useCallback(
 
     const poidsConverti = totalWeight ? parseFloat(totalWeight) / 1000 : 0;
 
-    const deliveryCost = calculateDeliveryCost({
-      distance,
-      weight: newData.weight ?? poidsConverti,
-      hasInsurance: newData.hasInsurance ?? formData.hasInsurance,
-      mode: distance > 40 ? newData.deliveryMethod ?? formData.deliveryMethod : "livraison",
-    });
+    const modeCondition = distance > 20 || (distance < 20 && totalPrice < 100);
+
+const deliveryCost = calculateDeliveryCost({
+  distance,
+  weight: newData.weight ?? poidsConverti,
+  hasInsurance: newData.hasInsurance ?? formData.hasInsurance,
+  mode: modeCondition 
+    ? newData.deliveryMethod ?? formData.deliveryMethod 
+    : "livraison", // ou un autre mode par défaut
+  cartTotal: totalPrice
+});
+
 
     setFormData((prev) => {
       const safeData = { ...prev };
@@ -242,7 +250,7 @@ const debouncedUpdateAddress = useCallback(
     return;
   }
 
-  if (parseFloat(formData.distance) > 40 && !formData.deliveryMethod) {
+  if (parseFloat(formData.distance) > 20 && !formData.deliveryMethod) {
     alert("Veuillez sélectionner un mode d’expédition.");
     return;
   }
@@ -313,6 +321,8 @@ function LivraisonSummary({ panier, formData }) {
  
 }
 
+const assuranceDisponible = totalPrice >= 150;
+const total = parseFloat(totalPrice) || 0;
 
 
   return (
@@ -333,7 +343,7 @@ function LivraisonSummary({ panier, formData }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="address"><FaMapMarkerAlt /> Rue</label>
+        <label htmlFor="address"><FaMapMarkerAlt /> Adresse</label>
         <input
           type="text"
           id="address"
@@ -403,14 +413,43 @@ function LivraisonSummary({ panier, formData }) {
           <label>💰 Total panier</label>
           <p>{formData.totalPrice} €</p>
         </div>
-        <div className="metric-item">
+       <div className="metric-item">
   <label>🛡️ Assurance</label>
-  {formData.hasInsurance ? (
-    <p> {assuranceAmount.toFixed(2)} €</p>
+
+  {assuranceDisponible ? (
+    <div className="assurance-option">
+  <label className="assurance-label">
+    <input
+  type="checkbox"
+  checked={formData.hasInsurance}
+  onChange={(e) => {
+    const newValue = e.target.checked;
+
+    setFormData((prev) => ({
+      ...prev,
+      hasInsurance: newValue,
+    }));
+
+    debouncedUpdateDeliveryCost({
+      hasInsurance: newValue,
+      deliveryMethod: formData.deliveryMethod,
+    });
+  }}
+/>
+
+    {formData.hasInsurance
+      ? `Coût : (+${calculateInsuranceFee(total, true).toFixed(2)} €) — Assuré à ${total.toFixed(2)} €`
+      : "Ajouter une assurance (facultatif)"}
+  </label>
+</div>
+
   ) : (
-    <p>Non</p>
+    <p>(réservée à partir de 150 € d'achat )</p>
   )}
 </div>
+
+
+
 
 
 
@@ -420,7 +459,7 @@ function LivraisonSummary({ panier, formData }) {
   </div>
       </div>
 
-      {parseFloat(formData.distance) > 40 && (
+      {(parseFloat(formData.distance) > 20 ||(totalPrice < 100 && parseFloat(formData.distance) <20)) && (
         <div className="form-group md:col-span-2">
           <label>Méthode d’expédition</label>
           <div className="delivery-options">
@@ -462,18 +501,7 @@ function LivraisonSummary({ panier, formData }) {
           <p className="text-green-600 font-semibold">{formData.deliveryCost} €</p>
         </div>
       )}
-      {totalPrice >= 150 && (
-  <div className="form-group md:col-span-2"> 
-    <label>
-      <input
-        type="checkbox"
-        checked={formData.hasInsurance}
-        onChange={handleCheckboxChange}
-      />{" "}
-      Ajouter une assurance Ad Valorem
-    </label>
-  </div>
-)}
+      
 
 
       <div className="form-group md:col-span-2">

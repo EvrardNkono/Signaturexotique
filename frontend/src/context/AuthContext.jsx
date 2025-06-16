@@ -1,41 +1,53 @@
-// src/context/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
-// Créer un contexte pour l'authentification
+
 const AuthContext = createContext();
 
-// Créer un provider pour gérer l'état de la connexion
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Vérification de la présence du token dans localStorage au démarrage
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
-      setIsAuthenticated(true);
-      setToken(storedToken);
+      try {
+        const decoded = jwtDecode(storedToken);
+        setUser(decoded);
+        setIsAuthenticated(true);
+        setToken(storedToken);
+      } catch (error) {
+        console.error("Erreur lors du décodage du token :", error);
+        logout();
+      }
     }
   }, []);
 
   const login = (newToken) => {
-    setIsAuthenticated(true);
-    setToken(newToken);
-    localStorage.setItem('token', newToken); // Stockage du token dans localStorage
+    try {
+      const decoded = jwtDecode(newToken);
+      setUser(decoded);
+      setIsAuthenticated(true);
+      setToken(newToken);
+      localStorage.setItem('token', newToken);
+    } catch (error) {
+      console.error("Token invalide :", error);
+    }
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setToken(null);
-    localStorage.removeItem('token'); // Suppression du token de localStorage
+    setUser(null);
+    localStorage.removeItem('token');
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, token, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, token, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook pour accéder au contexte facilement
 export const useAuth = () => useContext(AuthContext);

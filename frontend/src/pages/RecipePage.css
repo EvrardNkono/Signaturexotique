@@ -153,3 +153,8 @@
     }
   }
   
+  .social-icon:hover {
+  color: #ff6600; /* ou couleur de ton thème */
+  transform: scale(1.1);
+  transition: all 0.2s ease-in-out;
+}

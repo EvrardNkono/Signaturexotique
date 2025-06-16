@@ -74,6 +74,19 @@ const NewsletterPage = () => {
             <div className="teaser-banner">👨🏽‍🍳 *Des recettes pour voyager depuis votre cuisine !*</div>
           </div>
         </div>
+
+        {/* Bloc 6 - Expédition vers le Cameroun */}
+<div className="bloc bloc-expedition" style={{ backgroundImage: `url('/assets/cameroon-shipping.jpg')` }}>
+  <div className="bloc-content">
+    <h2>📦 Envois vers le Cameroun simplifiés</h2>
+    <p>
+      Vous avez de la famille ou des amis au pays ? Envoyez-leur facilement vos colis ! <br />
+      🇨🇲 Service fiable, rapide, avec suivi en temps réel et tarifs transparents.
+    </p>
+    <div className="teaser-banner">✈️ *On expédie vos sourires jusqu’à Douala, Yaoundé, Bafoussam et au-delà !*</div>
+  </div>
+</div>
+
       </div>
     </section>
   );

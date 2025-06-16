@@ -26,7 +26,7 @@ const PopupImage = () => {
 
     const interval = setInterval(() => {
       setCurrentPopup((prev) => (prev + 1) % popups.length);
-    }, 10000); // Changement toutes les 10 sec
+    }, 20000); // Changement toutes les 10 sec
 
     return () => clearInterval(interval);
   }, [popups]);
@@ -35,7 +35,7 @@ const PopupImage = () => {
     setShowPopup(false);
     setTimeout(() => {
       setShowPopup(true);
-    }, 100000); // Réaffiche après un moment
+    }, 200000); // Réaffiche après un moment
   };
 
   if (popups.length === 0 || !showPopup) return null;

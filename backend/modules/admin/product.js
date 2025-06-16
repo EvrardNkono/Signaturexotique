@@ -16,36 +16,29 @@ const checkRole = require('../../middleware/checkRole'); // Vérifie les rôles 
 
 // Configuration de Multer pour l’upload d’images avec dossier dynamique
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        try {
-            const rawCategory = req.body.category || 'autres';
-            const safeCategory = rawCategory.replace(/\s+/g, '-').toLowerCase(); // 🛡️ sécurisation du nom de dossier
-
-            const uploadPath = path.join(__dirname, '../../public/uploads/images', safeCategory);
-
-            // Création du dossier s’il n'existe pas
-            if (!fs.existsSync(uploadPath)) {
-                fs.mkdirSync(uploadPath, { recursive: true });
-            }
-
-            cb(null, uploadPath);
-        } catch (err) {
-            cb(err, null);
-        }
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname).toLowerCase();
-
-        // 🛡️ Optionnel : filtrer les extensions
-        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
-        if (!allowedExtensions.includes(ext)) {
-            return cb(new Error('Extension de fichier non autorisée'), null);
-        }
-
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  destination: function (req, file, cb) {
+    // 👉 Force "autres" ici, car req.body.category ne sera pas dispo à ce moment-là
+    const uploadPath = path.join(__dirname, '../../public/uploads/images', 'autres');
+    console.log('📂 Destination upload:', uploadPath);
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
     }
+
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+    if (!allowedExtensions.includes(ext)) {
+      return cb(new Error('Extension de fichier non autorisée'), null);
+    }
+
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  }
 });
+
 
 const upload = multer({ storage: storage });
 
@@ -59,6 +52,8 @@ const upload = multer({ storage: storage });
  * Route : POST /admin/products
  * Accès : Admin ou Superadmin uniquement
  */
+
+
 router.post(
   '/',
   verifyJWT,
@@ -79,20 +74,36 @@ router.post(
       details
     } = req.body;
 
-    // 🛡️ Nettoie la catégorie pour éviter les espaces ou majuscules dans le chemin
-    const safeCategory = category.replace(/\s+/g, '-').toLowerCase();
+    const safeCategory = category ? category.replace(/\s+/g, '-').toLowerCase() : 'autres';
 
-    // 📸 Construit le chemin relatif de l'image si elle existe
-    const imagePath = req.file ? `uploads/images/${safeCategory}/${req.file.filename}` : null;
-
-    // ✅ Validation des champs obligatoires
     if (!name || !category || !unitPrice || !wholesalePrice || !retailWeight || !wholesaleWeight || !details) {
       return res.status(400).json({ message: 'Tous les champs sont requis, y compris les détails.' });
     }
 
     const stockStatus = inStock === undefined ? 1 : inStock === 'true' ? 1 : 0;
 
+    let imagePath = null;
+
     try {
+      // Gestion de l'image si fournie
+      if (req.file) {
+        const currentImagePath = req.file.path; // dans le dossier "autres" temporaire
+        const newDir = path.join(__dirname, '../../public/uploads/images', safeCategory);
+        const newImagePath = path.join(newDir, req.file.filename);
+
+        // Créer le dossier si besoin
+        if (!fs.existsSync(newDir)) {
+          fs.mkdirSync(newDir, { recursive: true });
+        }
+
+        // Déplacer le fichier
+        fs.renameSync(currentImagePath, newImagePath);
+
+        // Chemin relatif pour la BDD
+        imagePath = `uploads/images/${safeCategory}/${req.file.filename}`;
+      }
+
+      // Insertion en BDD
       const insertSql = `
         INSERT INTO products (
           name, category, unitPrice, wholesalePrice, image, reduction,
@@ -106,7 +117,7 @@ router.post(
         category,
         unitPrice,
         wholesalePrice,
-        imagePath, // ✅ On enregistre le chemin complet ici
+        imagePath,
         reduction || 0,
         lotQuantity || null,
         lotPrice || null,
@@ -117,7 +128,7 @@ router.post(
       ]);
 
       res.status(201).json({
-        message: 'Produit créé avec succès',
+        message: '🎉 Produit créé avec succès',
         product: {
           id: result.lastID,
           name,
@@ -131,16 +142,17 @@ router.post(
           retailWeight,
           wholesaleWeight,
           details,
-          imageURL: imagePath ? `/${imagePath}` : null // ✅ URL relative accessible depuis frontend
+          imageURL: imagePath ? `/${imagePath}` : null
         }
       });
 
     } catch (error) {
-      console.error('Erreur lors de la création du produit :', error);
-      res.status(500).json({ message: 'Erreur serveur' });
+      console.error('❌ Erreur lors de la création du produit :', error);
+      res.status(500).json({ message: 'Erreur serveur lors de la création du produit.' });
     }
   }
 );
+
 
 
 
@@ -236,30 +248,28 @@ router.get('/', async (req, res) => {
  * Route : PUT /admin/products/:id
  * Accès : Admin ou Superadmin
  */
+
 router.put(
   '/:id',
   verifyJWT,
   checkRole(['admin', 'superadmin']),
-  upload.fields([{ name: 'image', maxCount: 1 }]),
+  upload.none(), // ✅ permet de parser les champs texte de FormData
   async (req, res) => {
     const { id } = req.params;
+
     const {
       name,
       category,
       unitPrice,
       wholesalePrice,
-      retailWeight,
-      wholesaleWeight,
       reduction,
       lotQuantity,
       lotPrice,
       inStock,
+      retailWeight,
+      wholesaleWeight,
       details,
-      image: imageFromBody
     } = req.body;
-
-    console.log('📦 Champs reçus (req.body):', req.body);
-    console.log('🖼️ Fichiers reçus (req.files):', req.files);
 
     if (!name || !category || !unitPrice || !wholesalePrice) {
       return res.status(400).json({ message: 'Tous les champs obligatoires ne sont pas remplis.' });
@@ -267,45 +277,8 @@ router.put(
 
     try {
       const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
-      if (!product) {
-        return res.status(404).json({ message: 'Produit non trouvé' });
-      }
+      if (!product) return res.status(404).json({ message: 'Produit non trouvé' });
 
-      // 📂 Traitement de l’image
-      let imageToUpdate = product.image;
-      const uploadedFile = req.files?.image?.[0];
-
-      if (uploadedFile?.filename) {
-        // Nettoyer la catégorie pour le chemin (comme au POST)
-        const safeCategory = category.replace(/\s+/g, '-').toLowerCase();
-
-        // Chemin complet à stocker
-        imageToUpdate = `uploads/images/${safeCategory}/${uploadedFile.filename}`;
-
-        // Supprimer l’ancienne image si elle existe et différente
-        if (product.image && product.image !== imageToUpdate) {
-          const oldImagePath = path.join(__dirname, '../public', product.image);
-          fs.access(oldImagePath, fs.constants.F_OK, (err) => {
-            if (!err) {
-              fs.unlink(oldImagePath, (unlinkErr) => {
-                if (unlinkErr) {
-                  console.error('❌ Erreur suppression ancienne image :', unlinkErr);
-                } else {
-                  console.log('🧹 Ancienne image supprimée :', product.image);
-                }
-              });
-            }
-          });
-        }
-      } else if (
-        typeof imageFromBody === 'string' &&
-        imageFromBody.trim() !== '' &&
-        imageFromBody !== 'null'
-      ) {
-        imageToUpdate = imageFromBody.trim();
-      }
-
-      // 📦 Mise à jour des autres champs
       const stockStatus = (inStock !== undefined)
         ? (inStock === 'true' || inStock === '1' || inStock === 1 ? 1 : 0)
         : product.inStock;
@@ -318,9 +291,6 @@ router.put(
           category = ?, 
           unitPrice = ?, 
           wholesalePrice = ?, 
-          image = ?, 
-          unit = ?, 
-          wholesaleUnit = ?, 
           reduction = ?, 
           lotQuantity = ?, 
           lotPrice = ?, 
@@ -329,15 +299,12 @@ router.put(
           wholesaleWeight = ?, 
           details = ?
         WHERE id = ?
-      `,
+        `,
         [
           name,
           category,
           unitPrice,
           wholesalePrice,
-          imageToUpdate,
-          product.unit,
-          product.wholesaleUnit,
           reduction ?? product.reduction,
           lotQuantity ?? product.lotQuantity,
           lotPrice ?? product.lotPrice,
@@ -345,36 +312,90 @@ router.put(
           retailWeight ?? product.retailWeight,
           wholesaleWeight ?? product.wholesaleWeight,
           details ?? product.details,
-          id
+          id,
         ]
       );
 
       res.status(200).json({
-        message: 'Produit mis à jour avec succès',
+        message: 'Produit mis à jour (sans image) avec succès',
         product: {
           id,
           name,
           category,
           unitPrice,
           wholesalePrice,
-          unit: product.unit,
-          wholesaleUnit: product.wholesaleUnit,
           reduction: reduction ?? product.reduction,
           lotQuantity: lotQuantity ?? product.lotQuantity,
           lotPrice: lotPrice ?? product.lotPrice,
-          imageURL: imageToUpdate ? `/${imageToUpdate}` : null,
           inStock: stockStatus,
           retailWeight: retailWeight ?? product.retailWeight,
           wholesaleWeight: wholesaleWeight ?? product.wholesaleWeight,
-          details: details ?? product.details
-        }
+          details: details ?? product.details,
+          imageURL: product.image ? `/${product.image}` : null,
+        },
       });
     } catch (error) {
-      console.error('❌ Erreur lors de la mise à jour du produit :', error);
+      console.error('❌ Erreur lors de la mise à jour du produit (sans image) :', error);
       res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 );
+
+
+
+
+
+
+// 2. Route PUT pour mettre à jour l’image
+router.put('/:id/image', verifyJWT, checkRole(['admin', 'superadmin']), upload.single('image'), async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const product = await db.get('SELECT * FROM products WHERE id = ?', [id]);
+    if (!product) return res.status(404).json({ message: 'Produit non trouvé' });
+    if (!req.file) return res.status(400).json({ message: "Aucune image envoyée." });
+
+    const category = req.body.category || product.category || 'autres';
+    const safeCategory = category.replace(/\s+/g, '-').toLowerCase();
+
+    const oldImagePath = product.image ? path.join(__dirname, '../../public', product.image) : null;
+    const currentImagePath = req.file.path; // chemin complet dans 'autres'
+    const newDir = path.join(__dirname, '../../public/uploads/images', safeCategory);
+    const newImageName = req.file.filename;
+    const newImagePath = path.join(newDir, newImageName);
+
+    // Création du dossier cible s'il n'existe pas
+    if (!fs.existsSync(newDir)) {
+      fs.mkdirSync(newDir, { recursive: true });
+    }
+
+    // Déplacement du fichier vers le dossier catégorie
+    fs.renameSync(currentImagePath, newImagePath);
+
+    // Suppression de l'ancienne image si différente
+    if (oldImagePath && oldImagePath !== newImagePath && fs.existsSync(oldImagePath)) {
+      fs.unlinkSync(oldImagePath);
+    }
+
+    // Mise à jour BDD avec le nouveau chemin relatif
+    const relativeImagePath = `uploads/images/${safeCategory}/${newImageName}`;
+    await db.run('UPDATE products SET image = ? WHERE id = ?', [relativeImagePath, id]);
+
+    res.status(200).json({
+      message: '✅ Image du produit mise à jour avec succès',
+      product: {
+        id,
+        imageURL: `/${relativeImagePath}`,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Erreur lors de la mise à jour de l’image :', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la mise à jour de l’image.' });
+  }
+});
+
+
+
 
 
 

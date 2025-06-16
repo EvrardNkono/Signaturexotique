@@ -50,7 +50,7 @@ const Banner = () => {
             <p>
               Produits d’exception, prix mini. Mais attention : nos surprises sont limitées dans le temps… soyez futé !
             </p>
-            <Button variant="dark" as={Link} to="/bonplans">
+            <Button variant="orange" as={Link} to="/bonplans">
               Voir les bons plans
             </Button>
           </div>
@@ -109,6 +109,23 @@ const Banner = () => {
       </Button>
     </div>
   </div>
+</Carousel.Item>
+{/* Slide 7 - Expedition Cameroun */}
+<Carousel.Item>
+  <div className="banner-slide slide7"> {/* ou slide-signature */}
+    <div className="banner-content">
+      <h1>
+    EXPÉDITION RAPIDE & SÛRE VERS LE CAMEROUN 🇨🇲
+  </h1>
+  <p>
+    Envoyez vos colis en toute confiance grâce à notre service d’expédition fiable et rapide vers toutes les régions du Cameroun.  
+    Suivi en temps réel, tarifs compétitifs et livraison soignée garantie !
+  </p>
+  <Button variant="success" as={Link} to="/livraison">
+    Je prépare mon envoi
+  </Button>
+</div>
+</div>
 </Carousel.Item>
 
 

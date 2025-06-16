@@ -80,6 +80,9 @@
 .slide6 {
   background-image: url('/assets/13 (6).png');
 }
+.slide7 {
+  background-image: url('/assets/13 (7).png');
+}
 
 
 /* Responsive - Petits écrans */
@@ -101,6 +104,9 @@
   }
   .slide6 {
     background-image: url('/assets/12 (6).png');
+  }
+  .slide7 {
+    background-image: url('/assets/12 (7).png');
   }
 
 

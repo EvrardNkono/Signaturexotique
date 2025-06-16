@@ -196,15 +196,15 @@ const handleAddProduct = async () => {
     formData.append('wholesaleWeight', wholesaleWeight);
     formData.append('details', details);
 
-    if (image instanceof File) {
-      console.log('📤 Nouvelle image à uploader :', image.name);
-      formData.append('image', image);
-    } else if (typeof image === 'string' && image.trim() !== '') {
-      console.log('📎 Ancienne image conservée :', image);
-      formData.append('image', image.trim());
-    } else {
-      console.warn('⚠️ Aucun champ image envoyé');
-    }
+    // ✅ Gestion de l'image : n'envoyer que si une nouvelle image est choisie
+if (image && typeof image !== 'string' && image instanceof File) {
+  console.log('📤 Nouvelle image à uploader :', image.name);
+  formData.append('image', image); // Nouvelle image à uploader
+} else {
+  console.log('📎 Aucune nouvelle image sélectionnée – champ ignoré');
+  // ❌ Ne pas envoyer du tout le champ image → le backend conservera l'existante
+}
+
 
     if (lotQuantity) formData.append('lotQuantity', lotQuantity);
     if (lotPrice) formData.append('lotPrice', lotPrice);
@@ -305,6 +305,7 @@ const handleEditProduct = (prod) => {
   // Remplit le formulaire avec les infos du produit
   setEditingProduct(prod);
   setProduct({
+    id: prod.id, // ✅ ← C'était l'ingrédient manquant
     name: prod.name,
     unitPrice: prod.unitPrice,
     wholesalePrice: prod.wholesalePrice,
@@ -326,17 +327,11 @@ const handleEditProduct = (prod) => {
   setShowUploader(false);
   setShowUserList(false);
 
-  // Étape 2 : attendre que le DOM ait bien rendu le formulaire avant de scroller
+  // Étape 2 : scroller en douceur vers le haut
   setTimeout(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 300); // ⏱ Un petit délai pour laisser React afficher le composant
+  }, 300);
 };
-
-
-
-
-
-
 
 
 
@@ -368,7 +363,89 @@ const handleDeleteProduct = async (id) => {
 };
 
 
-// Envoyer la mise à jour d'un produit existant
+const handleSelectProduct = (id) => {
+  const selected = products.find(p => p.id === id);
+  if (!selected) return alert("Produit non trouvé !");
+  setProduct(selected);
+};
+
+
+
+const handleUpdateProductImage = async () => {
+  if (!product.image || !(product.image instanceof File)) {
+    alert("Merci de sélectionner une nouvelle image avant de mettre à jour.");
+    return;
+  }
+
+  console.log('🛠️ Préparation de la mise à jour image...');
+  console.log('🆔 ID du produit:', product.id);
+  console.log('📂 Catégorie du produit envoyée:', product.category);
+  console.log('💡 Contenu du produit juste avant envoi :', product);
+
+  // ⚠️ Vérification de l'ID
+  if (!product.id) {
+    alert("Erreur : ID du produit manquant. Impossible de mettre à jour l'image.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('image', product.image);
+  formData.append('category', product.category); // Bien présent !
+
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return alert("Token d'authentification manquant");
+
+    const response = await fetch(`${API_URL}/admin/product/${product.id}/image`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = 'Erreur serveur';
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        // JSON invalide, on garde le message par défaut
+      }
+      alert(errorMessage);
+      return;
+    }
+
+    const responseData = await response.json();
+    console.log('✅ Image mise à jour:', responseData.product);
+
+    if (responseData?.product) {
+      setProduct((prev) => ({
+        ...prev,
+        image: responseData.product.imageURL ?? prev.image,
+      }));
+
+      const productId = responseData.product.id || product.id;
+
+      setProducts((prevProducts) =>
+        prevProducts.map(p =>
+          p.id === productId ? { ...p, image: responseData.product.imageURL } : p
+        )
+      );
+
+      alert('Image mise à jour avec succès !');
+    }
+  } catch (error) {
+    console.error('❌ Erreur réseau ou serveur :', error);
+    alert(`Erreur serveur : ${error.message}`);
+  }
+};
+
+
+
+
+
 // Envoyer la mise à jour d'un produit existant
 const handleUpdateProduct = async () => {
   const {
@@ -406,13 +483,13 @@ const handleUpdateProduct = async () => {
     formData.append('retailWeight', retailWeight);
     formData.append('wholesaleWeight', wholesaleWeight);
     formData.append('details', details);
+  
 
-    // ✅ Gestion de l'image (nouvelle ou existante)
-    if (image && typeof image !== 'string' && image instanceof File) {
-      formData.append('image', image); // 📸 nouvelle image
-    } else if (typeof image === 'string' && image.trim() !== '') {
-      formData.append('image', image); // 🔁 image déjà existante
-    }
+
+// 👉 ICI : Log de tout ce qu’on envoie
+for (let pair of formData.entries()) {
+  console.log(pair[0] + ':', pair[1]);
+}
 
     // ✅ Champs optionnels
     if (lotQuantity) formData.append('lotQuantity', lotQuantity);
@@ -458,7 +535,7 @@ const handleUpdateProduct = async () => {
           wholesalePrice: '',
           category: '',
           reduction: 0,
-          image: null,
+         // ← Garde l’image si présente
           lotQuantity: '',
           lotPrice: '',
           inStock: true,
@@ -667,12 +744,37 @@ const [showUserList, setShowUserList] = useState(false);
             </Form.Group>
 
             <Form.Group className="mt-3">
-              <Form.Label>Image</Form.Label>
-              <Form.Control
-                type="file"
-                onChange={(e) => setProduct({ ...product, image: e.target.files[0] })}
-              />
-            </Form.Group>
+  <div className="d-flex justify-content-between align-items-center">
+    <Form.Label>Image</Form.Label>
+    {editingProduct && (
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={handleUpdateProductImage}
+      >
+        Mettre à jour l’image uniquement
+      </Button>
+    )}
+  </div>
+
+  {/* Miniature de l'image actuelle si image est une URL (string) */}
+  {typeof product.image === 'string' && product.image.trim() !== '' && (
+    <div className="mb-2">
+      <img
+        src={`${API_URL}${product.image}`}
+        alt="Image actuelle"
+        style={{ maxWidth: '150px', borderRadius: '8px' }}
+      />
+    </div>
+  )}
+
+  <Form.Control
+    type="file"
+    onChange={(e) => setProduct({ ...product, image: e.target.files[0] })}
+  />
+</Form.Group>
+
+
           </Col>
         </Row>
 

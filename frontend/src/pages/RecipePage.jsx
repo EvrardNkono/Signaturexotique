@@ -45,18 +45,17 @@ const RecipePage = () => {
         : typeof recipe.ingredients === 'string'
           ? JSON.parse(recipe.ingredients)
           : [],
-  
+
       steps: Array.isArray(recipe.steps)
         ? recipe.steps
         : typeof recipe.steps === 'string'
           ? JSON.parse(recipe.steps)
           : [],
     };
-  
+
     console.log("Recette sélectionnée :", safeRecipe);
     setSelectedRecipe(safeRecipe);
   };
-  
 
   const closeModal = () => {
     setSelectedRecipe(null);
@@ -66,30 +65,54 @@ const RecipePage = () => {
     <div className="recipe-page">
       <h1 className="page-title">NOS DÉLICIEUSES RECETTES DU MONDE</h1>
       <div className="recipe-list">
-        {recipes.map((recipe) => (
-          <div key={recipe.id} className="recipe-card">
-            <img 
-              src={recipe.image} 
-              alt={recipe.title} 
-              className="recipe-image" 
-            />
-            <div className="recipe-info">
-              <h2 className="recipe-title">{recipe.title}</h2>
-              <p className="recipe-description">{recipe.description}</p>
-              <div className="social-section">
-                <p className="social-message">Voir la vidéo de la recette sur nos réseaux sociaux</p>
-                <div className="social-icons">
-                  <a href="#" className="social-icon" aria-label="TikTok"><FaTiktok /></a>
-                  <a href="#" className="social-icon" aria-label="Facebook"><FaFacebookF /></a>
-                  <a href="#" className="social-icon" aria-label="Instagram"><FaInstagram /></a>
-                </div>
+        {recipes.map((recipe) => {
+          // Détection des liens sociaux valides
+          const hasTikTok = recipe.tiktokLink && recipe.tiktokLink.trim() !== '';
+          const hasFacebook = recipe.facebookLink && recipe.facebookLink.trim() !== '';
+          const hasInstagram = recipe.instagramLink && recipe.instagramLink.trim() !== '';
+          const hasAnySocial = hasTikTok || hasFacebook || hasInstagram;
+
+          return (
+            <div key={recipe.id} className="recipe-card">
+              <img 
+                src={recipe.image} 
+                alt={recipe.title} 
+                className="recipe-image" 
+              />
+              <div className="recipe-info">
+                <h2 className="recipe-title">{recipe.title}</h2>
+                <p className="recipe-description">{recipe.description}</p>
+
+                {hasAnySocial && (
+                  <div className="social-section">
+                    <p className="social-message">Voir la vidéo de la recette sur nos réseaux sociaux</p>
+                    <div className="social-icons">
+                      {hasTikTok && (
+                        <a href={recipe.tiktokLink} target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="TikTok">
+                          <FaTiktok />
+                        </a>
+                      )}
+                      {hasFacebook && (
+                        <a href={recipe.facebookLink} target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Facebook">
+                          <FaFacebookF />
+                        </a>
+                      )}
+                      {hasInstagram && (
+                        <a href={recipe.instagramLink} target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Instagram">
+                          <FaInstagram />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <button className="recipe-button" onClick={() => openModal(recipe)}>
+                  Voir la recette
+                </button>
               </div>
-              <button className="recipe-button" onClick={() => openModal(recipe)}>
-                Voir la recette
-              </button>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {selectedRecipe && (

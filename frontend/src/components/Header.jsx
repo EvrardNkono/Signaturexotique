@@ -14,19 +14,17 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth(); // 👈 ajout de 'user'
   const navigate = useNavigate();
   const [lastAddedItem, setLastAddedItem] = useState(null);
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
 
   useEffect(() => {
-    // 1. Charger les catégories
     fetch(`${API_URL}/admin/category`)
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error('Erreur chargement catégories:', err));
 
-    // 2. Écouter les ajouts au panier
     const handleItemAdded = (e) => {
       setLastAddedItem(e.detail);
       const timer = setTimeout(() => setLastAddedItem(null), 3000);
@@ -35,17 +33,12 @@ const Header = () => {
 
     window.addEventListener('itemAdded', handleItemAdded);
 
-    // 3. Gestion scroll pour cacher/afficher le header sur mobile
     let lastScrollTop = 0;
     const handleScroll = () => {
       const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
       if (window.innerWidth <= 768) {
-        if (currentScroll > lastScrollTop) {
-          setIsHeaderHidden(true); // scroll vers le bas
-        } else {
-          setIsHeaderHidden(false); // scroll vers le haut
-        }
+        setIsHeaderHidden(currentScroll > lastScrollTop);
       }
 
       lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
@@ -94,7 +87,11 @@ const Header = () => {
           <Link to="/newsletter" onClick={handleLinkClick}>📰 Newsletter</Link>
           <Link to="/livraison" onClick={handleLinkClick}>📦  Envoie de colis</Link>
           <Link to="/aboutus" onClick={handleLinkClick}>À propos de nous</Link>
-          <Link to="/dashboard" onClick={handleLinkClick}>Tableau de bord</Link>
+
+          {user?.role === 'superadmin' && ( // 👈 condition d'affichage
+            <Link to="/dashboard" onClick={handleLinkClick}>Tableau de bord</Link>
+          )}
+
           <Link to="/panier" onClick={handleLinkClick}>
             🛒{cartQuantity > 0 && <span className="cart-quantity">{cartQuantity}</span>}
           </Link>

@@ -1,14 +1,10 @@
-const db = require('../config/db'); // Connexion à la base de données
+// --- Imports et fonctions utilitaires déjà présents ---
+const db = require('../config/db');
 
-// Fonction utilitaire pour générer le chemin de l'image
 const getImagePath = (file) => {
-  if (file) {
-    return `/uploads/${file.filename}`;
-  }
-  return null;
+  return file ? `/uploads/${file.filename}` : null;
 };
 
-// Fonction utilitaire pour parser en toute sécurité
 function parseSafely(field) {
   try {
     return JSON.parse(field);
@@ -17,29 +13,25 @@ function parseSafely(field) {
   }
 }
 
-// Récupérer toutes les recettes
+// --- Récupérer toutes les recettes ---
 const getAllRecipes = (req, res) => {
   const query = 'SELECT * FROM recipes';
   db.all(query, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    const host = req.protocol + '://' + req.get('host'); // http://localhost:5000
+    const host = req.protocol + '://' + req.get('host');
+    const updatedRows = rows.map((recipe) => ({
+      ...recipe,
+      ingredients: parseSafely(recipe.ingredients),
+      steps: parseSafely(recipe.steps),
+      image: recipe.image ? `${host}${recipe.image}` : null,
+    }));
 
-    const updatedRows = rows.map((recipe) => {
-      return {
-        ...recipe,
-        ingredients: parseSafely(recipe.ingredients),
-        steps: parseSafely(recipe.steps),
-        image: recipe.image ? `${host}${recipe.image}` : null,
-      };
-    });
-
-    console.log('📦 Recettes enrichies :', updatedRows);
     res.json(updatedRows);
   });
 };
 
-// Récupérer une recette par ID
+// --- Récupérer une recette par ID ---
 const getRecipeById = (req, res) => {
   const { id } = req.params;
   const query = 'SELECT * FROM recipes WHERE id = ?';
@@ -48,7 +40,6 @@ const getRecipeById = (req, res) => {
     if (!row) return res.status(404).json({ error: 'Recette non trouvée' });
 
     const host = req.protocol + '://' + req.get('host');
-
     const recipe = {
       ...row,
       ingredients: parseSafely(row.ingredients),
@@ -60,18 +51,9 @@ const getRecipeById = (req, res) => {
   });
 };
 
-module.exports = {
-  getAllRecipes,
-  getRecipeById,
-};
-
-
-// Créer une nouvelle recette
+// --- Créer une recette avec champs facultatifs ---
 const createRecipe = (req, res) => {
-  console.log('req.file :', req.file);
-  console.log('req.body :', req.body);
-
-  const { title, description, ingredients, steps } = req.body;
+  const { title, description, ingredients, steps, tiktokLink = '', facebookLink = '', instagramLink = '' } = req.body;
 
   let parsedIngredients;
   let parsedSteps;
@@ -86,8 +68,8 @@ const createRecipe = (req, res) => {
   const image = getImagePath(req.file);
 
   const query = `
-    INSERT INTO recipes (title, description, ingredients, steps, image)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO recipes (title, description, ingredients, steps, image, tiktokLink, facebookLink, instagramLink)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.run(query, [
@@ -95,7 +77,10 @@ const createRecipe = (req, res) => {
     description,
     JSON.stringify(parsedIngredients),
     JSON.stringify(parsedSteps),
-    image
+    image,
+    tiktokLink,
+    facebookLink,
+    instagramLink
   ], function (err) {
     if (err) return res.status(500).json({ error: err.message });
 
@@ -107,58 +92,77 @@ const createRecipe = (req, res) => {
         description,
         ingredients: parsedIngredients,
         steps: parsedSteps,
-        image
+        image,
+        tiktokLink,
+        facebookLink,
+        instagramLink
       }
     });
   });
 };
 
-// Mettre à jour une recette
+// --- Mettre à jour une recette ---
 const updateRecipe = (req, res) => {
   const recipeId = req.params.id;
-  const { title, description } = req.body;
+  const { title, description, ingredients, steps, tiktokLink = '', facebookLink = '', instagramLink = '' } = req.body;
 
-  let ingredients, steps;
-
+  let parsedIngredients, parsedSteps;
   try {
-    ingredients = JSON.parse(req.body.ingredients);
-    steps = JSON.parse(req.body.steps);
-  } catch (error) {
+    parsedIngredients = JSON.parse(ingredients);
+    parsedSteps = JSON.parse(steps);
+  } catch (err) {
     return res.status(400).json({ message: 'Format JSON invalide pour ingrédients ou étapes.' });
   }
 
-  const image = req.file ? `/uploads/${req.file.filename}` : null;
+  const newImage = getImagePath(req.file);
 
-  const selectQuery = `SELECT * FROM recipes WHERE id = ?`;
-  db.get(selectQuery, [recipeId], (err, existingRecipe) => {
-    if (err) return res.status(500).json({ message: "Erreur lors de la récupération de la recette." });
-    if (!existingRecipe) return res.status(404).json({ message: "Recette introuvable." });
+  db.get('SELECT * FROM recipes WHERE id = ?', [recipeId], (err, existingRecipe) => {
+    if (err) return res.status(500).json({ message: 'Erreur lors de la récupération de la recette.' });
+    if (!existingRecipe) return res.status(404).json({ message: 'Recette introuvable.' });
 
-    const finalImage = image || existingRecipe.image;
+    const finalImage = newImage || existingRecipe.image;
 
     const updateQuery = `
       UPDATE recipes
-      SET title = ?, description = ?, ingredients = ?, steps = ?, image = ?
+      SET title = ?, description = ?, ingredients = ?, steps = ?, image = ?, tiktokLink = ?, facebookLink = ?, instagramLink = ?
       WHERE id = ?
     `;
 
-    db.run(
-      updateQuery,
-      [title, description, JSON.stringify(ingredients), JSON.stringify(steps), finalImage, recipeId],
-      function (err) {
-        if (err) return res.status(500).json({ message: "Erreur lors de la mise à jour de la recette." });
+    db.run(updateQuery, [
+      title,
+      description,
+      JSON.stringify(parsedIngredients),
+      JSON.stringify(parsedSteps),
+      finalImage,
+      tiktokLink,
+      facebookLink,
+      instagramLink,
+      recipeId
+    ], function (err) {
+      if (err) return res.status(500).json({ message: 'Erreur lors de la mise à jour.' });
 
-        res.json({ message: "Recette mise à jour avec succès", id: recipeId });
-      }
-    );
+      res.json({
+        message: 'Recette mise à jour avec succès ✅',
+        updatedRecipe: {
+          id: recipeId,
+          title,
+          description,
+          ingredients: parsedIngredients,
+          steps: parsedSteps,
+          image: finalImage,
+          tiktokLink,
+          facebookLink,
+          instagramLink
+        }
+      });
+    });
   });
 };
 
-// Supprimer une recette
+// --- Supprimer une recette ---
 const deleteRecipe = (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM recipes WHERE id = ?';
-  db.run(query, [id], function (err) {
+  db.run('DELETE FROM recipes WHERE id = ?', [id], function (err) {
     if (err) return res.status(500).json({ error: err.message });
     if (this.changes === 0) return res.status(404).json({ error: 'Recette non trouvée' });
     res.status(204).send();
