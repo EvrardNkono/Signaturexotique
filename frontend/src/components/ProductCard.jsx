@@ -100,19 +100,20 @@ const handleAddToCart = async () => {
 
     const newQuantity = cartItem.quantity - 1;
 
-    if (newQuantity > 0) {
-      updateCartQuantity(cartItem.id, newQuantity)
-        .then(response => {
-          if (response?.message === 'Quantité mise à jour avec succès') {
-            setQuantityInCart(newQuantity);
-          } else {
-            console.error('Erreur lors de la mise à jour de la quantité');
-          }
-        })
-        .catch(error => {
-          console.error('Erreur dans la requête API :', error);
-        });
-    } else {
+if (newQuantity > 0) {
+  updateCartQuantity(cartItem.id, newQuantity, cartItem.productId)
+    .then(response => {
+      if (response?.message === 'Quantité mise à jour avec succès') {
+        setQuantityInCart(newQuantity);
+      } else {
+        console.error('Erreur lors de la mise à jour de la quantité');
+      }
+    })
+    .catch(error => {
+      console.error('Erreur dans la requête API :', error);
+    });
+}
+ else {
       removeFromCart(product.id);
       setQuantityInCart(0);
     }

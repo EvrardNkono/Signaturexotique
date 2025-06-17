@@ -100,11 +100,13 @@
 .btn-outline-danger {
   border-color: #ff6f00;
   color: #ff6f00;
+  background-color: red !important;
 }
 
 .btn-outline-success {
   border-color: #28a745;
   color: #28a745;
+  background-color: #218838 !important;
 }
 
 .btn-outline-success:hover {

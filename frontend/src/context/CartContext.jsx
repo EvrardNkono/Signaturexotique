@@ -3,14 +3,16 @@ import { API_URL } from '../config';
 
 function isTokenExpired(token) {
   try {
+    if (!token) return true;
     const payload = JSON.parse(atob(token.split('.')[1]));
     const now = Math.floor(Date.now() / 1000);
     return payload.exp < now;
   } catch (error) {
-    console.error("Erreur lors de la vérification du token :", error);
-    return true; // On considère qu'il est expiré en cas de problème
+    console.error("Erreur dans isTokenExpired :", error);
+    return true; // Considère expiré en cas de problème
   }
 }
+
 
 const CartContext = createContext();
 const token = localStorage.getItem('token');
@@ -192,84 +194,102 @@ export const CartProvider = ({ children }) => {
   
   
   const removeFromCart = async (productId) => {
-    console.log("=== REQUÊTE DE SUPPRESSION VERS BACKEND ===");
-    console.log("Produit à retirer ID :", productId);
-  
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token manquant, impossible de continuer.');
-      }
-  
-      const res = await fetch(`${API_URL}/modules/cart/cart/${productId}?force=true`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-  
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Erreur lors de la suppression du produit du panier');
-      }
-  
-      // Mise à jour de l'état local sans refaire une requête GET
-      setCart(prevCart => {
-        const updatedCart = prevCart.filter(item => item.productId !== productId);
-        console.log('Panier mis à jour localement après suppression complète :', updatedCart);
-        return updatedCart;
-      });
-      
-      
-      console.log(`Produit avec ID ${productId} retiré du panier.`);
-  
-    } catch (err) {
-      console.error('Erreur:', err);
-    }
-  };
+  console.log("=== REQUÊTE DE SUPPRESSION VERS BACKEND ===");
+  console.log("Produit à retirer ID :", productId);
 
-  const updateCartQuantity = async (cartId, newQuantity) => {
-    const token = localStorage.getItem('token');
-  
-    if (!token) {
-      console.error('Token manquant');
-      return;
+  const token = localStorage.getItem('token');
+
+console.log("Token détecté avant vérification :", token);
+console.log("Token expiré :", isTokenExpired(token));
+
+  if (!token || isTokenExpired(token)) {
+    // 🔥 Mode invité (non connecté)
+    const guestCart = JSON.parse(localStorage.getItem('guest_cart')) || [];
+    const updatedCart = guestCart.filter(item => item.productId !== productId);
+
+    localStorage.setItem('guest_cart', JSON.stringify(updatedCart));
+    setCart(updatedCart);
+    console.log('Produit retiré du panier invité.');
+    return;
+  }
+
+  // 🔐 Mode connecté (requête vers le backend)
+  try {
+    const res = await fetch(`${API_URL}/modules/cart/cart/${productId}?force=true`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Erreur lors de la suppression du produit du panier');
     }
-  
-    try {
-      const res = await fetch(`${API_URL}/modules/cart/cart/${cartId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ quantity: newQuantity }),
-      });
-  
-      const data = await res.json();
-  
-      // Vérifie la validité de la réponse du serveur avant d'aller plus loin
-      if (!res.ok || !data.id || !data.quantity) {
-        throw new Error(data.error || 'Erreur lors de la mise à jour de la quantité');
-      }
-  
-      console.log('Réponse du serveur:', data);
-  
-      // Met à jour le panier dans l'état global
-      setCart(prevCart => {
-        const updatedCart = prevCart.map(item =>
-          item.id === data.id ? { ...item, quantity: data.quantity } : item
-        );
-        console.log('Panier après mise à jour dans CartContext:', updatedCart);
-        return updatedCart;
-      });
-  
-      console.log('Quantité mise à jour avec succès');
-    } catch (err) {
-      console.error('Erreur de mise à jour du panier :', err.message);
+
+    setCart(prevCart => {
+      const updatedCart = prevCart.filter(item => item.productId !== productId);
+      console.log('Panier mis à jour localement après suppression complète :', updatedCart);
+      return updatedCart;
+    });
+
+    console.log(`Produit avec ID ${productId} retiré du panier.`);
+  } catch (err) {
+    console.error('Erreur:', err);
+  }
+};
+
+
+  const updateCartQuantity = async (cartId, newQuantity, productId) => {
+  const token = localStorage.getItem('token');
+
+  if (!token || isTokenExpired(token)) {
+    // 🧑‍✈️ Mode invité
+    console.log("🔍 Mode invité - mise à jour locale de la quantité");
+    const guestCart = JSON.parse(localStorage.getItem('guest_cart')) || [];
+
+    const updatedCart = guestCart.map(item =>
+      item.productId === productId
+        ? { ...item, quantity: newQuantity }
+        : item
+    );
+
+    localStorage.setItem('guest_cart', JSON.stringify(updatedCart));
+    setCart(updatedCart);
+    return;
+  }
+
+  // 🔐 Mode connecté
+  try {
+    const res = await fetch(`${API_URL}/modules/cart/cart/${cartId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ quantity: newQuantity }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.id || !data.quantity) {
+      throw new Error(data.error || 'Erreur lors de la mise à jour de la quantité');
     }
-  };
+
+    setCart(prevCart => {
+      const updatedCart = prevCart.map(item =>
+        item.id === data.id ? { ...item, quantity: data.quantity } : item
+      );
+      return updatedCart;
+    });
+
+    console.log('✅ Quantité mise à jour avec succès côté serveur');
+  } catch (err) {
+    console.error('Erreur de mise à jour du panier :', err.message);
+  }
+};
+
   
   
   

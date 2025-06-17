@@ -7,6 +7,63 @@
   margin-right: 0px;
   z-index: 1000;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+}
+
+/* À partir de 1000px, on commence à fixer la position avec left */
+@media (min-width: 1000px) {
+  .chat-toggle {
+    left: 950px;
+    right: auto; /* On désactive right pour éviter conflit */
+  }
+}
+
+@media (min-width: 1100px) {
+  .chat-toggle {
+    left: 1050px;
+  }
+}
+
+@media (min-width: 1250px) {
+  .chat-toggle {
+    left: 1200px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .chat-toggle {
+    left: 1350px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .chat-toggle {
+    left: 1550px;
+  }
+}
+
+@media (min-width: 1800px) {
+  .chat-toggle {
+    left: 1750px;
+  }
+}
+
+@media (min-width: 2000px) {
+  .chat-toggle {
+    left: 1950px;
+  }
+}
+
+@media (min-width: 2200px) {
+  .chat-toggle {
+    left: 2150px;
+  }
+}
+
+@media (min-width: 2400px) {
+  .chat-toggle {
+    left: 2350px;
+  }
 }
 
 /* Bouton pour ouvrir/fermer le chat */
@@ -209,7 +266,7 @@
 }
 
 /* Mobiles et petits écrans */
-@media (max-width: 400px) {
+@media (max-width: 500px) {
   
 
   .chat-popup {
@@ -222,7 +279,7 @@
 
   .chat-toggle {
     bottom: 10px;
-    right: 10px;
+    right: 10px !important;
     width: 50px;
     height: 50px;
   }

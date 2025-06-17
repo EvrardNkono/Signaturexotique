@@ -54,13 +54,14 @@ const Catalogue = () => {
       )}
 
       <div className="mb-3 text-end">
-        <Button
-          variant={clientType === 'retail' ? 'outline-success' : 'outline-warning'}
-          onClick={handleClientTypeChange}
-        >
-          Passer en mode {clientType === 'retail' ? 'GROSSISTE' : 'PARTICULIER'}
-        </Button>
-      </div>
+  <Button
+    variant={clientType === 'wholesale' ? 'success' : 'primary'} // couleur ACTIVE
+    onClick={handleClientTypeChange}
+  >
+    Passer en mode {clientType === 'retail' ? 'GROSSISTE' : 'PARTICULIER'}
+  </Button>
+</div>
+
 
       <Filters
         products={allProducts}

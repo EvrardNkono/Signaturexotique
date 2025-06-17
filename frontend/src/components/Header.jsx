@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 import AddToCartPopup from './AddToCartPopup';
+import { RiShoppingCart2Line } from 'react-icons/ri';
+
 
 const Header = () => {
   const { cart } = useCart();
@@ -92,9 +94,13 @@ const Header = () => {
             <Link to="/dashboard" onClick={handleLinkClick}>Tableau de bord</Link>
           )}
 
-          <Link to="/panier" onClick={handleLinkClick}>
-            🛒{cartQuantity > 0 && <span className="cart-quantity">{cartQuantity}</span>}
-          </Link>
+          <Link to="/panier" onClick={handleLinkClick} className="cart-link">
+  <RiShoppingCart2Line className="cart-icon" />
+  {cartQuantity > 0 && (
+    <span className="cart-quantity">{cartQuantity}</span>
+  )}
+</Link>
+
 
           {lastAddedItem && <AddToCartPopup item={lastAddedItem} />}
 
