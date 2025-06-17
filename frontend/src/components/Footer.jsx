@@ -71,7 +71,7 @@ const Footer = () => {
                   <span>Suivez-nous</span>
                   <a href="#"><i className="fab fa-facebook-f facebook-bg"></i></a>
                   <a href="#"><i className="fab fa-tiktok tiktok-bg"></i></a>
-                  <a href="#"><i className="fab fa-instagram instagram-bg"></i></a>
+                  <a href="https://www.instagram.com/mekafrance33/"><i className="fab fa-instagram instagram-bg"></i></a>
                   <a href="#"><i className="fab fa-snapchat-ghost snapchat-bg"></i></a>
                 </div>
                 <div className="signature-logo mt-3 text-center">

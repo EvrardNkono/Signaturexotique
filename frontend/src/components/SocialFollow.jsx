@@ -12,7 +12,7 @@ const SocialFollow = () => {
       <a href="https://www.snapchat.com/add/tonProfil" target="_blank" rel="noopener noreferrer">
         <SiSnapchat className="social-icon" />
       </a>
-      <a href="https://www.instagram.com/tonProfil" target="_blank" rel="noopener noreferrer">
+      <a href="https://www.instagram.com/mekafrance33/" target="_blank" rel="noopener noreferrer">
         <FaInstagram className="social-icon" />
       </a>
       <a href="https://www.tiktok.com/@tonProfil" target="_blank" rel="noopener noreferrer">
