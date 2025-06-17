@@ -66,6 +66,10 @@
   }
 }
 
+
+
+
+
 /* Bouton pour ouvrir/fermer le chat */
 .chat-toggle {
   background-color: #ffcc00;
@@ -115,6 +119,7 @@
   overflow: hidden;
   animation: fadeInUp 0.3s ease;
   position: relative;
+  margin-left: 400%;
 }
 
 /* Animation d'apparition */
