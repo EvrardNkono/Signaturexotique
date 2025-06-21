@@ -115,6 +115,14 @@
   }
 }
 
+@media screen and (min-width: 500px) and (max-width: 1199px) {
+  .custom-grid {
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    gap: 1.5rem;
+  }
+}
+
 .product-card-wrapper {
   display: flex;
   justify-content: center;

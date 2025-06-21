@@ -111,7 +111,7 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Link to="/profile" onClick={handleLinkClick} className="profile-link">👤 Mon Profil</Link>
+              <Link to="/profile" onClick={handleLinkClick} className="profile-link">👤</Link>
               <span
                 onClick={() => {
                   localStorage.removeItem('authToken');

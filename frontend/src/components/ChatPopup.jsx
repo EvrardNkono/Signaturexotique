@@ -11,7 +11,7 @@ const ChatPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
-    { sender: "assistant", text: "Bonjour ! Comment puis-je vous aider ?" },
+    { sender: "assistant", text: "Bonjour !! Comment puis-je vous aider ?" },
   ]);
   const [hasUnread, setHasUnread] = useState(false);
 
