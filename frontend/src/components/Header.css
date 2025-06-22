@@ -352,8 +352,13 @@
   top: 60px;
   right: 15px; /* ou left: selon ta préférence */
   z-index: 1001; /* plus que le header */
+} 
 }
 
-  
+.nav-links a.active,
+.nav-links .active {
+  color: orange;
+  font-weight: bold;
+  border-bottom: 2px solid orange;
+  transition: all 0.3s ease;
 }
-

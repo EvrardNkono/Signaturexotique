@@ -7,11 +7,11 @@
 
 /* Flèches */
 .slick-prev, .slick-next {
-  background-color: #f58c42;
+  background-color: #f58c42 !important;
   border: none;
   border-radius: 50%;
   padding: 10px;
-  color: white;
+  color: rgb(255, 255, 255) ;
   font-size: 18px;
   position: absolute;
   top: 50%;
@@ -19,8 +19,8 @@
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1;
-  width: 35px;
-  height: 35px;
+  width: 50px;
+  height: 50px;
 }
 
 .slick-prev {

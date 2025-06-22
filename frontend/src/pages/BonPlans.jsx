@@ -36,20 +36,23 @@ const BonPlans = () => {
   }, []);
 
   if (loading) {
-    return <div>CHARGEMENT DES BONS PLANS...</div>;
+    return <div style={{ padding: "2rem", textAlign: "center" }}>CHARGEMENT DES BONS PLANS...</div>;
   }
 
   if (error) {
-    return <div>ERREUR : {error}</div>;
+    return <div style={{ padding: "2rem", color: "red", textAlign: "center" }}>ERREUR : {error}</div>;
   }
 
   return (
-    <div className="bonplans-container">
-      <h1>NOS BONS PLANS 🔥</h1>
+    <div className="bonplans-container" style={{ padding: '2rem', textAlign: 'center' }}>
+      <h1 style={{ marginBottom: '2rem' }}>NOS BONS PLANS 🔥</h1>
+      
       {products.length > 0 ? (
         <>
           <ProductCarousel products={products} title="PRODUITS EN PROMOTION" />
-          <ClientRating2 />
+          <div style={{ marginTop: '3rem' }}>
+            <ClientRating2 />
+          </div>
         </>
       ) : (
         <p>AUCUN BON PLAN POUR LE MOMENT... MAIS RESTEZ CONNECTÉS !</p>
