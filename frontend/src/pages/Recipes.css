@@ -1,0 +1,111 @@
+.recipes-container {
+  max-width: 960px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #fed7aa;
+}
+
+.recipes-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  text-align: center;
+  color: #ea580c;
+  margin-bottom: 2rem;
+}
+
+.recipes-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #fb923c;
+  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.2);
+}
+
+.image-preview {
+  max-height: 150px;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ddd;
+  object-fit: cover;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-submit {
+  background-color: #f97316;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-submit:hover {
+  background-color: #ea580c;
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background-color: #ffe4e6;
+  color: #b91c1c;
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+  border: 1px solid #fca5a5;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #fecaca;
+}
+
+.recipes-list {
+  margin-top: 3rem;
+  border-top: 1px solid #fcd34d;
+  padding-top: 2rem;
+}

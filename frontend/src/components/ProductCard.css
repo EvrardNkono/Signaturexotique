@@ -419,7 +419,7 @@ body {
 .product-image-circle img {
   width: 100%!important;
   height: 100%!important;
-  object-fit: cover!important;
+   object-fit: contain!important;
 }
 
 .decorative-container {
@@ -549,6 +549,12 @@ body {
   box-sizing: border-box;
 }
 
+.product-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important; /* Affiche toute l'image sans la couper */
+}
+
 
 @media (max-width: 500px) {
   .flip-card-back {
@@ -572,6 +578,8 @@ body {
     padding: 1rem;
     
   }
+  
+
 
   .quantity-button {
   padding: 0.1rem 0.8rem !important;

@@ -7,6 +7,9 @@ const app = express();
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const { fileTypeFromBuffer } = require('file-type');
+const ordersRouter = require('./routes/orders');
+const usersRoutes = require('./routes/users');
+
 
 // Crée le dossier des uploads si nécessaire
 const uploadDir = path.join(__dirname, 'public', 'uploads');
@@ -36,11 +39,11 @@ const recommendationRoutes = require('./routes/recommendations');
 const stripeRoutes = require('./modules/payement/stripe'); // adapte selon ton arborescence
 const popupRoutes = require('./modules/admin/popup');
 const recetteRoutes = require('./routes/recetteRoutes');
-const orderRoutes = require('./routes/order');  // Importer la route de commande
+
 const chatRoute = require('./routes/chat');  // Utilisation de require
 const catalogueRoutes = require('./modules/routes/catalogue');
 const contactMailRoute = require('./modules/routes/contactmail');
-const usersRoutes = require('./modules/routes/users');
+
 const verifyEmailRoute = require('./modules/routes/verifyEmail');
 
 
@@ -53,6 +56,7 @@ app.use('/admin', filterRoutes); // Contient le GET /admin/product?...
 // J’active les routes d’authentification sur /auth
 app.use('/auth', authRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use('/admin/users', usersRoutes);
 
  // Met à jour avec le nouveau nom du fichier
 
@@ -80,13 +84,13 @@ app.use('/stripe', stripeRoutes); // au lieu de /payement
 
 
 app.use('/recetteRoutes', recetteRoutes); // les routes des recettes sont maintenant accessibles via /api/recettes
-app.use('/orderRoutes', orderRoutes);
+
 app.use('/chat', chatRoute);
 app.use('/routes/catalogue', catalogueRoutes);
 app.use('/routes/contactmail', contactMailRoute)
 app.use('/verify-email', verifyEmailRoute);
 app.use('/users', usersRoutes);
-
+app.use('/api/orders', ordersRouter);
 
 app.get('/ping', (req, res) => {
   res.status(200).send('pong');

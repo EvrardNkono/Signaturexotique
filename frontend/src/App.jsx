@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import Catalogue from './pages/Catalogue';
 import Cart from './pages/Cart';
 import Contact from './pages/Contact';
-import Dashboard from './pages/Dashboard';
+
 import { CartProvider } from './context/CartContext';
 import { SearchProvider } from './context/SearchContext';
 import { AuthProvider } from './context/AuthContext';
@@ -30,15 +30,21 @@ import PopupImage from './components/PopupImage';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import DeliveryForm from './pages/DeliveryForm'; // ✅ c’est une page, donc on le traite comme tel
+import DeliveryForm from './pages/DeliveryForm';
 import ChatPopup from "./components/ChatPopup";
 import DeliveryPage from "./pages/DeliveryPage";
 import SendParcelForm from "./components/SendParcelForm";
+import ScrollToTop from './components/ScrollToTop';
 
-
-
-// Import du composant ScrollToTop
-import ScrollToTop from './components/ScrollToTop'; // à créer
+// ✅ Imports pour la nouvelle structure admin
+import AdminLayout from './components/AdminLayout';
+import Dashboard from './pages/Dashboard';
+import Products from './pages/Products';
+import Categories from './pages/Categories';
+import Users from './pages/Users';
+import Recipes from './pages/Recipes';
+import PopupImages from './pages/PopupImages';
+import Orders from './pages/Orders';
 
 const App = () => {
   return (
@@ -46,10 +52,11 @@ const App = () => {
       <CartProvider>
         <SearchProvider>
           <Router>
-            <ScrollToTop /> {/* Ajout du composant ScrollToTop ici */}
+            <ScrollToTop />
             <Header />
             <main>
               <Routes>
+                {/* 🌍 Site public */}
                 <Route path="/" element={<Home />} />
                 <Route path="/catalogue" element={<Catalogue />} />
                 <Route path="/bonplans" element={<BonPlans />} />
@@ -57,18 +64,8 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/recettes" element={<RecipePage />} />
                 <Route path="/aboutus" element={<AboutUs />} />
-               <Route path="/livraison" element={<DeliveryPage />} />
-                  
+                <Route path="/livraison" element={<DeliveryPage />} />
                 <Route path="/newsletter" element={<NewsletterPage />} />
-                <Route 
-                  path="/dashboard" 
-                  element={
-                    <PrivateRoute allowedRoles={['admin', 'superadmin']}>
-                      <Dashboard />
-                    </PrivateRoute>
-                  } 
-                />
-                <Route path="/access-denied" element={<AccessDenied />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
@@ -76,13 +73,36 @@ const App = () => {
                 <Route path="/success" element={<Success />} />
                 <Route path="/cancel" element={<Cancel />} />
                 <Route path="/delivery" element={<DeliveryForm />} />
-                  <Route path="/envoyer-colis" element={<SendParcelForm />} />
+                <Route path="/envoyer-colis" element={<SendParcelForm />} />
+
+                {/* 🔒 Zone admin sécurisée */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute allowedRoles={['admin', 'superadmin']}>
+                      <AdminLayout />
+                    </PrivateRoute>
+                  }
+                >
+                  <Route index element={<Dashboard />} />
+                  <Route path="products" element={<Products />} />
+                  <Route path="categories" element={<Categories />} />
+                  <Route path="users" element={<Users />} />
+                  <Route path="recipes" element={<Recipes />} />
+                  <Route path="popup-images" element={<PopupImages />} />
+                  <Route path="orders" element={<Orders />} />
+                </Route>
+
+                {/* En cas d’accès refusé */}
+                <Route path="/access-denied" element={<AccessDenied />} />
               </Routes>
             </main>
-            <ChatPopup /> {/* Chat disponible sur toutes les pages */}
+
+            <ChatPopup />
             <PopupImage />
             <Footer />
             <SocialFollow />
+            <ToastContainer />
           </Router>
         </SearchProvider>
       </CartProvider>

@@ -1,9 +1,9 @@
-// src/components/admin/OrderList.jsx
+// src/pages/Orders.jsx
 import React, { useEffect, useState } from 'react';
 import { Table, Spinner, Alert } from 'react-bootstrap';
-import { API_URL } from '../config'; 
+import { API_URL } from '../config';
 
-const OrderList = () => {
+export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,15 +11,13 @@ const OrderList = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`${API_URL}/modules/checkout`); // Utiliser API_URL
-        if (!response.ok) {
-          throw new Error('Erreur lors du chargement des commandes');
-        }
+        const response = await fetch(`${API_URL}/modules/checkout`);
+        if (!response.ok) throw new Error('Erreur lors du chargement des commandes');
         const data = await response.json();
         setOrders(data);
-        setLoading(false);
-      } catch (err) {
-        setError("Erreur lors du chargement des commandes.");
+      } catch {
+        setError('Erreur lors du chargement des commandes.');
+      } finally {
         setLoading(false);
       }
     };
@@ -27,12 +25,13 @@ const OrderList = () => {
     fetchOrders();
   }, []);
 
-  if (loading) return <Spinner animation="border" />;
-  if (error) return <Alert variant="danger">{error}</Alert>;
+  if (loading) return <Spinner animation="border" className="d-block mx-auto my-5" />;
+  if (error) return <Alert variant="danger" className="my-3">{error}</Alert>;
 
   return (
-    <div>
-      <h3>Commandes reçues</h3>
+    <main style={{ maxWidth: 960, margin: '2rem auto', padding: '0 1rem' }}>
+      <h1 style={{ color: '#f97316', marginBottom: '1rem', textAlign: 'center' }}>📦 Gestion des commandes</h1>
+
       <Table striped bordered hover responsive>
         <thead>
           <tr>
@@ -67,8 +66,6 @@ const OrderList = () => {
           ))}
         </tbody>
       </Table>
-    </div>
+    </main>
   );
-};
-
-export default OrderList;
+}

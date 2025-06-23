@@ -1,0 +1,51 @@
+.recent-users-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.recent-users-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.recent-users-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.recent-user-item:last-child {
+  border-bottom: none;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #222;
+}
+
+.user-email {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.user-date {
+  font-size: 0.85rem;
+  color: #999;
+}
