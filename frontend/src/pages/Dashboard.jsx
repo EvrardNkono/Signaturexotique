@@ -1,9 +1,9 @@
-// src/pages/Dashboard.jsx
 import React from 'react';
-import './Dashboard.css'; // Tu peux personnaliser l'apparence ici
+import './Dashboard.css';
 import SalesChart from '../components/SalesChart';
 import UserStats from '../components/UserStats';
 import RecentUsers from '../components/RecentUsers';
+import UserStatsChart from '../components/UserStatsChart'; // 👈 ajout
 
 export default function Dashboard() {
   return (
@@ -16,6 +16,7 @@ export default function Dashboard() {
       <div className="dashboard-stats-grid">
         <SalesChart />
         <UserStats />
+        <UserStatsChart /> 
         <RecentUsers />
       </div>
     </div>
