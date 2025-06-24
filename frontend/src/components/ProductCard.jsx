@@ -17,6 +17,14 @@ const ProductCard = ({ product, clientType, onUpdate }) => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(product.name);
   const { user } = useAuth();
+const [activeImageEditProductId, setActiveImageEditProductId] = useState(null);
+const [pasteTargetProductId, setPasteTargetProductId] = useState(null);
+const [imageUpdated, setImageUpdated] = useState(false);
+ const [imageVersion, setImageVersion] = useState(Date.now()); // Pour forcer reload image
+const imageSrc = product.imageURL 
+  ? `${product.imageURL}?v=${imageVersion}`
+  : '/default-image.png';
+
 
 
   // Calcul du prix en fonction du poids
@@ -195,6 +203,8 @@ const backgroundImagePath =
 
 useEffect(() => {
   const handlePaste = (e) => {
+    if (!pasteTargetProductId) return; // Pas de cible = on ignore
+
     const items = e.clipboardData?.items;
     if (!items) return;
 
@@ -203,7 +213,11 @@ useEffect(() => {
       if (item.type.indexOf('image') !== -1) {
         const file = item.getAsFile();
         if (file) {
-          handleImageUpdate(file);
+          // Appelle la fonction de mise à jour avec le bon produit
+          handleImageUpdate(file, pasteTargetProductId);
+          setPasteTargetProductId(null); // Désactive la cible après collage
+          e.preventDefault(); // Empêche le collage par défaut si besoin
+          break;
         }
       }
     }
@@ -213,7 +227,9 @@ useEffect(() => {
   return () => {
     window.removeEventListener('paste', handlePaste);
   };
-}, []);
+}, [pasteTargetProductId]);
+
+
 
 
 
@@ -238,12 +254,23 @@ const handleImageUpdate = async (file) => {
 
     const data = await response.json();
 
-    // Actualise l’image du produit côté UI
+    // Actualise l’image côté UI
     onUpdate({ ...product, imageURL: data.product.imageURL });
+
+    // Forcer le reload image + afficher message
+    setImageVersion(Date.now());
+    setImageUpdated(true);
+
+    // Cacher le message au bout de 3 secondes
+    setTimeout(() => {
+      setImageUpdated(false);
+    }, 3000);
+
   } catch (err) {
     console.error('Erreur de mise à jour de l’image :', err);
   }
 };
+
 
 
  return (
@@ -279,16 +306,25 @@ const handleImageUpdate = async (file) => {
 
             <div className="red-extension"></div>
 
-            <div className="product-image-circle">
+           <div 
+  className="product-image-circle" 
+  onClick={() => setPasteTargetProductId(product.id)} // On cible le produit
+>
   <Card.Img
     src={fullImagePath}
     alt={`Image de ${product.name}`}
     className="product-card-image"
   />
-
   {(user?.role === 'admin' || user?.role === 'superadmin') && (
     <>
-      <label htmlFor={`edit-image-${product.id}`} className="edit-image-btn">
+      <label
+        htmlFor={`edit-image-${product.id}`}
+        className="edit-image-btn"
+        onClick={(e) => {
+          e.stopPropagation(); // Empêche le clic sur le label de déclencher le onClick parent
+          setPasteTargetProductId(product.id);
+        }}
+      >
         🖊️
       </label>
       <input
@@ -299,8 +335,16 @@ const handleImageUpdate = async (file) => {
         onChange={(e) => handleImageUpdate(e.target.files[0])}
       />
     </>
+    
   )}
+  {imageUpdated && (
+  <div className="image-update-message">
+    Image du produit mise à jour avec succès 🎉
+  </div>
+)}
+
 </div>
+
 
 
             <div className="title-wrapper">
