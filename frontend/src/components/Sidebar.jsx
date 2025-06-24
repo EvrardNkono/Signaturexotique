@@ -1,4 +1,3 @@
-// src/components/Sidebar.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
@@ -6,7 +5,7 @@ import {
 } from 'lucide-react';
 import './Sidebar.css';
 
-export function Sidebar() {
+export function Sidebar({ isOpen, onClose }) {
   const routes = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/dashboard/products", label: "Produits", icon: Package },
@@ -18,7 +17,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <div className="sidebar-header">
         <h1 className="sidebar-title">Meka Admin</h1>
       </div>
@@ -27,13 +26,11 @@ export function Sidebar() {
           <NavLink
             to={to}
             key={to}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
+            onClick={onClose} // ferme la sidebar sur mobile au clic
+            className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
           >
             <Icon size={20} className="sidebar-icon" />
             <span>{label}</span>
-            <span className="active-indicator" />
           </NavLink>
         ))}
       </nav>

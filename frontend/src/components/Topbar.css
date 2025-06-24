@@ -35,3 +35,19 @@
   object-fit: cover;
   border: 2px solid #f39c12;
 }
+
+
+
+@media (max-width: 780px) {
+
+  .menu{
+  background-color: rgb(252, 113, 0) !important;
+  width: 60px;
+  margin-left: 250px;
+  display: block !important;
+}
+}
+
+.menu{
+  display: none;
+}

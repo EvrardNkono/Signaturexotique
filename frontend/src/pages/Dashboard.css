@@ -1,24 +1,7 @@
-.dashboard-stats-grid {
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 768px) {
-  .dashboard-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .dashboard-stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 .dashboard-container {
   padding: 1rem 1.5rem;
   background-color: #f9fafb;
-  height: 110vh;
+  min-height: 100vh;
   box-sizing: border-box;
   overflow-y: auto;
   display: flex;
@@ -38,23 +21,21 @@
   margin-bottom: 1rem;
 }
 
-/* Grille des composants */
+/* Grille des composants - 1 colonne par défaut (mobile) */
 .dashboard-stats-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.75rem;
-  flex: 1;
-  overflow: hidden;
+  gap: 1rem;
 }
 
-/* Deux colonnes sur écrans moyens et grands */
-@media (min-width: 768px) {
+/* 2 colonnes sur grand écran, donc 2 en haut, 2 en bas */
+@media (min-width: 1024px) {
   .dashboard-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Cartes individuelles */
+/* Style pour chaque bloc (facultatif mais recommandé) */
 .dashboard-stats-grid > * {
   background: white;
   border-radius: 6px;
