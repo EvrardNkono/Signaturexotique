@@ -3,14 +3,21 @@ import { useCart } from '../context/CartContext';
 import { Card, Button, Badge } from 'react-bootstrap';
 import './ProductCard.css';
 import { API_URL } from '../config';
+import { Pencil, Check, X } from 'lucide-react';
+import { useAuth } from '../context/AuthContext'; // Chemin à ajuster si nécessaire
 
 
 
-const ProductCard = ({ product, clientType }) => {
+
+const ProductCard = ({ product, clientType, onUpdate }) => {
   const { addToCart, updateCartQuantity, removeFromCart, cart } = useCart();
   const [flipped, setFlipped] = useState(false);
   const [quantityInCart, setQuantityInCart] = useState(0);
   const [reductionLevel, setReductionLevel] = useState(0); // Niveau de réduction par lot
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState(product.name);
+  const { user } = useAuth();
+
 
   // Calcul du prix en fonction du poids
   const pricePerWeight =
@@ -139,6 +146,106 @@ const backgroundImagePath =
     ? 'assets/back1.jpg'
     : 'assets/back.jpg';
 
+
+    {/*Edition de nom de produits */}
+
+    const handleNameUpdate = async () => {
+  try {
+    const token = localStorage.getItem('token'); // Récupère le token d'authentification
+
+    // On envoie tous les champs obligatoires + optionnels pour satisfaire la route PUT
+    const bodyData = {
+      name: editedName,
+      category: product.category,
+      unitPrice: product.unitPrice,
+      wholesalePrice: product.wholesalePrice,
+      reduction: product.reduction,
+      lotQuantity: product.lotQuantity,
+      lotPrice: product.lotPrice,
+      inStock: product.inStock,
+      retailWeight: product.retailWeight,
+      wholesaleWeight: product.wholesaleWeight,
+      details: product.details,
+    };
+
+    const response = await fetch(`${API_URL}/admin/product/${product.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,  // Important pour authentification
+      },
+      body: JSON.stringify(bodyData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erreur lors de la mise à jour : ${errorText}`);
+    }
+
+    const updatedProduct = await response.json();
+
+    // Appelle la callback pour mettre à jour dans le parent
+    onUpdate(updatedProduct.product);
+
+    setIsEditingName(false);
+  } catch (error) {
+    console.error('Erreur de mise à jour:', error);
+  }
+};
+
+useEffect(() => {
+  const handlePaste = (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.indexOf('image') !== -1) {
+        const file = item.getAsFile();
+        if (file) {
+          handleImageUpdate(file);
+        }
+      }
+    }
+  };
+
+  window.addEventListener('paste', handlePaste);
+  return () => {
+    window.removeEventListener('paste', handlePaste);
+  };
+}, []);
+
+
+
+const handleImageUpdate = async (file) => {
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const token = localStorage.getItem('token');
+
+  try {
+    const response = await fetch(`${API_URL}/admin/product/${product.id}/image`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error('Erreur lors de la mise à jour');
+
+    const data = await response.json();
+
+    // Actualise l’image du produit côté UI
+    onUpdate({ ...product, imageURL: data.product.imageURL });
+  } catch (err) {
+    console.error('Erreur de mise à jour de l’image :', err);
+  }
+};
+
+
  return (
   <div className="scoped-reset-card">
     <div className="product-card-wrapper"> {/* 👈 WRAPPER AJOUTÉ ICI */}
@@ -173,18 +280,64 @@ const backgroundImagePath =
             <div className="red-extension"></div>
 
             <div className="product-image-circle">
-              <Card.Img
-                src={fullImagePath}
-                alt={`Image de ${product.name}`}
-                className="product-card-image"
-              />
-            </div>
+  <Card.Img
+    src={fullImagePath}
+    alt={`Image de ${product.name}`}
+    className="product-card-image"
+  />
+
+  {(user?.role === 'admin' || user?.role === 'superadmin') && (
+    <>
+      <label htmlFor={`edit-image-${product.id}`} className="edit-image-btn">
+        🖊️
+      </label>
+      <input
+        id={`edit-image-${product.id}`}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={(e) => handleImageUpdate(e.target.files[0])}
+      />
+    </>
+  )}
+</div>
+
 
             <div className="title-wrapper">
               <div className="title-shadow"></div>
               <div className="product-title2">
-                <div className="product-title">{product.name}</div>
-              </div>
+  {isEditingName ? (
+    <div className="product-title edit-mode">
+      <input
+        value={editedName}
+        onChange={(e) => setEditedName(e.target.value)}
+        className="edit-input"
+      />
+      <Check size={18} onClick={handleNameUpdate} className="icon validate" />
+      <X
+        size={18}
+        onClick={() => {
+          setEditedName(product.name);
+          setIsEditingName(false);
+        }}
+        className="icon cancel"
+      />
+    </div>
+  ) : (
+    <div className="product-title">
+      {product.name}
+      {user?.role === 'superadmin' && (
+  <Pencil
+    size={16}
+    className="icon edit"
+    onClick={() => setIsEditingName(true)}
+  />
+)}
+
+    </div>
+  )}
+</div>
+
 
               <div className="product-price2">
                 {product.reduction > 0 ? (

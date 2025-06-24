@@ -18,10 +18,10 @@ const Catalogue = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${API_URL}/routes/catalogue`); // ✅ Utilisation de la nouvelle route
+      const response = await fetch(`${API_URL}/routes/catalogue`);
       const data = await response.json();
-
       setAllProducts(data);
+      setFilteredProducts(data);  // Par défaut on affiche tous les produits
     } catch (error) {
       console.error('Erreur chargement des produits:', error);
       setErrorMessage('Erreur lors du chargement des produits. Veuillez réessayer plus tard.');
@@ -49,19 +49,16 @@ const Catalogue = () => {
         CATALOGUE DE PRODUITS
       </Typography>
 
-      {errorMessage && (
-        <Alert variant="danger">{errorMessage}</Alert>
-      )}
+      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
       <div className="mb-3 text-end">
-  <Button
-    variant={clientType === 'wholesale' ? 'success' : 'primary'} // couleur ACTIVE
-    onClick={handleClientTypeChange}
-  >
-    Passer en mode {clientType === 'retail' ? 'GROSSISTE' : 'PARTICULIER'}
-  </Button>
-</div>
-
+        <Button
+          variant={clientType === 'wholesale' ? 'success' : 'primary'}
+          onClick={handleClientTypeChange}
+        >
+          Passer en mode {clientType === 'retail' ? 'GROSSISTE' : 'PARTICULIER'}
+        </Button>
+      </div>
 
       <Filters
         products={allProducts}
@@ -74,7 +71,7 @@ const Catalogue = () => {
           AUCUN PRODUIT NE CORRESPOND À VOTRE RECHERCHE.
         </Typography>
       ) : (
-        <ProductGrid products={filteredProducts} clientType={clientType} />
+        <ProductGrid initialProducts={filteredProducts} clientType={clientType} />
       )}
     </Container>
   );

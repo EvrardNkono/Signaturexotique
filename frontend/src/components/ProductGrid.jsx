@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
-import './ProductGrid.css'; // On conserve le CSS mais on vire Bootstrap ici
+import './ProductGrid.css';
 
-const ProductGrid = ({ products, clientType }) => {
+const ProductGrid = ({ initialProducts, clientType }) => {
+  const [products, setProducts] = useState(initialProducts || []);
+
+  useEffect(() => {
+    setProducts(initialProducts || []);
+  }, [initialProducts]);
+
+  const handleProductUpdate = (updatedProduct) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+    );
+  };
+
   return (
     <div className="custom-grid-container">
       <div className="custom-grid">
         {products.map((product) => (
           <div className="product-card-wrapper" key={product.id}>
-            <ProductCard product={product} clientType={clientType} />
+            <ProductCard
+              product={product}
+              clientType={clientType}
+              onUpdate={handleProductUpdate}
+            />
           </div>
         ))}
       </div>
