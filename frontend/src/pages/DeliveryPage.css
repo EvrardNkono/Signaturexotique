@@ -1,137 +1,134 @@
-.page-livraison {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  color: #1a1a1a;
-  background: #fafafa;
-  line-height: 1.7;
-}
+/* Police élégante */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-.page-livraison h1 {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #ff6b00;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  letter-spacing: -0.5px;
-}
-
-.page-livraison h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin: 2.5rem 0 1rem;
+.delivery-container {
+  max-width: 680px;
+  margin: 3rem auto;
+  padding: 2rem 2.5rem;
+  background: #fff;
+  font-family: 'Poppins', sans-serif;
   color: #222;
-  border-left: 4px solid #ff6b00;
-  padding-left: 1rem;
+  border-radius: 12px;
+  box-shadow:
+    0 4px 6px rgb(0 0 0 / 0.05),
+    0 10px 15px rgb(255 111 0 / 0.12);
 }
 
-.page-livraison p {
-  font-size: 1.1rem;
+header h1 {
+  font-weight: 700;
+  font-size: 2.6rem;
+  color: #111;
+  text-align: center;
+  margin-bottom: 0.3rem;
+}
+
+.subtitle {
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: #555;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  letter-spacing: 0.02em;
+}
+
+.btn-action {
+  display: block;
+  margin: 0 auto 3rem;
+  background: #ff6f00; /* accent orange */
+  color: white;
+  border: none;
+  padding: 0.85rem 3rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(255, 111, 0, 0.35);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  filter: drop-shadow(0 3px 3px rgb(255 111 0 / 0.4));
+}
+
+.btn-action:hover {
+  background: #e65c00;
+  box-shadow: 0 8px 16px rgba(230, 92, 0, 0.6);
+}
+
+.advantages {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 1.8rem 2rem;
+  box-shadow: inset 0 0 12px rgb(255 111 0 / 0.12);
+}
+
+.advantages h2 {
+  color: #ff6f00;
+  font-weight: 700;
+  font-size: 1.6rem;
   margin-bottom: 1rem;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+
+.advantages ul {
+  list-style: none;
+  padding-left: 0;
+  font-size: 1.1rem;
   color: #444;
 }
 
-.page-livraison ul,
-.page-livraison ol {
-  padding-left: 1.5rem;
-  margin-top: 1rem;
+.advantages li {
+  margin-bottom: 0.85rem;
+  padding-left: 1.6rem;
+  position: relative;
 }
 
-.page-livraison li {
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
+.advantages li::before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #ff6f00;
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1;
 }
 
-.page-livraison ul li::marker {
-  color: #ff6b00;
-}
-
-.page-livraison ol li::marker {
-  font-weight: bold;
-  color: #ff6b00;
-}
-
-.page-livraison section {
-  background: white;
-  padding: 2rem;
-  border-radius: 1rem;
-  margin-top: 2rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.3s ease;
-}
-
-.page-livraison section:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-}
-
-.page-livraison table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1.5rem;
-  font-size: 1rem;
-  overflow-x: auto;
-}
-
-.page-livraison table th,
-.page-livraison table td {
-  padding: 1rem;
+.contact-section {
+  margin-top: 4rem;
+  border-top: 2px solid #eee;
+  padding-top: 2rem;
   text-align: center;
+  color: #333;
 }
 
-.page-livraison table th {
-  background-color: #fff3e6;
-  color: #ff6b00;
-  text-transform: uppercase;
-  font-size: 0.9rem;
+.contact-section h2 {
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+.contact-details {
+  display: flex;
+  justify-content: center;
+  gap: 2.4rem;
+  font-size: 1.15rem;
   font-weight: 600;
+  margin-bottom: 0.8rem;
 }
 
-.page-livraison table td {
-  background: #fff;
-  border-bottom: 1px solid #eee;
+.contact-details a {
+  color: #ff6f00;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.page-livraison .note {
-  font-size: 0.9rem;
-  color: #999;
-  margin-top: 1rem;
+.contact-details a:hover {
+  color: #e65c00;
+  text-decoration: underline;
+}
+
+.availability {
   font-style: italic;
-  text-align: center;
-}
-
-@media (max-width: 768px) {
-  .page-livraison h1 {
-    font-size: 2rem;
-  }
-
-  .page-livraison section {
-    padding: 1.5rem;
-  }
-
-  .page-livraison table th,
-  .page-livraison table td {
-    padding: 0.75rem;
-  }
-}
-
-.form-button-wrapper {
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.btn-orange {
-  background-color: #f97316;
-  color: white;
-  font-weight: bold;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-orange:hover {
-  background-color: #ea580c;
+  color: #666;
+  font-size: 0.95rem;
 }
